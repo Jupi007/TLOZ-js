@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Canvas Game</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+        }
+        canvas {
+            background: #ffffff;
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="1500" height="750"></canvas>
+
+    <script src="events.js"></script>
+    <script src="collisions.js"></script>
+    <script src="bricks.js"></script>
+    <script src="map.js"></script>
+    <script src="main.js"></script>
+
+    <script type="text/javascript">
+        let canvas = document.getElementById("canvas");
+
+        Game = new Game(canvas);
+
+        function main() {
+            Game.draw();
+            requestAnimationFrame( main );
+        }
+
+        main();
+    </script>
+</body>
+</html>
