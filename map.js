@@ -7,8 +7,8 @@ class Scene {
         this.c = c;
         this.r = r;
 
-        this.nbRow = 15;
-        this.nbColl = 30;
+        this.nbRow = 11;
+        this.nbColl = 16;
         this.cellSize = 50;
 
         this.enemies = true;

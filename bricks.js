@@ -6,9 +6,9 @@ class Brick {
     }
 }
 
-$default = new Brick("./default.png");
+$default = new Brick("./sprites/png/default.png");
 
-$wall = new Brick("./wall.png");
+$wall = new Brick("./sprites/png/wall.png");
 $wall.collisions = true;
 
 class Bricks {

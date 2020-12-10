@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-    <canvas id="canvas" width="1500" height="750"></canvas>
+    <canvas id="canvas"></canvas>
 
     <script src="events.js"></script>
     <script src="collisions.js"></script>
@@ -32,6 +32,7 @@
         let canvas = document.getElementById("canvas");
 
         Game = new Game(canvas);
+        Game.init();
 
         function main() {
             Game.draw();

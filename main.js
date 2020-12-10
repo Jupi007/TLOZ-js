@@ -1,4 +1,4 @@
-lpfunction getRandomIntInclusive(min, max) {
+function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -18,7 +18,7 @@ class Landscape {
     draw() {
         this.loopCells((c, r) => {
             this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(this.Game.Bricks.get(this.Scene.cells[c][r].brick).img, this.cellSize * c, this.cellSize * r, 50, 50);
+            this.Game.ctx.drawImage(this.Game.Bricks.get(this.Scene.cells[c][r].brick).img, this.cellSize * c, this.cellSize * r, this.cellSize, this.cellSize);
             this.Game.ctx.closePath();
         });
     }
@@ -30,10 +30,10 @@ class Landscape {
 
                 this.Game.Enemies.enemies.forEach((enemy) => {
                     if (movingBoxCollision(enemy, this.Scene.cells[c][r])) {
-                        if (enemy.dirY == "up") {
-                            enemy.dirY = "down";
+                        if (enemy.dirY == "Up") {
+                            enemy.dirY = "Down";
                         } else {
-                            enemy.dirY = "up";
+                            enemy.dirY = "Up";
                         }
                     }
                 });
@@ -59,6 +59,14 @@ class Player {
         this.dx = 0;
         this.dy = 0;
 
+        this.direction = "Down";
+
+        this.frame = 0;
+        this.animationSpeed = 20;
+
+        this.animationStep = 1;
+        this.nbAnimationStep = 2;
+
         this.width = 40;
         this.height = 40;
 
@@ -71,27 +79,43 @@ class Player {
 
         this.score = 0;
 
-        this.color = "#00ffff";
-        this.invicibleColor = "#37953e";
+        this.imgUp = [];
+        this.imgUp[1] = new Image();
+        this.imgUp[1].src = "./sprites/png/link-up1.png";
+        this.imgUp[2] = new Image();
+        this.imgUp[2].src = "./sprites/png/link-up2.png";
 
-        this.imgUp = new Image();
-        this.imgUp.src = "./link-up.png";
+        this.imgRight = [];
+        this.imgRight[1] = new Image();
+        this.imgRight[1].src = "./sprites/png/link-right1.png";
+        this.imgRight[2] = new Image();
+        this.imgRight[2].src = "./sprites/png/link-right2.png";
 
-        this.imgRight = new Image();
-        this.imgRight.src = "./link-right.png";
+        this.imgDown = [];
+        this.imgDown[1] = new Image();
+        this.imgDown[1].src = "./sprites/png/link-down1.png";
+        this.imgDown[2] = new Image();
+        this.imgDown[2].src = "./sprites/png/link-down2.png";
 
-        this.imgDown = new Image();
-        this.imgDown.src = "./link-down.png";
-
-        this.imgLeft = new Image();
-        this.imgLeft.src = "./link-left.png";
-
-        this.img = this.imgDown;
+        this.imgLeft = [];
+        this.imgLeft[1] = new Image();
+        this.imgLeft[1].src = "./sprites/png/link-left1.png";
+        this.imgLeft[2] = new Image();
+        this.imgLeft[2].src = "./sprites/png/link-left2.png";
     }
 
     draw() {
+        if (leftPressed || rightPressed || upPressed || downPressed) {
+            this.frame += speedUpPressed ? 2 : 1;
+        }
+
+        if (this.frame >= this.animationSpeed) {
+            this.frame = 0;
+            this.animationStep = (this.animationStep+1 > this.nbAnimationStep) ? 1 : this.animationStep+1;
+        }
+
         this.Game.ctx.beginPath();
-        this.Game.ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        this.Game.ctx.drawImage(this["img" + this.direction][this.animationStep], this.x, this.y, this.width, this.height);
         this.Game.ctx.closePath();
     }
 
@@ -129,13 +153,13 @@ class Player {
         }
 
         if (upPressed) {
-            this.img = this.imgUp;
+            this.direction = "Up";
         } else if (downPressed) {
-            this.img = this.imgDown;
+            this.direction = "Down";
         }else if (leftPressed) {
-            this.img = this.imgLeft;
+            this.direction = "Left";
         } else if (rightPressed) {
-            this.img = this.imgRight;
+            this.direction = "Right";
         }
     }
 
@@ -182,16 +206,16 @@ class Sword {
         this.swordHeight = 14;
 
         this.imgUp = new Image();
-        this.imgUp.src = "./sword-up.png";
+        this.imgUp.src = "./sprites/png/sword-up.png";
 
         this.imgRight = new Image();
-        this.imgRight.src = "./sword-right.png";
+        this.imgRight.src = "./sprites/png/sword-right.png";
 
         this.imgDown = new Image();
-        this.imgDown.src = "./sword-down.png";
+        this.imgDown.src = "./sprites/png/sword-down.png";
 
         this.imgLeft = new Image();
-        this.imgLeft.src = "./sword-left.png";
+        this.imgLeft.src = "./sprites/png/sword-left.png";
     }
 
     draw() {
@@ -268,7 +292,7 @@ class Enemies {
         this.Game = Game;
 
         this.img = new Image();
-        this.img.src = "./goomba.png";
+        this.img.src = "./sprites/png/goomba.png";
 
         this.speed = 2;
 
@@ -285,7 +309,7 @@ class Enemies {
                     dx: 0,
                     dy: 0,
                     speed: getRandomIntInclusive(1, 3),
-                    dirY: getRandomIntInclusive(0, 1) ? "up" : "down",
+                    dirY: getRandomIntInclusive(0, 1) ? "Up" : "Down",
                     width: 40,
                     height: 40,
                 };
@@ -326,7 +350,7 @@ class Enemies {
                 }
 
                 if (!(rightPressed || leftPressed || downPressed || upPressed)) {
-                    if (enemy.dirY == "down") {
+                    if (enemy.dirY == "Down") {
                         this.Game.Player.dy = this.Game.Landscape.cellSize;
                         enemy.dy = -this.Game.Landscape.cellSize;
                     } else {
@@ -338,10 +362,10 @@ class Enemies {
 
 
             if (movingBoxCanvasCollision(enemy, this.Game.Canvas)) {
-                if (enemy.dirY == "up") {
-                    enemy.dirY = "down";
+                if (enemy.dirY == "Up") {
+                    enemy.dirY = "Down";
                 } else {
-                    enemy.dirY = "up";
+                    enemy.dirY = "Up";
                 }
             }
         });
@@ -351,7 +375,7 @@ class Enemies {
         this.enemies.forEach((enemy) => {
             enemy.dx = 0;
 
-            if (enemy.dirY == "down") {
+            if (enemy.dirY == "Down") {
                 enemy.dy = enemy.speed;
             } else {
                 enemy.dy = -enemy.speed;
@@ -378,6 +402,11 @@ class Game {
         this.Player = new Player(this);
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
+    }
+
+    init() {
+        this.Canvas.width = this.Landscape.nbColl * this.Landscape.cellSize;
+        this.Canvas.height = this.Landscape.nbRow * this.Landscape.cellSize;
     }
 
     changeScene() {
