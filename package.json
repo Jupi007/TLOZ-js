@@ -1,0 +1,16 @@
+{
+  "name": "tloz-js",
+  "version": "0.0.1",
+  "description": "The legend of Zelda in javascript",
+  "main": "gulpfile.js",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.13",
+    "gulp": "^4.0.2",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-concat": "^2.6.1"
+  },
+  "author": "Paul Kepinski",
+  "license": "ISC"
+}

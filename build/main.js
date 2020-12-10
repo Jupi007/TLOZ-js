@@ -1,7 +1,184 @@
+class Brick {
+    constructor(src, collisions = false) {
+        this.img = new Image();
+        this.img.src = src;
+        this.collisions = collisions;
+    }
+}
+
+$default = new Brick("./sprites/png/default.png");
+
+$wall = new Brick("./sprites/png/wall.png");
+$wall.collisions = true;
+
+class Bricks {
+    constructor() {
+        this.bricks = {
+            "default": $default,
+            "wall": $wall,
+        };
+    }
+
+    get(brick) {
+        return this.bricks[brick];
+    }
+}
+
+var rightPressed = false;
+var leftPressed = false;
+var upPressed = false;
+var downPressed = false;
+var speedUpPressed = false;
+var attackPressed = false;
+
+document.addEventListener("keydown", function(e) {
+    switch (e.keyCode) {
+        case 39:
+            rightPressed = true;
+            break;
+        case 37:
+            leftPressed = true;
+            break;
+        case 38:
+            upPressed = true;
+            break;
+        case 40:
+            downPressed = true;
+            break;
+        case 83:
+            speedUpPressed = true;
+            break;
+        case 81:
+            attackPressed = true;
+            break;
+    }
+    e.preventDefault();
+}, false);
+
+document.addEventListener("keyup", function(e) {
+    switch (e.keyCode) {
+        case 39:
+            rightPressed = false;
+            break;
+        case 37:
+            leftPressed = false;
+            break;
+        case 38:
+            upPressed = false;
+            break;
+        case 40:
+            downPressed = false;
+            break;
+        case 83:
+            speedUpPressed = false;
+            break;
+        case 81:
+            attackPressed = false;
+            break;
+    }
+    e.preventDefault();
+}, false);
+
+// **********************
+// Random helper function
+// **********************
+
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// **************************
+// Collision helper functions
+// **************************
+
+function simpleMovingBoxCollision(movingBox, box2) {
+    if (
+        (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
+        (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
+        (movingBox.y + movingBox.dy >= box2.y + box2.height) ||
+        (movingBox.y + movingBox.dy + movingBox.height <= box2.y)
+    ) {
+        return false;
+    }
+
+    return true;
+}
+function movingBoxCollision(movingBox, box2) {
+    if (
+        (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
+        (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
+        (movingBox.y + movingBox.dy >= box2.y + box2.height) ||
+        (movingBox.y + movingBox.dy + movingBox.height <= box2.y)
+    ) {
+        return false;
+    } else {
+        if (movingBox.dx > 0 && movingBox.x + movingBox.width + movingBox.dx > box2.x && movingBox.x + movingBox.width <= box2.x) {
+            movingBox.x = box2.x - movingBox.width;
+            movingBox.dx = 0;
+            movingBox.dy = 0;
+        }
+        if (movingBox.dx < 0 && movingBox.x + movingBox.dx < box2.x + box2.width && movingBox.x >= box2.x + box2.width) {
+            movingBox.x = box2.x + box2.width;
+            movingBox.dx = 0;
+            movingBox.dy = 0;
+        }
+        if (movingBox.dy > 0 && movingBox.y + movingBox.height + movingBox.dy > box2.y && movingBox.y + movingBox.height <= box2.y) {
+            movingBox.y = box2.y - movingBox.height;
+            movingBox.dy = 0;
+            movingBox.dx = 0;
+        }
+        if (movingBox.dy < 0 && movingBox.y + movingBox.dy < box2.y + box2.height && movingBox.y >= box2.y + box2.height) {
+            movingBox.y = box2.y + box2.height;
+            movingBox.dy = 0;
+            movingBox.dx = 0;
+        }
+
+        return true;
+    }
+}
+
+function movingBoxsCollision(movingBox1, movingBox2) {
+    if (
+        (movingBox1.x + movingBox1.dx >= movingBox2.x + movingBox2.width + movingBox1.dx) ||
+        (movingBox1.x + movingBox1.dx + movingBox1.width <= movingBox2.x + movingBox1.dx) ||
+        (movingBox1.y + movingBox1.dy >= movingBox2.y + movingBox2.height + movingBox1.dy) ||
+        (movingBox1.y + movingBox1.dy + movingBox1.height <= movingBox2.y + movingBox1.dy)
+    ) {
+        return false;
+    }
+    return true;
+}
+
+function movingBoxCanvasCollision(box, canvas) {
+    if (
+        box.x + box.dx + box.width <= canvas.width &&
+        box.x + box.dx >= 0 &&
+        box.y + box.dy + box.height <= canvas.height &&
+        box.y + box.dy >= 0
+    ) {
+        return false;
+    } else {
+        if (box.x + box.dx + box.width > canvas.width) {
+            box.dx = 0;
+            box.x = canvas.width - box.width;
+        }
+        if (box.x + box.dx < 0) {
+            box.dx = 0;
+            box.x = 0;
+        }
+        if (box.y + box.dy + box.height > canvas.height) {
+            box.dy = 0;
+            box.y = canvas.height - box.height;
+        }
+        if (box.y + box.dy < 0) {
+            box.dy = 0;
+            box.y = 0;
+        }
+
+        return true;
+    }
 }
 
 class Landscape {
@@ -71,7 +248,7 @@ class Player {
         this.height = 40;
 
         this.speed = 2;
-        this.speedUp = 4;
+        this.speedUp = 3;
 
         this.hp = 100;
         this.invincible = false;
@@ -487,5 +664,83 @@ class Game {
         this.Enemies.move();
 
         this.Sword.reset();
+    }
+}
+
+class Scene {
+    constructor(Overworld, c, r) {
+        this.Overworld = Overworld;
+
+        this.cells = [];
+
+        this.c = c;
+        this.r = r;
+
+        this.nbRow = 11;
+        this.nbColl = 16;
+        this.cellSize = 50;
+
+        this.enemies = true;
+
+        for (let c = 0; c < this.nbColl; c++) {
+            this.cells[c] = [];
+            for (let r = 0; r < this.nbRow; r++) {
+                this.cells[c][r] = {
+                    x: this.cellSize * c,
+                    y: this.cellSize * r,
+                    width: this.cellSize,
+                    height: this.cellSize,
+                    brick: "default",
+                };
+            }
+        }
+
+        if (this.c == 0) {
+            for (let r = 0; r < this.nbRow; r++) {
+                this.cells[0][r].brick = "wall";
+            }
+        }
+        if (this.c == this.Overworld.nbColl-1) {
+            for (let r = 0; r < this.nbRow; r++) {
+                this.cells[this.nbColl-1][r].brick = "wall";
+            }
+        }
+        if (this.r == 0) {
+            for (let c = 0; c < this.nbColl; c++) {
+                this.cells[c][0].brick = "wall";
+            }
+        }
+        if (this.r == this.Overworld.nbRow-1) {
+            for (let c = 0; c < this.nbColl; c++) {
+                this.cells[c][this.nbRow-1].brick = "wall";
+            }
+        }
+    }
+}
+
+class Overworld {
+    constructor(Game) {
+        this.Game = Game;
+
+        this.map = [];
+
+        this.nbRow = 3;
+        this.nbColl = 3;
+
+        this.spawnColl = 1;
+        this.spawnRow = 1;
+        this.spawnX = 1;
+        this.spawnY = 1;
+
+        for (let c = 0; c < this.nbColl; c++) {
+            this.map[c] = [];
+            for (let r = 0; r < this.nbRow; r++) {
+                this.map[c][r] = new Scene(this, c, r);
+            }
+        }
+    }
+
+    getSpawnScene() {
+        return this.map[this.spawnColl - 1][this.spawnRow - 1];
     }
 }

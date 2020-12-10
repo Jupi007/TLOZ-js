@@ -1,3 +1,17 @@
+// **********************
+// Random helper function
+// **********************
+
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// **************************
+// Collision helper functions
+// **************************
+
 function simpleMovingBoxCollision(movingBox, box2) {
     if (
         (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
