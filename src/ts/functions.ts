@@ -2,7 +2,7 @@
 // Random helper function
 // **********************
 
-function getRandomIntInclusive(min, max) {
+function getRandomIntInclusive(min: number, max: number): number {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -12,7 +12,7 @@ function getRandomIntInclusive(min, max) {
 // Collision helper functions
 // **************************
 
-function simpleMovingBoxCollision(movingBox, box2) {
+function simpleMovingBoxCollision(movingBox, box2): boolean { // TODO: implement interface
     if (
         (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
         (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
@@ -24,7 +24,7 @@ function simpleMovingBoxCollision(movingBox, box2) {
 
     return true;
 }
-function movingBoxCollision(movingBox, box2) {
+function movingBoxCollision(movingBox, box2): boolean {
     if (
         (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
         (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
@@ -58,7 +58,7 @@ function movingBoxCollision(movingBox, box2) {
     }
 }
 
-function movingBoxsCollision(movingBox1, movingBox2) {
+function movingBoxsCollision(movingBox1, movingBox2): boolean {
     if (
         (movingBox1.x + movingBox1.dx >= movingBox2.x + movingBox2.width + movingBox1.dx) ||
         (movingBox1.x + movingBox1.dx + movingBox1.width <= movingBox2.x + movingBox1.dx) ||
@@ -70,7 +70,7 @@ function movingBoxsCollision(movingBox1, movingBox2) {
     return true;
 }
 
-function movingBoxCanvasCollision(box, canvas) {
+function movingBoxCanvasCollision(box, canvas): boolean {
     if (
         box.x + box.dx + box.width <= canvas.width &&
         box.x + box.dx >= 0 &&
