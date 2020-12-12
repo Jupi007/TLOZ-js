@@ -1,7 +1,7 @@
 {
   "name": "tloz-js",
   "version": "0.0.1",
-  "description": "The legend of Zelda in javascript",
+  "description": "The legend of Zelda I like game in javascript",
   "main": "gulpfile.js",
   "dependencies": {
   },
