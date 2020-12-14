@@ -414,6 +414,16 @@ class Landscape {
     }
 }
 
+class Cell extends SimpleBox {
+    constructor(x, y, size, brick) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.width = size;
+        this.height = size;
+        this.brick = brick;
+    }
+}
 class Scene {
     constructor(overworld, c, r) {
         this.cells = [];
@@ -427,13 +437,7 @@ class Scene {
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[c][r] = {
-                    x: this.cellSize * c,
-                    y: this.cellSize * r,
-                    width: this.cellSize,
-                    height: this.cellSize,
-                    brick: "default",
-                };
+                this.cells[c][r] = new Cell(this.cellSize * c, this.cellSize * r, this.cellSize, "default");
             }
         }
         if (this.c == 0) {

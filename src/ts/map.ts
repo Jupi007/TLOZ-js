@@ -1,7 +1,21 @@
+class Cell extends SimpleBox {
+    brick: string;
+
+    constructor(x: number, y: number, size: number, brick: string) {
+        super();
+
+        this.x = x;
+        this.y = y;
+        this.width = size;
+        this.height = size;
+        this.brick = brick;
+    }
+}
+
 class Scene {
     private Overworld: Overworld;
 
-    cells = [];
+    cells: Cell[][] = [];
 
     // Coordinates of the scene in the overworld
     c:number;
@@ -22,13 +36,12 @@ class Scene {
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[c][r] = {
-                    x: this.cellSize * c,
-                    y: this.cellSize * r,
-                    width: this.cellSize,
-                    height: this.cellSize,
-                    brick: "default",
-                };
+                this.cells[c][r] = new Cell(
+                    this.cellSize * c,
+                    this.cellSize * r,
+                    this.cellSize,
+                    "default"
+                );
             }
         }
 
@@ -54,7 +67,7 @@ class Scene {
         }
     }
 
-    getCell(col, row) { // TODO: Add type (and create a Cell class)
+    getCell(col: number, row: number): Cell {
         return this.cells[col][row];
     }
 }

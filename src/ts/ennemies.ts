@@ -3,7 +3,7 @@ class Enemy extends MovingBox {
     isKilled: boolean;
     sprite: HTMLImageElement;
 
-    constructor(x, y, speed, direction) {
+    constructor(x: number, y: number, speed: number, direction: Direction) {
         super();
 
         this.x = x;
@@ -13,7 +13,7 @@ class Enemy extends MovingBox {
         this.isKilled = false;
     }
 
-    invertDirection() {
+    invertDirection(): void {
         if (this.direction == Direction.Up) {
             this.direction = Direction.Down;
         } else {
@@ -23,7 +23,7 @@ class Enemy extends MovingBox {
 }
 
 class Goomba extends Enemy {
-    constructor(x, y, speed, direction) {
+    constructor(x: number, y: number, speed: number, direction: Direction) {
         super(x, y, speed, direction);
 
         this.sprite = SpriteLoader.load("./sprites/png/goomba.png");
