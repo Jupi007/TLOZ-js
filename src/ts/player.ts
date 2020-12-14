@@ -1,14 +1,8 @@
-class Player extends MovingBox {
+class Player extends AnimatedMovingBox {
     private Game: Game;
 
     width = 40;
     height = 40;
-
-    frame = 0;
-    animationSpeed = 20;
-
-    animationStep = 1;
-    nbAnimationStep = 2;
 
     speed = 2;
     speedUp = 3;
@@ -19,8 +13,6 @@ class Player extends MovingBox {
 
     score = 0;
 
-    sprites: HTMLImageElement[][] = [];
-
     constructor(game: Game) {
         super();
 
@@ -30,6 +22,9 @@ class Player extends MovingBox {
         this.y = this.Game.Landscape.cellSize;
 
         this.direction = Direction.Down;
+
+        this.animationSpeed = 20;
+        this.nbAnimationStep = 2;
 
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
@@ -59,16 +54,17 @@ class Player extends MovingBox {
 
     draw(): void {
         if (leftPressed || rightPressed || upPressed || downPressed) {
-            this.frame += speedUpPressed ? 2 : 1;
-        }
-
-        if (this.frame >= this.animationSpeed) {
-            this.frame = 0;
-            this.animationStep = (this.animationStep+1 > this.nbAnimationStep) ? 1 : this.animationStep+1;
+            this.requestNewFrameAnimation(speedUpPressed ? 2 : 1);
         }
 
         this.Game.ctx.beginPath();
-        this.Game.ctx.drawImage(this.sprites[this.direction][this.animationStep], this.x, this.y, this.width, this.height);
+        this.Game.ctx.drawImage(
+            this.sprites[this.direction][this.currentAnimationStep],
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
         this.Game.ctx.closePath();
     }
 

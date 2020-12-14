@@ -22,6 +22,24 @@ class MovingBox extends SimpleBox {
         this.dy = 0;
     }
 }
+class AnimatedMovingBox extends MovingBox {
+    constructor() {
+        super(...arguments);
+        this.currentFrame = 0;
+        this.currentAnimationStep = 1;
+        this.sprites = [];
+    }
+    requestNewFrameAnimation(animationSpeedModifier) {
+        this.currentFrame += 1 * animationSpeedModifier;
+        if (this.currentFrame >= this.animationSpeed) {
+            this.currentFrame = 0;
+            this.currentAnimationStep =
+                (this.currentAnimationStep + 1 > this.nbAnimationStep)
+                    ? 1
+                    : this.currentAnimationStep + 1;
+        }
+    }
+}
 
 class Brick {
     constructor(src, hasCollisions = false) {
@@ -43,14 +61,13 @@ class BrickCollection {
     }
 }
 
-class Enemy extends MovingBox {
+class Enemy extends AnimatedMovingBox {
     constructor(x, y, speed, direction) {
         super();
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.direction = direction;
-        this.isKilled = false;
     }
     invertDirection() {
         if (this.direction == Direction.Up) {
@@ -64,9 +81,14 @@ class Enemy extends MovingBox {
 class Goomba extends Enemy {
     constructor(x, y, speed, direction) {
         super(x, y, speed, direction);
-        this.sprite = SpriteLoader.load("./sprites/png/goomba.png");
         this.width = 40;
         this.height = 40;
+        this.animationSpeed = 20;
+        this.nbAnimationStep = 2;
+        this.sprites[Direction.Up] = [];
+        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/goomba1.png");
+        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/goomba2.png");
+        this.sprites[Direction.Down] = this.sprites[Direction.Up];
     }
 }
 class Enemies {
@@ -98,8 +120,9 @@ class Enemies {
     }
     draw() {
         this.loopEnemies((enemy) => {
+            enemy.requestNewFrameAnimation(enemy.speed);
             this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(enemy.sprite, enemy.x, enemy.y, enemy.width, enemy.height);
+            this.Game.ctx.drawImage(enemy.sprites[enemy.direction][enemy.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
             this.Game.ctx.closePath();
         });
     }
@@ -485,26 +508,23 @@ class Overworld {
     }
 }
 
-class Player extends MovingBox {
+class Player extends AnimatedMovingBox {
     constructor(game) {
         super();
         this.width = 40;
         this.height = 40;
-        this.frame = 0;
-        this.animationSpeed = 20;
-        this.animationStep = 1;
-        this.nbAnimationStep = 2;
         this.speed = 2;
         this.speedUp = 3;
         this.hp = 100;
         this.isInvincible = false;
         this.invincibleTime = 0;
         this.score = 0;
-        this.sprites = [];
         this.Game = game;
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
         this.direction = Direction.Down;
+        this.animationSpeed = 20;
+        this.nbAnimationStep = 2;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/link-up2.png");
@@ -527,14 +547,10 @@ class Player extends MovingBox {
     }
     draw() {
         if (leftPressed || rightPressed || upPressed || downPressed) {
-            this.frame += speedUpPressed ? 2 : 1;
-        }
-        if (this.frame >= this.animationSpeed) {
-            this.frame = 0;
-            this.animationStep = (this.animationStep + 1 > this.nbAnimationStep) ? 1 : this.animationStep + 1;
+            this.requestNewFrameAnimation(speedUpPressed ? 2 : 1);
         }
         this.Game.ctx.beginPath();
-        this.Game.ctx.drawImage(this.sprites[this.direction][this.animationStep], this.x, this.y, this.width, this.height);
+        this.Game.ctx.drawImage(this.sprites[this.direction][this.currentAnimationStep], this.x, this.y, this.width, this.height);
         this.Game.ctx.closePath();
     }
     move() {

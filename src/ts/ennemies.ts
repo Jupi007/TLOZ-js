@@ -1,7 +1,5 @@
-class Enemy extends MovingBox {
+class Enemy extends AnimatedMovingBox {
     speed: number;
-    isKilled: boolean;
-    sprite: HTMLImageElement;
 
     constructor(x: number, y: number, speed: number, direction: Direction) {
         super();
@@ -10,7 +8,6 @@ class Enemy extends MovingBox {
         this.y = y;
         this.speed = speed;
         this.direction = direction;
-        this.isKilled = false;
     }
 
     invertDirection(): void {
@@ -26,9 +23,18 @@ class Goomba extends Enemy {
     constructor(x: number, y: number, speed: number, direction: Direction) {
         super(x, y, speed, direction);
 
-        this.sprite = SpriteLoader.load("./sprites/png/goomba.png");
         this.width = 40;
         this.height = 40;
+
+        this.animationSpeed = 20;
+        this.nbAnimationStep = 2;
+
+        this.sprites[Direction.Up] = [];
+        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/goomba1.png");
+        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/goomba2.png");
+
+
+        this.sprites[Direction.Down] = this.sprites[Direction.Up];
     }
 }
 
@@ -76,9 +82,11 @@ class Enemies {
 
     draw(): void {
         this.loopEnemies((enemy) => {
+            enemy.requestNewFrameAnimation(enemy.speed);
+
             this.Game.ctx.beginPath();
             this.Game.ctx.drawImage(
-                enemy.sprite,
+                enemy.sprites[enemy.direction][enemy.currentAnimationStep],
                 enemy.x,
                 enemy.y,
                 enemy.width,
