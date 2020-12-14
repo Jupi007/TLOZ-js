@@ -43,7 +43,7 @@ class Landscape {
         this.loopCells((col, row) => {
             this.Game.ctx.beginPath();
             this.Game.ctx.drawImage(
-                this.Game.BrickCollection.get(this.Scene.cell(col, row).brick).img,
+                this.Game.BrickCollection.get(this.Scene.getCell(col, row).brick).img,
                 this.cellSize * col,
                 this.cellSize * row,
                 this.cellSize,
@@ -55,15 +55,15 @@ class Landscape {
 
     collisions(): void {
         this.loopCells((col, row) => {
-            if (this.Game.BrickCollection.get(this.Scene.cell(col, row).brick).hasCollisions) {
-                movingBoxCollision(this.Game.Player, this.Scene.cell(col, row));
+            if (this.Game.BrickCollection.get(this.Scene.getCell(col, row).brick).hasCollisions) {
+                movingBoxCollision(this.Game.Player, this.Scene.getCell(col, row));
 
                 this.Game.Enemies.loopEnemies((enemy) => {
-                    if (movingBoxCollision(enemy, this.Scene.cell(col, row))) {
-                        if (enemy.dirY == "Up") {
-                            enemy.dirY = "Down";
+                    if (movingBoxCollision(enemy, this.Scene.getCell(col, row))) {
+                        if (enemy.dirY == Direction.Up) {
+                            enemy.dirY = Direction.Down;
                         } else {
-                            enemy.dirY = "Up";
+                            enemy.dirY = Direction.Up;
                         }
                     }
                 });

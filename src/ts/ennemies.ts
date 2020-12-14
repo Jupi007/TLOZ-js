@@ -1,25 +1,25 @@
 class Enemies {
     private Game: Game;
 
-    private _img: HTMLImageElement = new Image();
+    img: HTMLImageElement = new Image();
 
-    private _nbEnemies = 3;
-    private _enemies: any = []; // TODO: Change type to array when Ennemie class is created
+    nbEnemies = 3;
+    enemies: any = []; // TODO: Change type to array when Ennemie class is created
 
     constructor(game: Game) {
         this.Game = game;
 
-        this._img.src = "./sprites/png/goomba.png";
+        this.img.src = "./sprites/png/goomba.png";
 
         if (this.Game.Landscape.currentScene.hasEnemies) {
-            for (var i = 0; i < this._nbEnemies; i++) {
-                this._enemies[i] = {
+            for (var i = 0; i < this.nbEnemies; i++) {
+                this.enemies[i] = {
                     x: getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)),
                     y: getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)),
                     dx: 0,
                     dy: 0,
                     speed: getRandomIntInclusive(1, 3),
-                    dirY: getRandomIntInclusive(0, 1) ? "Up" : "Down",
+                    dirY: getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down,
                     width: 40,
                     height: 40,
                     isKilled: false,
@@ -28,21 +28,17 @@ class Enemies {
         }
     }
 
-    get enemies(): any { // TODO: Change type to array when Ennemie class is created
-        return this._enemies;
-    }
-
     loopEnemies(callback: Function): void {
-        this._enemies.forEach((enemy) => {
+        this.enemies.forEach((enemy) => {
             callback(enemy);
         });
     }
 
     killEnemy(enemy): void { // TODO: Change enemy type to Ennemie when class is created
-        const enemyIndex = this._enemies.indexOf(enemy);
+        const enemyIndex = this.enemies.indexOf(enemy);
 
         if (enemyIndex > -1) {
-            this._enemies.splice(enemyIndex, 1);
+            this.enemies.splice(enemyIndex, 1);
         }
 
         if (this.Game.Enemies.enemies.length <= 0) {
@@ -55,7 +51,7 @@ class Enemies {
         this.loopEnemies((enemy) => {
             this.Game.ctx.beginPath();
             this.Game.ctx.drawImage(
-                this._img,
+                this.img,
                 enemy.x,
                 enemy.y,
                 enemy.width,
@@ -73,10 +69,10 @@ class Enemies {
             }
 
             if (movingBoxCanvasCollision(enemy, this.Game.Canvas)) {
-                if (enemy.dirY == "Up") {
-                    enemy.dirY = "Down";
+                if (enemy.dirY == Direction.Up) {
+                    enemy.dirY = Direction.Down;
                 } else {
-                    enemy.dirY = "Up";
+                    enemy.dirY = Direction.Up;
                 }
             }
         });
@@ -86,7 +82,7 @@ class Enemies {
         this.loopEnemies((enemy) => {
             enemy.dx = 0;
 
-            if (enemy.dirY == "Down") {
+            if (enemy.dirY == Direction.Down) {
                 enemy.dy = enemy.speed;
             } else {
                 enemy.dy = -enemy.speed;
