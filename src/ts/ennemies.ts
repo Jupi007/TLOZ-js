@@ -1,40 +1,67 @@
+class Enemy extends MovingBox {
+    speed: number;
+    isKilled: boolean;
+    sprite: HTMLImageElement;
+
+    constructor(x, y, speed, direction) {
+        super();
+
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+        this.direction = direction;
+        this.isKilled = false;
+    }
+
+    invertDirection() {
+        if (this.direction == Direction.Up) {
+            this.direction = Direction.Down;
+        } else {
+            this.direction = Direction.Up;
+        }
+    }
+}
+
+class Goomba extends Enemy {
+    constructor(x, y, speed, direction) {
+        super(x, y, speed, direction);
+
+        this.sprite = SpriteLoader.load("./sprites/png/goomba.png");
+        this.width = 40;
+        this.height = 40;
+    }
+}
+
 class Enemies {
     private Game: Game;
 
     img: HTMLImageElement = new Image();
 
     nbEnemies = 3;
-    enemies: any = []; // TODO: Change type to array when Ennemie class is created
+    enemies: Enemy[] = [];
 
     constructor(game: Game) {
         this.Game = game;
 
-        this.img.src = "./sprites/png/goomba.png";
-
         if (this.Game.Landscape.currentScene.hasEnemies) {
             for (var i = 0; i < this.nbEnemies; i++) {
-                this.enemies[i] = {
-                    x: getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)),
-                    y: getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)),
-                    dx: 0,
-                    dy: 0,
-                    speed: getRandomIntInclusive(1, 3),
-                    dirY: getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down,
-                    width: 40,
-                    height: 40,
-                    isKilled: false,
-                };
+                this.enemies[i] = new Goomba(
+                    getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)),
+                    getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)),
+                    getRandomIntInclusive(1, 3),
+                    getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
+                );
             }
         }
     }
 
     loopEnemies(callback: Function): void {
-        this.enemies.forEach((enemy) => {
+        this.enemies.forEach((enemy: Enemy) => {
             callback(enemy);
         });
     }
 
-    killEnemy(enemy): void { // TODO: Change enemy type to Ennemie when class is created
+    killEnemy(enemy: Enemy): void {
         const enemyIndex = this.enemies.indexOf(enemy);
 
         if (enemyIndex > -1) {
@@ -51,7 +78,7 @@ class Enemies {
         this.loopEnemies((enemy) => {
             this.Game.ctx.beginPath();
             this.Game.ctx.drawImage(
-                this.img,
+                enemy.sprite,
                 enemy.x,
                 enemy.y,
                 enemy.width,
@@ -69,12 +96,16 @@ class Enemies {
             }
 
             if (movingBoxCanvasCollision(enemy, this.Game.Canvas)) {
-                if (enemy.dirY == Direction.Up) {
-                    enemy.dirY = Direction.Down;
-                } else {
-                    enemy.dirY = Direction.Up;
-                }
+                enemy.invertDirection();
             }
+        });
+
+        this.Game.Landscape.loopCollision((cell, col, row) => {
+            this.Game.Enemies.loopEnemies((enemy) => {
+                if (movingBoxCollision(enemy, cell)) {
+                    enemy.invertDirection();
+                }
+            });
         });
     }
 
@@ -82,7 +113,7 @@ class Enemies {
         this.loopEnemies((enemy) => {
             enemy.dx = 0;
 
-            if (enemy.dirY == Direction.Down) {
+            if (enemy.direction == Direction.Down) {
                 enemy.dy = enemy.speed;
             } else {
                 enemy.dy = -enemy.speed;

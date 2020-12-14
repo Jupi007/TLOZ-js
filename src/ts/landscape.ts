@@ -34,16 +34,24 @@ class Landscape {
     loopCells(callback: Function): void {
         for (let col = 0; col < this.nbCol; col++) {
             for (let row = 0; row < this.nbRow; row++) {
-                callback(col, row);
+                callback(this.Scene.getCell(col, row), col, row);
             }
         }
     }
 
+    loopCollision(callback: Function): void {
+        this.loopCells((cell, col, row) => {
+            if (this.Game.BrickCollection.get(cell.brick).hasCollisions) {
+                callback(cell, col, row);
+            }
+        });
+    }
+
     draw(): void {
-        this.loopCells((col, row) => {
+        this.loopCells((cell, col, row) => {
             this.Game.ctx.beginPath();
             this.Game.ctx.drawImage(
-                this.Game.BrickCollection.get(this.Scene.getCell(col, row).brick).img,
+                this.Game.BrickCollection.get(cell.brick).img,
                 this.cellSize * col,
                 this.cellSize * row,
                 this.cellSize,
@@ -54,20 +62,5 @@ class Landscape {
     }
 
     collisions(): void {
-        this.loopCells((col, row) => {
-            if (this.Game.BrickCollection.get(this.Scene.getCell(col, row).brick).hasCollisions) {
-                movingBoxCollision(this.Game.Player, this.Scene.getCell(col, row));
-
-                this.Game.Enemies.loopEnemies((enemy) => {
-                    if (movingBoxCollision(enemy, this.Scene.getCell(col, row))) {
-                        if (enemy.dirY == Direction.Up) {
-                            enemy.dirY = Direction.Down;
-                        } else {
-                            enemy.dirY = Direction.Up;
-                        }
-                    }
-                });
-            }
-        });
     }
 }

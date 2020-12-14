@@ -84,6 +84,10 @@ class Player extends MovingBox {
         if (movingBoxCanvasCollision(this, this.Game.Canvas)) {
             this.Game.changeScene();
         }
+
+        this.Game.Landscape.loopCollision((cell, col, row) => {
+            movingBoxCollision(this, cell);
+        });
     }
 
     preMove(): void {

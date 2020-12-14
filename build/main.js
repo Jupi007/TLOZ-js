@@ -43,26 +43,41 @@ class BrickCollection {
     }
 }
 
+class Enemy extends MovingBox {
+    constructor(x, y, speed, direction) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+        this.direction = direction;
+        this.isKilled = false;
+    }
+    invertDirection() {
+        if (this.direction == Direction.Up) {
+            this.direction = Direction.Down;
+        }
+        else {
+            this.direction = Direction.Up;
+        }
+    }
+}
+class Goomba extends Enemy {
+    constructor(x, y, speed, direction) {
+        super(x, y, speed, direction);
+        this.sprite = SpriteLoader.load("./sprites/png/goomba.png");
+        this.width = 40;
+        this.height = 40;
+    }
+}
 class Enemies {
     constructor(game) {
         this.img = new Image();
         this.nbEnemies = 3;
-        this.enemies = []; // TODO: Change type to array when Ennemie class is created
+        this.enemies = [];
         this.Game = game;
-        this.img.src = "./sprites/png/goomba.png";
         if (this.Game.Landscape.currentScene.hasEnemies) {
             for (var i = 0; i < this.nbEnemies; i++) {
-                this.enemies[i] = {
-                    x: getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)),
-                    y: getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)),
-                    dx: 0,
-                    dy: 0,
-                    speed: getRandomIntInclusive(1, 3),
-                    dirY: getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down,
-                    width: 40,
-                    height: 40,
-                    isKilled: false,
-                };
+                this.enemies[i] = new Goomba(getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(1, 3), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down);
             }
         }
     }
@@ -84,7 +99,7 @@ class Enemies {
     draw() {
         this.loopEnemies((enemy) => {
             this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(this.img, enemy.x, enemy.y, enemy.width, enemy.height);
+            this.Game.ctx.drawImage(enemy.sprite, enemy.x, enemy.y, enemy.width, enemy.height);
             this.Game.ctx.closePath();
         });
     }
@@ -95,19 +110,21 @@ class Enemies {
                 this.Game.Player.takeKnockBack();
             }
             if (movingBoxCanvasCollision(enemy, this.Game.Canvas)) {
-                if (enemy.dirY == Direction.Up) {
-                    enemy.dirY = Direction.Down;
-                }
-                else {
-                    enemy.dirY = Direction.Up;
-                }
+                enemy.invertDirection();
             }
+        });
+        this.Game.Landscape.loopCollision((cell, col, row) => {
+            this.Game.Enemies.loopEnemies((enemy) => {
+                if (movingBoxCollision(enemy, cell)) {
+                    enemy.invertDirection();
+                }
+            });
         });
     }
     preMove() {
         this.loopEnemies((enemy) => {
             enemy.dx = 0;
-            if (enemy.dirY == Direction.Down) {
+            if (enemy.direction == Direction.Down) {
                 enemy.dy = enemy.speed;
             }
             else {
@@ -375,33 +392,25 @@ class Landscape {
     loopCells(callback) {
         for (let col = 0; col < this.nbCol; col++) {
             for (let row = 0; row < this.nbRow; row++) {
-                callback(col, row);
+                callback(this.Scene.getCell(col, row), col, row);
             }
         }
     }
+    loopCollision(callback) {
+        this.loopCells((cell, col, row) => {
+            if (this.Game.BrickCollection.get(cell.brick).hasCollisions) {
+                callback(cell, col, row);
+            }
+        });
+    }
     draw() {
-        this.loopCells((col, row) => {
+        this.loopCells((cell, col, row) => {
             this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(this.Game.BrickCollection.get(this.Scene.getCell(col, row).brick).img, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
+            this.Game.ctx.drawImage(this.Game.BrickCollection.get(cell.brick).img, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
             this.Game.ctx.closePath();
         });
     }
     collisions() {
-        this.loopCells((col, row) => {
-            if (this.Game.BrickCollection.get(this.Scene.getCell(col, row).brick).hasCollisions) {
-                movingBoxCollision(this.Game.Player, this.Scene.getCell(col, row));
-                this.Game.Enemies.loopEnemies((enemy) => {
-                    if (movingBoxCollision(enemy, this.Scene.getCell(col, row))) {
-                        if (enemy.dirY == Direction.Up) {
-                            enemy.dirY = Direction.Down;
-                        }
-                        else {
-                            enemy.dirY = Direction.Up;
-                        }
-                    }
-                });
-            }
-        });
     }
 }
 
@@ -534,6 +543,9 @@ class Player extends MovingBox {
         if (movingBoxCanvasCollision(this, this.Game.Canvas)) {
             this.Game.changeScene();
         }
+        this.Game.Landscape.loopCollision((cell, col, row) => {
+            movingBoxCollision(this, cell);
+        });
     }
     preMove() {
         let speed = speedUpPressed ? this.speedUp : this.speed;
