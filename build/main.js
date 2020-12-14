@@ -25,7 +25,7 @@ class MovingBox extends SimpleBox {
 
 class Brick {
     constructor(src, hasCollisions = false) {
-        this.img = SpriteLoader.load(src);
+        this.sprite = SpriteLoader.load(src);
         this.hasCollisions = hasCollisions;
     }
 }
@@ -406,7 +406,7 @@ class Landscape {
     draw() {
         this.loopCells((cell, col, row) => {
             this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(this.Game.BrickCollection.get(cell.brick).img, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
+            this.Game.ctx.drawImage(this.Game.BrickCollection.get(cell.brick).sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
             this.Game.ctx.closePath();
         });
     }

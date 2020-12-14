@@ -51,7 +51,7 @@ class Landscape {
         this.loopCells((cell, col, row) => {
             this.Game.ctx.beginPath();
             this.Game.ctx.drawImage(
-                this.Game.BrickCollection.get(cell.brick).img,
+                this.Game.BrickCollection.get(cell.brick).sprite,
                 this.cellSize * col,
                 this.cellSize * row,
                 this.cellSize,

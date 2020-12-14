@@ -1,9 +1,9 @@
 class Brick {
-    img: HTMLImageElement;
+    sprite: HTMLImageElement;
     hasCollisions: boolean;
 
     constructor(src: string, hasCollisions: boolean = false) {
-        this.img = SpriteLoader.load(src);
+        this.sprite = SpriteLoader.load(src);
         this.hasCollisions = hasCollisions;
     }
 }
