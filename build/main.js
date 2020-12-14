@@ -27,7 +27,6 @@ class AnimatedMovingBox extends MovingBox {
         super(...arguments);
         this.currentFrame = 0;
         this.currentAnimationStep = 1;
-        this.sprites = [];
     }
     requestNewFrameAnimation(animationSpeedModifier) {
         this.currentFrame += 1 * animationSpeedModifier;
@@ -64,6 +63,7 @@ class BrickCollection {
 class Enemy extends AnimatedMovingBox {
     constructor(x, y, speed, direction) {
         super();
+        this.sprites = [];
         this.x = x;
         this.y = y;
         this.speed = speed;
@@ -144,7 +144,7 @@ class Enemies {
             });
         });
     }
-    preMove() {
+    listenEvents() {
         this.loopEnemies((enemy) => {
             enemy.dx = 0;
             if (enemy.direction == Direction.Down) {
@@ -377,8 +377,8 @@ class Game {
         this.Player.draw();
         this.Sword.draw();
         this.drawHud();
-        this.Player.preMove();
-        this.Enemies.preMove();
+        this.Player.listenEvents();
+        this.Enemies.listenEvents();
         this.Player.collisions();
         this.Sword.collisions();
         this.Enemies.collisions();
@@ -515,10 +515,12 @@ class Player extends AnimatedMovingBox {
         this.height = 40;
         this.speed = 2;
         this.speedUp = 3;
+        this.isMoving = false;
         this.hp = 100;
         this.isInvincible = false;
         this.invincibleTime = 0;
         this.score = 0;
+        this.sprites = [];
         this.Game = game;
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
@@ -546,7 +548,7 @@ class Player extends AnimatedMovingBox {
         }
     }
     draw() {
-        if (leftPressed || rightPressed || upPressed || downPressed) {
+        if (this.isMoving) {
             this.requestNewFrameAnimation(speedUpPressed ? 2 : 1);
         }
         this.Game.ctx.beginPath();
@@ -567,36 +569,32 @@ class Player extends AnimatedMovingBox {
             movingBoxCollision(this, cell);
         });
     }
-    preMove() {
+    listenEvents() {
         let speed = speedUpPressed ? this.speedUp : this.speed;
-        if (!(rightPressed && leftPressed)) {
-            if (rightPressed) {
-                this.dx = speed;
-            }
-            else if (leftPressed) {
-                this.dx = -speed;
-            }
-        }
-        if (!(downPressed && upPressed)) {
+        if ((downPressed || upPressed) && !(downPressed && upPressed)) {
             if (downPressed) {
                 this.dy = speed;
+                this.direction = Direction.Down;
             }
             else if (upPressed) {
                 this.dy = -speed;
+                this.direction = Direction.Up;
             }
         }
-        if (upPressed) {
-            this.direction = Direction.Up;
+        else if ((rightPressed || leftPressed) && !(rightPressed && leftPressed)) {
+            if (rightPressed) {
+                this.dx = speed;
+                this.direction = Direction.Right;
+            }
+            else if (leftPressed) {
+                this.dx = -speed;
+                this.direction = Direction.Left;
+            }
         }
-        else if (downPressed) {
-            this.direction = Direction.Down;
-        }
-        else if (leftPressed) {
-            this.direction = Direction.Left;
-        }
-        else if (rightPressed) {
-            this.direction = Direction.Right;
-        }
+        this.isMoving =
+            this.dx > 0 || this.dy > 0
+                ? true
+                : false;
     }
     takeDamage(damage) {
         if (this.isInvincible) {

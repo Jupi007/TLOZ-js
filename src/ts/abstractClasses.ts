@@ -28,8 +28,6 @@ abstract class AnimatedMovingBox extends MovingBox {
     currentAnimationStep = 1;
     nbAnimationStep: number;
 
-    sprites: HTMLImageElement[][] = [];
-
     requestNewFrameAnimation(animationSpeedModifier): void {
         this.currentFrame += 1 * animationSpeedModifier;
 

@@ -90,8 +90,8 @@ class Game {
         this.Sword.draw();
         this.drawHud();
 
-        this.Player.preMove();
-        this.Enemies.preMove();
+        this.Player.listenEvents();
+        this.Enemies.listenEvents();
 
         this.Player.collisions();
         this.Sword.collisions();

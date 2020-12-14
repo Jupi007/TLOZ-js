@@ -7,11 +7,15 @@ class Player extends AnimatedMovingBox {
     speed = 2;
     speedUp = 3;
 
+    isMoving = false;
+
     hp = 100;
     isInvincible = false;
     invincibleTime = 0;
 
     score = 0;
+
+    sprites: HTMLImageElement[][] = [];
 
     constructor(game: Game) {
         super();
@@ -53,7 +57,7 @@ class Player extends AnimatedMovingBox {
     }
 
     draw(): void {
-        if (leftPressed || rightPressed || upPressed || downPressed) {
+        if (this.isMoving) {
             this.requestNewFrameAnimation(speedUpPressed ? 2 : 1);
         }
 
@@ -86,34 +90,32 @@ class Player extends AnimatedMovingBox {
         });
     }
 
-    preMove(): void {
+    listenEvents(): void {
         let speed = speedUpPressed ? this.speedUp : this.speed;
 
-        if (!(rightPressed && leftPressed)) {
-            if (rightPressed) {
-                this.dx = speed;
-            } else if (leftPressed) {
-                this.dx = -speed;
-            }
-        }
-
-        if (!(downPressed && upPressed)) {
+        if ((downPressed || upPressed) && !(downPressed && upPressed)) {
             if (downPressed) {
                 this.dy = speed;
+                this.direction = Direction.Down;
             } else if (upPressed) {
                 this.dy = -speed;
+                this.direction = Direction.Up;
+            }
+        } else if ((rightPressed || leftPressed) && !(rightPressed && leftPressed)) {
+            if (rightPressed) {
+                this.dx = speed;
+                this.direction = Direction.Right;
+            } else if (leftPressed) {
+                this.dx = -speed;
+                this.direction = Direction.Left;
             }
         }
 
-        if (upPressed) {
-            this.direction = Direction.Up;
-        } else if (downPressed) {
-            this.direction = Direction.Down;
-        }else if (leftPressed) {
-            this.direction = Direction.Left;
-        } else if (rightPressed) {
-            this.direction = Direction.Right;
-        }
+        this.isMoving =
+            this.dx > 0 || this.dy > 0
+            ? true
+            : false
+        ;
     }
 
     takeDamage(damage: number): void {

@@ -1,6 +1,8 @@
 class Enemy extends AnimatedMovingBox {
     speed: number;
 
+    sprites: HTMLImageElement[][] = [];
+
     constructor(x: number, y: number, speed: number, direction: Direction) {
         super();
 
@@ -117,7 +119,7 @@ class Enemies {
         });
     }
 
-    preMove(): void {
+    listenEvents(): void {
         this.loopEnemies((enemy) => {
             enemy.dx = 0;
 
