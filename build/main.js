@@ -313,37 +313,37 @@ function movingBoxsCollision(movingBox1, movingBox2) {
     }
     return true;
 }
-function simpleMovingBoxCanvasCollision(box, canvas) {
-    if (box.x + box.dx + box.width <= canvas.width &&
-        box.x + box.dx >= 0 &&
-        box.y + box.dy + box.height <= canvas.height &&
-        box.y + box.dy >= 0) {
+function simpleMovingBoxCanvasCollision(movingBox, canvas) {
+    if (movingBox.x + movingBox.dx + movingBox.width <= canvas.width &&
+        movingBox.x + movingBox.dx >= 0 &&
+        movingBox.y + movingBox.dy + movingBox.height <= canvas.height &&
+        movingBox.y + movingBox.dy >= 0) {
         return false;
     }
     else {
         return true;
     }
 }
-function movingBoxCanvasCollision(box, canvas) {
-    if (!simpleMovingBoxCanvasCollision(box, canvas)) {
+function movingBoxCanvasCollision(movingBox, canvas) {
+    if (!simpleMovingBoxCanvasCollision(movingBox, canvas)) {
         return false;
     }
     else {
-        if (box.x + box.dx + box.width > canvas.width) {
-            box.dx = 0;
-            box.x = canvas.width - box.width;
+        if (movingBox.x + movingBox.dx + movingBox.width > canvas.width) {
+            movingBox.dx = 0;
+            movingBox.x = canvas.width - movingBox.width;
         }
-        if (box.x + box.dx < 0) {
-            box.dx = 0;
-            box.x = 0;
+        if (movingBox.x + movingBox.dx < 0) {
+            movingBox.dx = 0;
+            movingBox.x = 0;
         }
-        if (box.y + box.dy + box.height > canvas.height) {
-            box.dy = 0;
-            box.y = canvas.height - box.height;
+        if (movingBox.y + movingBox.dy + movingBox.height > canvas.height) {
+            movingBox.dy = 0;
+            movingBox.y = canvas.height - movingBox.height;
         }
-        if (box.y + box.dy < 0) {
-            box.dy = 0;
-            box.y = 0;
+        if (movingBox.y + movingBox.dy < 0) {
+            movingBox.dy = 0;
+            movingBox.y = 0;
         }
         return true;
     }

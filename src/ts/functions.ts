@@ -12,7 +12,7 @@ function getRandomIntInclusive(min: number, max: number): number {
 // Collision helper functions
 // **************************
 
-function simpleMovingBoxCollision(movingBox, box2): boolean { // TODO: implement interface
+function simpleMovingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolean { // TODO: implement interface
     if (
         (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
         (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
@@ -24,7 +24,7 @@ function simpleMovingBoxCollision(movingBox, box2): boolean { // TODO: implement
 
     return true;
 }
-function movingBoxCollision(movingBox, box2): boolean {
+function movingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolean {
     if (
         (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
         (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
@@ -58,7 +58,7 @@ function movingBoxCollision(movingBox, box2): boolean {
     }
 }
 
-function movingBoxsCollision(movingBox1, movingBox2): boolean {
+function movingBoxsCollision(movingBox1: MovingBox, movingBox2): boolean {
     if (
         (movingBox1.x + movingBox1.dx >= movingBox2.x + movingBox2.width + movingBox1.dx) ||
         (movingBox1.x + movingBox1.dx + movingBox1.width <= movingBox2.x + movingBox1.dx) ||
@@ -70,12 +70,12 @@ function movingBoxsCollision(movingBox1, movingBox2): boolean {
     return true;
 }
 
-function simpleMovingBoxCanvasCollision(box, canvas): boolean {
+function simpleMovingBoxCanvasCollision(movingBox: MovingBox, canvas: SimpleBox): boolean {
     if (
-        box.x + box.dx + box.width <= canvas.width &&
-        box.x + box.dx >= 0 &&
-        box.y + box.dy + box.height <= canvas.height &&
-        box.y + box.dy >= 0
+        movingBox.x + movingBox.dx + movingBox.width <= canvas.width &&
+        movingBox.x + movingBox.dx >= 0 &&
+        movingBox.y + movingBox.dy + movingBox.height <= canvas.height &&
+        movingBox.y + movingBox.dy >= 0
     ) {
         return false;
     } else {
@@ -83,25 +83,25 @@ function simpleMovingBoxCanvasCollision(box, canvas): boolean {
     }
 }
 
-function movingBoxCanvasCollision(box, canvas): boolean {
-    if (!simpleMovingBoxCanvasCollision(box, canvas)) {
+function movingBoxCanvasCollision(movingBox: MovingBox, canvas: SimpleBox): boolean {
+    if (!simpleMovingBoxCanvasCollision(movingBox, canvas)) {
         return false;
     } else {
-        if (box.x + box.dx + box.width > canvas.width) {
-            box.dx = 0;
-            box.x = canvas.width - box.width;
+        if (movingBox.x + movingBox.dx + movingBox.width > canvas.width) {
+            movingBox.dx = 0;
+            movingBox.x = canvas.width - movingBox.width;
         }
-        if (box.x + box.dx < 0) {
-            box.dx = 0;
-            box.x = 0;
+        if (movingBox.x + movingBox.dx < 0) {
+            movingBox.dx = 0;
+            movingBox.x = 0;
         }
-        if (box.y + box.dy + box.height > canvas.height) {
-            box.dy = 0;
-            box.y = canvas.height - box.height;
+        if (movingBox.y + movingBox.dy + movingBox.height > canvas.height) {
+            movingBox.dy = 0;
+            movingBox.y = canvas.height - movingBox.height;
         }
-        if (box.y + box.dy < 0) {
-            box.dy = 0;
-            box.y = 0;
+        if (movingBox.y + movingBox.dy < 0) {
+            movingBox.dy = 0;
+            movingBox.y = 0;
         }
 
         return true;
