@@ -133,7 +133,7 @@ class Enemies {
                 this.Game.Player.takeDamage(20);
                 this.Game.Player.takeKnockBack();
             }
-            if (movingBoxCanvasCollision(enemy, this.Game.Canvas)) {
+            if (movingBoxCanvasCollision(enemy, this.Game.Landscape)) {
                 enemy.invertDirection();
             }
         });
@@ -363,8 +363,11 @@ class Game {
         this.Player = new Player(this);
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
+        this.Hud = new Hud(this);
+        this.Landscape.y = this.Hud.height;
+        this.Hud.width = this.Landscape.width;
         this.Canvas.width = this.Landscape.width;
-        this.Canvas.height = this.Landscape.height;
+        this.Canvas.height = 600;
         this.status = GameStatus.Run;
     }
     changeScene() {
@@ -391,7 +394,7 @@ class Game {
             return;
         }
         if (!(c + dc < 0 || c + dc > this.Overworld.nbCol - 1 || r + dr < 0 || r + dr > this.Overworld.nbRow - 1)) {
-            this.Landscape = new Landscape(this, this.Overworld.map[c + dc][r + dr]);
+            this.Landscape.Scene = this.Overworld.map[c + dc][r + dr];
             this.Enemies = new Enemies(this);
             if (this.EventManager.isLeftPressed) {
                 this.Player.x = this.Canvas.width - this.Player.width;
@@ -409,11 +412,6 @@ class Game {
             this.Player.dy = 0;
         }
     }
-    drawHud() {
-        this.ctx.font = "16px Ubuntu";
-        this.ctx.fillStyle = "#000000";
-        this.ctx.fillText("HP: " + this.Player.hp + " Score: " + this.Player.score + "/" + (this.Overworld.nbRow * this.Overworld.nbCol), 8, 20);
-    }
     loop() {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
         if (this.status === GameStatus.Run) {
@@ -424,7 +422,7 @@ class Game {
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
-        this.drawHud();
+        this.Hud.draw();
         if (this.status === GameStatus.Run) {
             this.Player.listenEvents();
             this.Enemies.listenEvents();
@@ -442,6 +440,26 @@ class Game {
         this.ctx.beginPath();
         this.ctx.drawImage(sprite, x, y, width, height);
         this.ctx.closePath();
+    }
+}
+
+class Hud {
+    constructor(game) {
+        this.Game = game;
+        this.x = 0;
+        this.y = 0;
+        this.height = 50;
+    }
+    draw() {
+        this.Game.ctx.beginPath();
+        this.Game.ctx.fillStyle = "#000";
+        this.Game.ctx.fillRect(this.x, this.y, this.width, this.height);
+        this.Game.ctx.closePath();
+        this.Game.ctx.beginPath();
+        this.Game.ctx.font = "16px Ubuntu";
+        this.Game.ctx.fillStyle = "#fff";
+        this.Game.ctx.fillText("HP: " + this.Game.Player.hp + " Score: " + this.Game.Player.score + "/" + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol), 8 + this.x, 20 + this.y);
+        this.Game.ctx.closePath();
     }
 }
 
@@ -627,7 +645,7 @@ class Player extends AnimatedMovingBox {
         this.dy = 0;
     }
     collisions() {
-        if (movingBoxCanvasCollision(this, this.Game.Canvas)) {
+        if (movingBoxCanvasCollision(this, this.Game.Landscape)) {
             this.Game.changeScene();
         }
         this.Game.Landscape.loopCollision((cell, col, row) => {

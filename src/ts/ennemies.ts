@@ -104,7 +104,7 @@ class Enemies {
                 this.Game.Player.takeKnockBack();
             }
 
-            if (movingBoxCanvasCollision(enemy, this.Game.Canvas)) {
+            if (movingBoxCanvasCollision(enemy, this.Game.Landscape)) {
                 enemy.invertDirection();
             }
         });

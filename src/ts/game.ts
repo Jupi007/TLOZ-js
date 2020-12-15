@@ -11,6 +11,7 @@ class Game {
     Sword: Sword;
     Enemies: Enemies;
     EventManager: EventManager;
+    Hud: Hud;
 
     status: GameStatus;
 
@@ -25,9 +26,13 @@ class Game {
         this.Player = new Player(this);
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
+        this.Hud = new Hud(this);
+
+        this.Landscape.y = this.Hud.height;
+        this.Hud.width = this.Landscape.width;
 
         this.Canvas.width = this.Landscape.width;
-        this.Canvas.height = this.Landscape.height;
+        this.Canvas.height = 600;
 
         this.status = GameStatus.Run;
     }
@@ -56,7 +61,7 @@ class Game {
         }
 
         if (!(c + dc < 0 || c + dc > this.Overworld.nbCol - 1 || r + dr < 0 || r + dr > this.Overworld.nbRow - 1)) {
-            this.Landscape = new Landscape(this, this.Overworld.map[c + dc][r + dr]);
+            this.Landscape.Scene = this.Overworld.map[c + dc][r + dr];
             this.Enemies = new Enemies(this);
 
             if (this.EventManager.isLeftPressed) {
@@ -74,12 +79,6 @@ class Game {
         }
     }
 
-    drawHud(): void {
-        this.ctx.font = "16px Ubuntu";
-        this.ctx.fillStyle = "#000000";
-        this.ctx.fillText("HP: " + this.Player.hp + " Score: " + this.Player.score + "/" + (this.Overworld.nbRow * this.Overworld.nbCol), 8, 20);
-    }
-
     loop(): void {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
@@ -93,7 +92,7 @@ class Game {
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
-        this.drawHud();
+        this.Hud.draw();
 
         if (this.status === GameStatus.Run) {
             this.Player.listenEvents();

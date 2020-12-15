@@ -85,7 +85,7 @@ class Player extends AnimatedMovingBox {
     }
 
     collisions(): void {
-        if (movingBoxCanvasCollision(this, this.Game.Canvas)) {
+        if (movingBoxCanvasCollision(this, this.Game.Landscape)) {
             this.Game.changeScene();
         }
 
