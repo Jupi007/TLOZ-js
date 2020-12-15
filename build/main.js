@@ -104,7 +104,7 @@ class Enemies {
         this.Game = game;
         if (this.Game.Landscape.currentScene.hasEnemies) {
             for (var i = 0; i < this.nbEnemies; i++) {
-                this.enemies[i] = new Octorok(this.Game, getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down);
+                this.enemies[i] = new Octorok(this.Game, getRandomIntInclusive(this.Game.Landscape.cellSize * 2, this.Game.Landscape.width - (this.Game.Landscape.cellSize * 2)), getRandomIntInclusive(this.Game.Landscape.cellSize * 2, this.Game.Landscape.height - (this.Game.Landscape.cellSize * 2)), getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down);
             }
         }
     }
