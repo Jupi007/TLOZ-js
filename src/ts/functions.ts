@@ -70,7 +70,7 @@ function movingBoxsCollision(movingBox1, movingBox2): boolean {
     return true;
 }
 
-function simpleCanvasCollision(box, canvas): boolean {
+function simpleMovingBoxCanvasCollision(box, canvas): boolean {
     if (
         box.x + box.dx + box.width <= canvas.width &&
         box.x + box.dx >= 0 &&
@@ -84,7 +84,7 @@ function simpleCanvasCollision(box, canvas): boolean {
 }
 
 function movingBoxCanvasCollision(box, canvas): boolean {
-    if (!simpleCanvasCollision(box, canvas)) {
+    if (!simpleMovingBoxCanvasCollision(box, canvas)) {
         return false;
     } else {
         if (box.x + box.dx + box.width > canvas.width) {

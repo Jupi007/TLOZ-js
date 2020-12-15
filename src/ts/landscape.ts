@@ -83,4 +83,44 @@ class Landscape {
             height
         );
     }
+
+    changeScene(direction: Direction): void {
+        let c = this.currentScene.c; // TODO: Rename vars names
+        let r = this.currentScene.r;
+
+        let dc = 0;
+        let dr = 0;
+
+        if (direction === Direction.Left) {
+            dc = -1;
+        } else if (direction === Direction.Right) {
+            dc = 1;
+        } else if (direction === Direction.Up) {
+            dr = -1;
+        } else if (direction === Direction.Down) {
+            dr = 1;
+        } else {
+            this.Game.Player.dx = 0;
+            this.Game.Player.dy = 0;
+            return;
+        }
+
+        if (!(c + dc < 0 || c + dc > this.Game.Overworld.nbCol - 1 || r + dr < 0 || r + dr > this.Game.Overworld.nbRow - 1)) {
+            this.Scene = this.Game.Overworld.map[c + dc][r + dr];
+            this.Game.Enemies = new Enemies(this.Game);
+
+            if (direction === Direction.Left) {
+                this.Game.Player.x = this.width - this.Game.Player.width;
+            } else if (direction === Direction.Right) {
+                this.Game.Player.x = 0;
+            } else if (direction === Direction.Up) {
+                this.Game.Player.y = this.height - this.Game.Player.height;
+            } else if (direction === Direction.Down) {
+                this.Game.Player.y = 0;
+            }
+
+            this.Game.Player.dx = 0;
+            this.Game.Player.dy = 0;
+        }
+    }
 }

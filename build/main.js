@@ -313,7 +313,7 @@ function movingBoxsCollision(movingBox1, movingBox2) {
     }
     return true;
 }
-function simpleCanvasCollision(box, canvas) {
+function simpleMovingBoxCanvasCollision(box, canvas) {
     if (box.x + box.dx + box.width <= canvas.width &&
         box.x + box.dx >= 0 &&
         box.y + box.dy + box.height <= canvas.height &&
@@ -325,7 +325,7 @@ function simpleCanvasCollision(box, canvas) {
     }
 }
 function movingBoxCanvasCollision(box, canvas) {
-    if (!simpleCanvasCollision(box, canvas)) {
+    if (!simpleMovingBoxCanvasCollision(box, canvas)) {
         return false;
     }
     else {
@@ -372,48 +372,6 @@ class Game {
         this.Canvas.width = this.Landscape.width;
         this.Canvas.height = this.Landscape.height + this.Hud.height;
         this.status = GameStatus.Run;
-    }
-    changeScene() {
-        let c = this.Landscape.currentScene.c; // TODO: Rename vars names
-        let r = this.Landscape.currentScene.r;
-        //this.Overworld.map[c][r] = this.Landscape.currentScene;
-        let dc = 0;
-        let dr = 0;
-        if (this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && !this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
-            dc = -1;
-        }
-        else if (!this.EventManager.isLeftPressed && this.EventManager.isRightPressed && !this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
-            dc = 1;
-        }
-        else if (!this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
-            dr = -1;
-        }
-        else if (!this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && !this.EventManager.isUpPressed && this.EventManager.isDownPressed) {
-            dr = 1;
-        }
-        else {
-            this.Player.dx = 0;
-            this.Player.dy = 0;
-            return;
-        }
-        if (!(c + dc < 0 || c + dc > this.Overworld.nbCol - 1 || r + dr < 0 || r + dr > this.Overworld.nbRow - 1)) {
-            this.Landscape.Scene = this.Overworld.map[c + dc][r + dr];
-            this.Enemies = new Enemies(this);
-            if (this.EventManager.isLeftPressed) {
-                this.Player.x = this.Canvas.width - this.Player.width;
-            }
-            else if (this.EventManager.isRightPressed) {
-                this.Player.x = 0;
-            }
-            else if (this.EventManager.isUpPressed) {
-                this.Player.y = this.Canvas.height - this.Player.height;
-            }
-            else if (this.EventManager.isDownPressed) {
-                this.Player.y = 0;
-            }
-            this.Player.dx = 0;
-            this.Player.dy = 0;
-        }
     }
     loop() {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
@@ -514,6 +472,47 @@ class Landscape {
     }
     drawImage(sprite, x, y, width, height) {
         this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
+    }
+    changeScene(direction) {
+        let c = this.currentScene.c; // TODO: Rename vars names
+        let r = this.currentScene.r;
+        let dc = 0;
+        let dr = 0;
+        if (direction === Direction.Left) {
+            dc = -1;
+        }
+        else if (direction === Direction.Right) {
+            dc = 1;
+        }
+        else if (direction === Direction.Up) {
+            dr = -1;
+        }
+        else if (direction === Direction.Down) {
+            dr = 1;
+        }
+        else {
+            this.Game.Player.dx = 0;
+            this.Game.Player.dy = 0;
+            return;
+        }
+        if (!(c + dc < 0 || c + dc > this.Game.Overworld.nbCol - 1 || r + dr < 0 || r + dr > this.Game.Overworld.nbRow - 1)) {
+            this.Scene = this.Game.Overworld.map[c + dc][r + dr];
+            this.Game.Enemies = new Enemies(this.Game);
+            if (direction === Direction.Left) {
+                this.Game.Player.x = this.width - this.Game.Player.width;
+            }
+            else if (direction === Direction.Right) {
+                this.Game.Player.x = 0;
+            }
+            else if (direction === Direction.Up) {
+                this.Game.Player.y = this.height - this.Game.Player.height;
+            }
+            else if (direction === Direction.Down) {
+                this.Game.Player.y = 0;
+            }
+            this.Game.Player.dx = 0;
+            this.Game.Player.dy = 0;
+        }
     }
 }
 
@@ -647,8 +646,8 @@ class Player extends AnimatedMovingBox {
         this.dy = 0;
     }
     collisions() {
-        if (movingBoxCanvasCollision(this, this.Game.Landscape)) {
-            this.Game.changeScene();
+        if (simpleMovingBoxCanvasCollision(this, this.Game.Landscape)) {
+            this.Game.Landscape.changeScene(this.direction);
         }
         this.Game.Landscape.loopCollision((cell, col, row) => {
             movingBoxCollision(this, cell);

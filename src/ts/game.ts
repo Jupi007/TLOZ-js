@@ -37,48 +37,6 @@ class Game {
         this.status = GameStatus.Run;
     }
 
-    changeScene(): void {
-        let c = this.Landscape.currentScene.c; // TODO: Rename vars names
-        let r = this.Landscape.currentScene.r;
-
-        //this.Overworld.map[c][r] = this.Landscape.currentScene;
-
-        let dc = 0;
-        let dr = 0;
-
-        if (this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && !this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
-            dc = -1;
-        } else if (!this.EventManager.isLeftPressed && this.EventManager.isRightPressed && !this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
-            dc = 1;
-        } else if (!this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
-            dr = -1;
-        } else if (!this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && !this.EventManager.isUpPressed && this.EventManager.isDownPressed) {
-            dr = 1;
-        } else {
-            this.Player.dx = 0;
-            this.Player.dy = 0;
-            return;
-        }
-
-        if (!(c + dc < 0 || c + dc > this.Overworld.nbCol - 1 || r + dr < 0 || r + dr > this.Overworld.nbRow - 1)) {
-            this.Landscape.Scene = this.Overworld.map[c + dc][r + dr];
-            this.Enemies = new Enemies(this);
-
-            if (this.EventManager.isLeftPressed) {
-                this.Player.x = this.Canvas.width - this.Player.width;
-            } else if (this.EventManager.isRightPressed) {
-                this.Player.x = 0;
-            } else if (this.EventManager.isUpPressed) {
-                this.Player.y = this.Canvas.height - this.Player.height;
-            } else if (this.EventManager.isDownPressed) {
-                this.Player.y = 0;
-            }
-
-            this.Player.dx = 0;
-            this.Player.dy = 0;
-        }
-    }
-
     loop(): void {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 

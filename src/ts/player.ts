@@ -84,8 +84,8 @@ class Player extends AnimatedMovingBox {
     }
 
     collisions(): void {
-        if (movingBoxCanvasCollision(this, this.Game.Landscape)) {
-            this.Game.changeScene();
+        if (simpleMovingBoxCanvasCollision(this, this.Game.Landscape)) {
+            this.Game.Landscape.changeScene(this.direction);
         }
 
         this.Game.Landscape.loopCollision((cell, col, row) => {
