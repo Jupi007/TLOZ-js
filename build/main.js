@@ -81,7 +81,7 @@ class Enemy extends AnimatedMovingBox {
         }
     }
 }
-class Goomba extends Enemy {
+class Octorok extends Enemy {
     constructor(game, x, y, speed, direction) {
         super(game, x, y, speed, direction);
         this.width = 40;
@@ -89,9 +89,11 @@ class Goomba extends Enemy {
         this.animationSpeed = 20;
         this.nbAnimationStep = 2;
         this.sprites[Direction.Up] = [];
-        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/goomba1.png");
-        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/goomba2.png");
-        this.sprites[Direction.Down] = this.sprites[Direction.Up];
+        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
+        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/octorok-up2.png");
+        this.sprites[Direction.Down] = [];
+        this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/octorok-down1.png");
+        this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/octorok-down2.png");
     }
 }
 class Enemies {
@@ -102,7 +104,7 @@ class Enemies {
         this.Game = game;
         if (this.Game.Landscape.currentScene.hasEnemies) {
             for (var i = 0; i < this.nbEnemies; i++) {
-                this.enemies[i] = new Goomba(this.Game, getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(1, 3), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down);
+                this.enemies[i] = new Octorok(this.Game, getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down);
             }
         }
     }
