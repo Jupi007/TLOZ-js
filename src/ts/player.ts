@@ -164,6 +164,11 @@ class Player extends AnimatedMovingBox {
                 this.dx = this.Game.Landscape.cellSize;
                 break;
         }
+
+        movingBoxCanvasCollision(this, this.Game.Landscape);
+        this.Game.Landscape.loopCollision((cell, col, row) => {
+            movingBoxCollision(this, cell);
+        });
     }
 
     setInvicibility(): void {

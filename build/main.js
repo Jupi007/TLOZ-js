@@ -318,11 +318,19 @@ function movingBoxsCollision(movingBox1, movingBox2) {
     }
     return true;
 }
-function movingBoxCanvasCollision(box, canvas) {
+function simpleCanvasCollision(box, canvas) {
     if (box.x + box.dx + box.width <= canvas.width &&
         box.x + box.dx >= 0 &&
         box.y + box.dy + box.height <= canvas.height &&
         box.y + box.dy >= 0) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+function movingBoxCanvasCollision(box, canvas) {
+    if (!simpleCanvasCollision(box, canvas)) {
         return false;
     }
     else {
@@ -716,6 +724,10 @@ class Player extends AnimatedMovingBox {
                 this.dx = this.Game.Landscape.cellSize;
                 break;
         }
+        movingBoxCanvasCollision(this, this.Game.Landscape);
+        this.Game.Landscape.loopCollision((cell, col, row) => {
+            movingBoxCollision(this, cell);
+        });
     }
     setInvicibility() {
         this.isInvincible = true;

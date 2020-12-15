@@ -70,13 +70,21 @@ function movingBoxsCollision(movingBox1, movingBox2): boolean {
     return true;
 }
 
-function movingBoxCanvasCollision(box, canvas): boolean {
+function simpleCanvasCollision(box, canvas): boolean {
     if (
         box.x + box.dx + box.width <= canvas.width &&
         box.x + box.dx >= 0 &&
         box.y + box.dy + box.height <= canvas.height &&
         box.y + box.dy >= 0
     ) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function movingBoxCanvasCollision(box, canvas): boolean {
+    if (!simpleCanvasCollision(box, canvas)) {
         return false;
     } else {
         if (box.x + box.dx + box.width > canvas.width) {
