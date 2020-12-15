@@ -745,8 +745,9 @@ class Player extends AnimatedMovingBox {
 class Sword extends SimpleBox {
     constructor(game) {
         super();
-        this.swordWidth = 32;
-        this.swordHeight = 14;
+        this.swordWidth = 64;
+        this.swordHeight = 28;
+        this.swordHandleWidth = 16;
         this.sprites = [];
         this.Game = game;
         this.sprites[Direction.Up] = SpriteLoader.load("./sprites/png/sword-up.png");
@@ -772,24 +773,24 @@ class Sword extends SimpleBox {
         if (this.Game.Player.isAttack) {
             if (this.Game.Player.direction == Direction.Up) {
                 this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
-                this.y = this.Game.Player.y - this.swordWidth + 8;
+                this.y = this.Game.Player.y - this.swordWidth + this.swordHandleWidth;
                 this.width = this.swordHeight;
                 this.height = this.swordWidth;
             }
             else if (this.Game.Player.direction == Direction.Down) {
                 this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
-                this.y = this.Game.Player.y + this.Game.Player.width - 8;
+                this.y = this.Game.Player.y + this.Game.Player.width - this.swordHandleWidth;
                 this.width = this.swordHeight;
                 this.height = this.swordWidth;
             }
             else if (this.Game.Player.direction == Direction.Left) {
-                this.x = this.Game.Player.x - this.swordWidth + 8;
+                this.x = this.Game.Player.x - this.swordWidth + this.swordHandleWidth;
                 this.y = this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
                 this.width = this.swordWidth;
                 this.height = this.swordHeight;
             }
             else if (this.Game.Player.direction == Direction.Right) {
-                this.x = this.Game.Player.x + this.Game.Player.width - 8;
+                this.x = this.Game.Player.x + this.Game.Player.width - this.swordHandleWidth;
                 this.y = this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
                 this.width = this.swordWidth;
                 this.height = this.swordHeight;
