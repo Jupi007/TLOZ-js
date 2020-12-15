@@ -12,7 +12,7 @@ const defaultBrick = new Brick("./sprites/png/default.png");
 const wallBrick = new Brick("./sprites/png/wall.png", true);
 
 class BrickCollection {
-    private bricks = {
+    bricks = {
         "default": defaultBrick,
         "wall": wallBrick,
     };

@@ -13,7 +13,7 @@ class Cell extends SimpleBox {
 }
 
 class Scene {
-    private Overworld: Overworld;
+    Overworld: Overworld;
 
     cells: Cell[][] = [];
 

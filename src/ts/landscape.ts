@@ -1,10 +1,16 @@
 class Landscape {
     Game: Game;
-    private Scene: Scene;
+    Scene: Scene;
+
+    x: number;
+    y: number;
 
     constructor(game: Game, scene: Scene) {
         this.Game = game;
         this.Scene = scene;
+
+        this.x = 0;
+        this.y = 0;
     }
 
     get currentScene(): Scene {
@@ -49,18 +55,32 @@ class Landscape {
 
     draw(): void {
         this.loopCells((cell, col, row) => {
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(
+            this.drawImage(
                 this.Game.BrickCollection.get(cell.brick).sprite,
                 this.cellSize * col,
                 this.cellSize * row,
                 this.cellSize,
                 this.cellSize
             );
-            this.Game.ctx.closePath();
         });
     }
 
     collisions(): void {
+    }
+
+    drawImage(
+        sprite: HTMLImageElement,
+        x: number,
+        y: number,
+        width: number,
+        height: number
+    ) {
+        this.Game.drawImage(
+            sprite,
+            x + this.x,
+            y + this.y,
+            width,
+            height
+        );
     }
 }

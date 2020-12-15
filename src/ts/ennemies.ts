@@ -87,15 +87,13 @@ class Enemies {
         this.loopEnemies((enemy) => {
             enemy.requestNewFrameAnimation(enemy.speed);
 
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(
+            this.Game.Landscape.drawImage(
                 enemy.sprites[enemy.direction][enemy.currentAnimationStep],
                 enemy.x,
                 enemy.y,
                 enemy.width,
                 enemy.height
             );
-            this.Game.ctx.closePath();
         });
     }
 

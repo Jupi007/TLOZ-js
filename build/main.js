@@ -124,9 +124,7 @@ class Enemies {
     draw() {
         this.loopEnemies((enemy) => {
             enemy.requestNewFrameAnimation(enemy.speed);
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(enemy.sprites[enemy.direction][enemy.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
-            this.Game.ctx.closePath();
+            this.Game.Landscape.drawImage(enemy.sprites[enemy.direction][enemy.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
         });
     }
     collisions() {
@@ -444,12 +442,19 @@ class Game {
             this.EventManager.newFrame();
         }
     }
+    drawImage(sprite, x, y, width, height) {
+        this.ctx.beginPath();
+        this.ctx.drawImage(sprite, x, y, width, height);
+        this.ctx.closePath();
+    }
 }
 
 class Landscape {
     constructor(game, scene) {
         this.Game = game;
         this.Scene = scene;
+        this.x = 0;
+        this.y = 0;
     }
     get currentScene() {
         return this.Scene;
@@ -485,12 +490,13 @@ class Landscape {
     }
     draw() {
         this.loopCells((cell, col, row) => {
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(this.Game.BrickCollection.get(cell.brick).sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
-            this.Game.ctx.closePath();
+            this.drawImage(this.Game.BrickCollection.get(cell.brick).sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
         });
     }
     collisions() {
+    }
+    drawImage(sprite, x, y, width, height) {
+        this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
     }
 }
 
@@ -616,9 +622,7 @@ class Player extends AnimatedMovingBox {
         let sprite = this.isAttack
             ? this.spritesAttack[this.direction]
             : this.sprites[this.direction][this.currentAnimationStep];
-        this.Game.ctx.beginPath();
-        this.Game.ctx.drawImage(sprite, this.x, this.y, this.width, this.height);
-        this.Game.ctx.closePath();
+        this.Game.Landscape.drawImage(sprite, this.x, this.y, this.width, this.height);
     }
     move() {
         this.x += this.dx;
@@ -724,9 +728,7 @@ class Sword extends SimpleBox {
     }
     draw() {
         if (this.Game.Player.isAttack) {
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(this.sprites[this.Game.Player.direction], this.x, this.y, this.width, this.height);
-            this.Game.ctx.closePath();
+            this.Game.Landscape.drawImage(this.sprites[this.Game.Player.direction], this.x, this.y, this.width, this.height);
         }
     }
     collisions() {

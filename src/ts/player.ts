@@ -65,17 +65,15 @@ class Player extends AnimatedMovingBox {
 
         let sprite = this.isAttack
                    ? this.spritesAttack[this.direction]
-                   : this.sprites[this.direction][this.currentAnimationStep]
+                   : this.sprites[this.direction][this.currentAnimationStep];
 
-        this.Game.ctx.beginPath();
-        this.Game.ctx.drawImage(
+        this.Game.Landscape.drawImage(
             sprite,
             this.x,
             this.y,
             this.width,
             this.height
         );
-        this.Game.ctx.closePath();
     }
 
     move(): void {

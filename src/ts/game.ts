@@ -116,4 +116,22 @@ class Game {
             this.EventManager.newFrame();
         }
     }
+
+    drawImage(
+        sprite: HTMLImageElement,
+        x: number,
+        y: number,
+        width: number,
+        height: number
+    ) {
+        this.ctx.beginPath();
+        this.ctx.drawImage(
+            sprite,
+            x,
+            y,
+            width,
+            height
+        );
+        this.ctx.closePath();
+    }
 }
