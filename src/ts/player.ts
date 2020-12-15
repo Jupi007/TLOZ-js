@@ -8,6 +8,7 @@ class Player extends AnimatedMovingBox {
     speedUp = 3;
 
     isMoving = false;
+    isAttack = false;
 
     hp = 100;
     isInvincible = false;
@@ -16,6 +17,7 @@ class Player extends AnimatedMovingBox {
     score = 0;
 
     sprites: HTMLImageElement[][] = [];
+    spritesAttack: HTMLImageElement[] = [];
 
     constructor(game: Game) {
         super();
@@ -33,18 +35,22 @@ class Player extends AnimatedMovingBox {
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/link-up2.png");
+        this.spritesAttack[Direction.Up] = SpriteLoader.load("./sprites/png/link-up-attack.png");
 
         this.sprites[Direction.Right] = [];
         this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/link-right1.png");
         this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/link-right2.png");
+        this.spritesAttack[Direction.Right] = SpriteLoader.load("./sprites/png/link-right-attack.png");
 
         this.sprites[Direction.Down] = [];
         this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/link-down1.png");
         this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/link-down2.png");
+        this.spritesAttack[Direction.Down] = SpriteLoader.load("./sprites/png/link-down-attack.png");
 
         this.sprites[Direction.Left] = [];
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/link-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
+        this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
     }
 
     increaseScore(): void {
@@ -58,12 +64,16 @@ class Player extends AnimatedMovingBox {
 
     draw(): void {
         if (this.isMoving) {
-            this.requestNewFrameAnimation(speedUpPressed ? 2 : 1);
+            this.requestNewFrameAnimation(this.Game.EventManager.isSpeedUpPressed ? 2 : 1);
         }
+
+        let sprite = this.isAttack
+                   ? this.spritesAttack[this.direction]
+                   : this.sprites[this.direction][this.currentAnimationStep]
 
         this.Game.ctx.beginPath();
         this.Game.ctx.drawImage(
-            this.sprites[this.direction][this.currentAnimationStep],
+            sprite,
             this.x,
             this.y,
             this.width,
@@ -91,28 +101,36 @@ class Player extends AnimatedMovingBox {
     }
 
     listenEvents(): void {
-        let speed = speedUpPressed ? this.speedUp : this.speed;
+        if (this.Game.EventManager.isAttackPressed) {
+            this.isAttack = true;
+            return;
+        }
 
-        if ((downPressed || upPressed) && !(downPressed && upPressed)) {
-            if (downPressed) {
+        // this.currentAttackFrame = 0;
+        this.isAttack = false;
+
+        let speed = this.Game.EventManager.isSpeedUpPressed ? this.speedUp : this.speed;
+
+        if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) && !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
+            if (this.Game.EventManager.isDownPressed) {
                 this.dy = speed;
                 this.direction = Direction.Down;
-            } else if (upPressed) {
+            } else if (this.Game.EventManager.isUpPressed) {
                 this.dy = -speed;
                 this.direction = Direction.Up;
             }
-        } else if ((rightPressed || leftPressed) && !(rightPressed && leftPressed)) {
-            if (rightPressed) {
+        } else if ((this.Game.EventManager.isRightPressed || this.Game.EventManager.isLeftPressed) && !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)) {
+            if (this.Game.EventManager.isRightPressed) {
                 this.dx = speed;
                 this.direction = Direction.Right;
-            } else if (leftPressed) {
+            } else if (this.Game.EventManager.isLeftPressed) {
                 this.dx = -speed;
                 this.direction = Direction.Left;
             }
         }
 
         this.isMoving =
-            this.dx > 0 || this.dy > 0
+            this.dx != 0 || this.dy != 0
             ? true
             : false
         ;

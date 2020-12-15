@@ -8,11 +8,13 @@ class Game {
     Player: Player;
     Sword: Sword;
     Enemies: Enemies;
+    EventManager: EventManager;
 
     constructor(canvas: HTMLCanvasElement) {
         this.Canvas = canvas;
         this.ctx = this.Canvas.getContext("2d");
 
+        this.EventManager = new EventManager(this);
         this.Overworld = new Overworld(this);
         this.BrickCollection = new BrickCollection();
         this.Landscape = new Landscape(this, this.Overworld.getSpawnScene());
@@ -34,13 +36,13 @@ class Game {
         let dc = 0;
         let dr = 0;
 
-        if (leftPressed && !rightPressed && !upPressed && !downPressed) {
+        if (this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && !this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
             dc = -1;
-        } else if (!leftPressed && rightPressed && !upPressed && !downPressed) {
+        } else if (!this.EventManager.isLeftPressed && this.EventManager.isRightPressed && !this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
             dc = 1;
-        } else if (!leftPressed && !rightPressed && upPressed && !downPressed) {
+        } else if (!this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
             dr = -1;
-        } else if (!leftPressed && !rightPressed && !upPressed && downPressed) {
+        } else if (!this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && !this.EventManager.isUpPressed && this.EventManager.isDownPressed) {
             dr = 1;
         } else {
             this.Player.dx = 0;
@@ -52,16 +54,16 @@ class Game {
             this.Landscape = new Landscape(this, this.Overworld.map[c + dc][r + dr]);
             this.Enemies = new Enemies(this);
 
-            if (leftPressed) {
+            if (this.EventManager.isLeftPressed) {
                 this.Player.x = this.Canvas.width - this.Player.width;
                 this.Player.y = (this.Canvas.height - this.Player.height) / 2;
-            } else if (rightPressed) {
+            } else if (this.EventManager.isRightPressed) {
                 this.Player.x = 0;
                 this.Player.y = (this.Canvas.height - this.Player.height) / 2;
-            } else if (upPressed) {
+            } else if (this.EventManager.isUpPressed) {
                 this.Player.x = (this.Canvas.width - this.Player.width) / 2;
                 this.Player.y = this.Canvas.height - this.Player.height;
-            } else if (downPressed) {
+            } else if (this.EventManager.isDownPressed) {
                 this.Player.x = (this.Canvas.width - this.Player.width) / 2;
                 this.Player.y = 0;
             }
@@ -86,8 +88,8 @@ class Game {
 
         this.Landscape.draw();
         this.Enemies.draw();
-        this.Player.draw();
         this.Sword.draw();
+        this.Player.draw();
         this.drawHud();
 
         this.Player.listenEvents();
@@ -102,5 +104,7 @@ class Game {
         this.Enemies.move();
 
         this.Sword.reset();
+
+        this.EventManager.newFrame();
     }
 }

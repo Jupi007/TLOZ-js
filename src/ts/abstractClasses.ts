@@ -1,4 +1,4 @@
-class SpriteLoader { page
+class SpriteLoader {
     static load(src: string): HTMLImageElement {
         let sprite = new Image();
         sprite.src = src;

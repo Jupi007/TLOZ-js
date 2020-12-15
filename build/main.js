@@ -163,58 +163,93 @@ class Enemies {
     }
 }
 
-var rightPressed = false;
-var leftPressed = false;
-var upPressed = false;
-var downPressed = false;
-var speedUpPressed = false;
-var attackPressed = false;
-document.addEventListener("keydown", function (e) {
-    switch (e.keyCode) {
-        case 39:
-            rightPressed = true;
-            break;
-        case 37:
-            leftPressed = true;
-            break;
-        case 38:
-            upPressed = true;
-            break;
-        case 40:
-            downPressed = true;
-            break;
-        case 83:
-            speedUpPressed = true;
-            break;
-        case 81:
-            attackPressed = true;
-            break;
+class EventManager {
+    constructor(game) {
+        this.isRightPressed = false;
+        this.isLeftPressed = false;
+        this.isUpPressed = false;
+        this.isDownPressed = false;
+        this.isSpeedUpPressed = false;
+        this.isAttackPressed = false;
+        this.currentAttackFrame = 0;
+        this.attackDuration = 20;
+        this.Game = game;
+        document.addEventListener("keydown", e => this.keydownEvent(e));
+        document.addEventListener("keyup", e => this.keyupEvent(e));
     }
-    e.preventDefault();
-}, false);
-document.addEventListener("keyup", function (e) {
-    switch (e.keyCode) {
-        case 39:
-            rightPressed = false;
-            break;
-        case 37:
-            leftPressed = false;
-            break;
-        case 38:
-            upPressed = false;
-            break;
-        case 40:
-            downPressed = false;
-            break;
-        case 83:
-            speedUpPressed = false;
-            break;
-        case 81:
-            attackPressed = false;
-            break;
+    keydownEvent(e) {
+        if (e.repeat) {
+            e.preventDefault();
+            return;
+        }
+        ;
+        let preventDefault = true;
+        switch (e.key) {
+            case "ArrowRight":
+                this.isRightPressed = true;
+                break;
+            case "ArrowLeft":
+                this.isLeftPressed = true;
+                break;
+            case "ArrowUp":
+                this.isUpPressed = true;
+                break;
+            case "ArrowDown":
+                this.isDownPressed = true;
+                break;
+            case "s":
+                this.isSpeedUpPressed = true;
+                break;
+            case "q":
+                this.isAttackPressed = true;
+                console.log("attack");
+                break;
+            default:
+                preventDefault = false;
+                break;
+        }
+        if (preventDefault)
+            e.preventDefault();
     }
-    e.preventDefault();
-}, false);
+    keyupEvent(e) {
+        let preventDefault = true;
+        switch (e.key) {
+            case "ArrowRight":
+                this.isRightPressed = false;
+                break;
+            case "ArrowLeft":
+                this.isLeftPressed = false;
+                break;
+            case "ArrowUp":
+                this.isUpPressed = false;
+                break;
+            case "ArrowDown":
+                this.isDownPressed = false;
+                break;
+            case "s":
+                this.isSpeedUpPressed = false;
+                break;
+            case "q":
+                this.isAttackPressed = false;
+                break;
+            default:
+                preventDefault = false;
+                break;
+        }
+        if (preventDefault)
+            e.preventDefault();
+    }
+    newFrame() {
+        if (this.isAttackPressed) {
+            this.currentAttackFrame++;
+            if (this.currentAttackFrame >= this.attackDuration) {
+                this.isAttackPressed = false;
+            }
+            return;
+        }
+        this.currentAttackFrame = 0;
+    }
+}
 
 // **********************
 // Random helper function
@@ -308,6 +343,7 @@ class Game {
     constructor(canvas) {
         this.Canvas = canvas;
         this.ctx = this.Canvas.getContext("2d");
+        this.EventManager = new EventManager(this);
         this.Overworld = new Overworld(this);
         this.BrickCollection = new BrickCollection();
         this.Landscape = new Landscape(this, this.Overworld.getSpawnScene());
@@ -323,16 +359,16 @@ class Game {
         this.Overworld.map[c][r] = this.Landscape.currentScene; // TODO: ???? what is it ????
         let dc = 0;
         let dr = 0;
-        if (leftPressed && !rightPressed && !upPressed && !downPressed) {
+        if (this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && !this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
             dc = -1;
         }
-        else if (!leftPressed && rightPressed && !upPressed && !downPressed) {
+        else if (!this.EventManager.isLeftPressed && this.EventManager.isRightPressed && !this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
             dc = 1;
         }
-        else if (!leftPressed && !rightPressed && upPressed && !downPressed) {
+        else if (!this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
             dr = -1;
         }
-        else if (!leftPressed && !rightPressed && !upPressed && downPressed) {
+        else if (!this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && !this.EventManager.isUpPressed && this.EventManager.isDownPressed) {
             dr = 1;
         }
         else {
@@ -343,19 +379,19 @@ class Game {
         if (!(c + dc < 0 || c + dc > this.Overworld.nbCol - 1 || r + dr < 0 || r + dr > this.Overworld.nbRow - 1)) {
             this.Landscape = new Landscape(this, this.Overworld.map[c + dc][r + dr]);
             this.Enemies = new Enemies(this);
-            if (leftPressed) {
+            if (this.EventManager.isLeftPressed) {
                 this.Player.x = this.Canvas.width - this.Player.width;
                 this.Player.y = (this.Canvas.height - this.Player.height) / 2;
             }
-            else if (rightPressed) {
+            else if (this.EventManager.isRightPressed) {
                 this.Player.x = 0;
                 this.Player.y = (this.Canvas.height - this.Player.height) / 2;
             }
-            else if (upPressed) {
+            else if (this.EventManager.isUpPressed) {
                 this.Player.x = (this.Canvas.width - this.Player.width) / 2;
                 this.Player.y = this.Canvas.height - this.Player.height;
             }
-            else if (downPressed) {
+            else if (this.EventManager.isDownPressed) {
                 this.Player.x = (this.Canvas.width - this.Player.width) / 2;
                 this.Player.y = 0;
             }
@@ -374,8 +410,8 @@ class Game {
         this.Sword.events();
         this.Landscape.draw();
         this.Enemies.draw();
-        this.Player.draw();
         this.Sword.draw();
+        this.Player.draw();
         this.drawHud();
         this.Player.listenEvents();
         this.Enemies.listenEvents();
@@ -386,6 +422,7 @@ class Game {
         this.Player.move();
         this.Enemies.move();
         this.Sword.reset();
+        this.EventManager.newFrame();
     }
 }
 
@@ -516,11 +553,13 @@ class Player extends AnimatedMovingBox {
         this.speed = 2;
         this.speedUp = 3;
         this.isMoving = false;
+        this.isAttack = false;
         this.hp = 100;
         this.isInvincible = false;
         this.invincibleTime = 0;
         this.score = 0;
         this.sprites = [];
+        this.spritesAttack = [];
         this.Game = game;
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
@@ -530,15 +569,19 @@ class Player extends AnimatedMovingBox {
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/link-up2.png");
+        this.spritesAttack[Direction.Up] = SpriteLoader.load("./sprites/png/link-up-attack.png");
         this.sprites[Direction.Right] = [];
         this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/link-right1.png");
         this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/link-right2.png");
+        this.spritesAttack[Direction.Right] = SpriteLoader.load("./sprites/png/link-right-attack.png");
         this.sprites[Direction.Down] = [];
         this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/link-down1.png");
         this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/link-down2.png");
+        this.spritesAttack[Direction.Down] = SpriteLoader.load("./sprites/png/link-down-attack.png");
         this.sprites[Direction.Left] = [];
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/link-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
+        this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
     }
     increaseScore() {
         this.score++;
@@ -549,10 +592,13 @@ class Player extends AnimatedMovingBox {
     }
     draw() {
         if (this.isMoving) {
-            this.requestNewFrameAnimation(speedUpPressed ? 2 : 1);
+            this.requestNewFrameAnimation(this.Game.EventManager.isSpeedUpPressed ? 2 : 1);
         }
+        let sprite = this.isAttack
+            ? this.spritesAttack[this.direction]
+            : this.sprites[this.direction][this.currentAnimationStep];
         this.Game.ctx.beginPath();
-        this.Game.ctx.drawImage(this.sprites[this.direction][this.currentAnimationStep], this.x, this.y, this.width, this.height);
+        this.Game.ctx.drawImage(sprite, this.x, this.y, this.width, this.height);
         this.Game.ctx.closePath();
     }
     move() {
@@ -570,29 +616,35 @@ class Player extends AnimatedMovingBox {
         });
     }
     listenEvents() {
-        let speed = speedUpPressed ? this.speedUp : this.speed;
-        if ((downPressed || upPressed) && !(downPressed && upPressed)) {
-            if (downPressed) {
+        if (this.Game.EventManager.isAttackPressed) {
+            this.isAttack = true;
+            return;
+        }
+        // this.currentAttackFrame = 0;
+        this.isAttack = false;
+        let speed = this.Game.EventManager.isSpeedUpPressed ? this.speedUp : this.speed;
+        if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) && !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
+            if (this.Game.EventManager.isDownPressed) {
                 this.dy = speed;
                 this.direction = Direction.Down;
             }
-            else if (upPressed) {
+            else if (this.Game.EventManager.isUpPressed) {
                 this.dy = -speed;
                 this.direction = Direction.Up;
             }
         }
-        else if ((rightPressed || leftPressed) && !(rightPressed && leftPressed)) {
-            if (rightPressed) {
+        else if ((this.Game.EventManager.isRightPressed || this.Game.EventManager.isLeftPressed) && !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)) {
+            if (this.Game.EventManager.isRightPressed) {
                 this.dx = speed;
                 this.direction = Direction.Right;
             }
-            else if (leftPressed) {
+            else if (this.Game.EventManager.isLeftPressed) {
                 this.dx = -speed;
                 this.direction = Direction.Left;
             }
         }
         this.isMoving =
-            this.dx > 0 || this.dy > 0
+            this.dx != 0 || this.dy != 0
                 ? true
                 : false;
     }
@@ -652,14 +704,14 @@ class Sword extends SimpleBox {
         this.sprites[Direction.Left] = SpriteLoader.load("./sprites/png/sword-left.png");
     }
     draw() {
-        if (attackPressed) {
+        if (this.Game.Player.isAttack) {
             this.Game.ctx.beginPath();
             this.Game.ctx.drawImage(this.sprites[this.Game.Player.direction], this.x, this.y, this.width, this.height);
             this.Game.ctx.closePath();
         }
     }
     collisions() {
-        if (attackPressed) {
+        if (this.Game.Player.isAttack) {
             this.Game.Enemies.loopEnemies((enemy) => {
                 if (simpleMovingBoxCollision(enemy, this)) {
                     this.Game.Enemies.killEnemy(enemy);
@@ -668,27 +720,27 @@ class Sword extends SimpleBox {
         }
     }
     events() {
-        if (attackPressed) {
+        if (this.Game.Player.isAttack) {
             if (this.Game.Player.direction == Direction.Up) {
                 this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
-                this.y = this.Game.Player.y - this.swordWidth;
+                this.y = this.Game.Player.y - this.swordWidth + 8;
                 this.width = this.swordHeight;
                 this.height = this.swordWidth;
             }
             else if (this.Game.Player.direction == Direction.Down) {
                 this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
-                this.y = this.Game.Player.y + this.Game.Player.width;
+                this.y = this.Game.Player.y + this.Game.Player.width - 8;
                 this.width = this.swordHeight;
                 this.height = this.swordWidth;
             }
             else if (this.Game.Player.direction == Direction.Left) {
-                this.x = this.Game.Player.x - this.swordWidth;
+                this.x = this.Game.Player.x - this.swordWidth + 8;
                 this.y = this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
                 this.width = this.swordWidth;
                 this.height = this.swordHeight;
             }
             else if (this.Game.Player.direction == Direction.Right) {
-                this.x = this.Game.Player.x + this.Game.Player.width;
+                this.x = this.Game.Player.x + this.Game.Player.width - 8;
                 this.y = this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
                 this.width = this.swordWidth;
                 this.height = this.swordHeight;
