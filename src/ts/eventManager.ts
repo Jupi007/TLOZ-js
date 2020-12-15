@@ -5,7 +5,6 @@ class EventManager {
     isLeftPressed = false;
     isUpPressed = false;
     isDownPressed = false;
-    isSpeedUpPressed = false;
     isAttackPressed = false;
 
     currentAttackFrame = 0;
@@ -38,9 +37,6 @@ class EventManager {
                 break;
             case "ArrowDown":
                 this.isDownPressed = true;
-                break;
-            case "s":
-                this.isSpeedUpPressed = true;
                 break;
             case "q":
                 this.isAttackPressed = true;
@@ -75,9 +71,6 @@ class EventManager {
                 break;
             case "ArrowDown":
                 this.isDownPressed = false;
-                break;
-            case "s":
-                this.isSpeedUpPressed = false;
                 break;
             case "q":
                 this.isAttackPressed = false;

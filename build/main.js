@@ -29,7 +29,7 @@ class AnimatedMovingBox extends MovingBox {
         this.currentAnimationStep = 1;
         this.Game = game;
     }
-    requestNewFrameAnimation(animationSpeedModifier) {
+    requestNewFrameAnimation(animationSpeedModifier = 1) {
         if (this.Game.status !== GameStatus.Run)
             return;
         this.currentFrame += 1 * animationSpeedModifier;
@@ -172,7 +172,6 @@ class EventManager {
         this.isLeftPressed = false;
         this.isUpPressed = false;
         this.isDownPressed = false;
-        this.isSpeedUpPressed = false;
         this.isAttackPressed = false;
         this.currentAttackFrame = 0;
         this.attackDuration = 20;
@@ -199,9 +198,6 @@ class EventManager {
                 break;
             case "ArrowDown":
                 this.isDownPressed = true;
-                break;
-            case "s":
-                this.isSpeedUpPressed = true;
                 break;
             case "q":
                 this.isAttackPressed = true;
@@ -234,9 +230,6 @@ class EventManager {
                 break;
             case "ArrowDown":
                 this.isDownPressed = false;
-                break;
-            case "s":
-                this.isSpeedUpPressed = false;
                 break;
             case "q":
                 this.isAttackPressed = false;
@@ -600,8 +593,7 @@ class Player extends AnimatedMovingBox {
         super(game);
         this.width = 64;
         this.height = 64;
-        this.speed = 2;
-        this.speedUp = 3;
+        this.speed = 5;
         this.isMoving = false;
         this.isAttack = false;
         this.hp = 100;
@@ -613,7 +605,7 @@ class Player extends AnimatedMovingBox {
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
         this.direction = Direction.Down;
-        this.animationSpeed = 20;
+        this.animationSpeed = 8;
         this.nbAnimationStep = 2;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
@@ -641,7 +633,7 @@ class Player extends AnimatedMovingBox {
     }
     draw() {
         if (this.isMoving) {
-            this.requestNewFrameAnimation(this.Game.EventManager.isSpeedUpPressed ? 2 : 1);
+            this.requestNewFrameAnimation();
         }
         let sprite = this.isAttack
             ? this.spritesAttack[this.direction]
@@ -667,26 +659,24 @@ class Player extends AnimatedMovingBox {
             this.isAttack = true;
             return;
         }
-        // this.currentAttackFrame = 0;
         this.isAttack = false;
-        let speed = this.Game.EventManager.isSpeedUpPressed ? this.speedUp : this.speed;
         if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) && !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
             if (this.Game.EventManager.isDownPressed) {
-                this.dy = speed;
+                this.dy = this.speed;
                 this.direction = Direction.Down;
             }
             else if (this.Game.EventManager.isUpPressed) {
-                this.dy = -speed;
+                this.dy = -this.speed;
                 this.direction = Direction.Up;
             }
         }
         else if ((this.Game.EventManager.isRightPressed || this.Game.EventManager.isLeftPressed) && !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)) {
             if (this.Game.EventManager.isRightPressed) {
-                this.dx = speed;
+                this.dx = this.speed;
                 this.direction = Direction.Right;
             }
             else if (this.Game.EventManager.isLeftPressed) {
-                this.dx = -speed;
+                this.dx = -this.speed;
                 this.direction = Direction.Left;
             }
         }

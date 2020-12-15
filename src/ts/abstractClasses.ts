@@ -31,11 +31,11 @@ abstract class AnimatedMovingBox extends MovingBox {
     nbAnimationStep: number;
 
     constructor(game: Game) {
-        super(); 
+        super();
         this.Game = game;
     }
 
-    requestNewFrameAnimation(animationSpeedModifier): void {
+    requestNewFrameAnimation(animationSpeedModifier: number = 1): void {
         if (this.Game.status !== GameStatus.Run) return;
 
         this.currentFrame += 1 * animationSpeedModifier;

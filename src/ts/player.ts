@@ -2,8 +2,7 @@ class Player extends AnimatedMovingBox {
     width = 64;
     height = 64;
 
-    speed = 2;
-    speedUp = 3;
+    speed = 5;
 
     isMoving = false;
     isAttack = false;
@@ -25,7 +24,7 @@ class Player extends AnimatedMovingBox {
 
         this.direction = Direction.Down;
 
-        this.animationSpeed = 20;
+        this.animationSpeed = 8;
         this.nbAnimationStep = 2;
 
         this.sprites[Direction.Up] = [];
@@ -60,7 +59,7 @@ class Player extends AnimatedMovingBox {
 
     draw(): void {
         if (this.isMoving) {
-            this.requestNewFrameAnimation(this.Game.EventManager.isSpeedUpPressed ? 2 : 1);
+            this.requestNewFrameAnimation();
         }
 
         let sprite = this.isAttack
@@ -100,25 +99,22 @@ class Player extends AnimatedMovingBox {
             return;
         }
 
-        // this.currentAttackFrame = 0;
         this.isAttack = false;
-
-        let speed = this.Game.EventManager.isSpeedUpPressed ? this.speedUp : this.speed;
 
         if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) && !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
             if (this.Game.EventManager.isDownPressed) {
-                this.dy = speed;
+                this.dy = this.speed;
                 this.direction = Direction.Down;
             } else if (this.Game.EventManager.isUpPressed) {
-                this.dy = -speed;
+                this.dy = -this.speed;
                 this.direction = Direction.Up;
             }
         } else if ((this.Game.EventManager.isRightPressed || this.Game.EventManager.isLeftPressed) && !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)) {
             if (this.Game.EventManager.isRightPressed) {
-                this.dx = speed;
+                this.dx = this.speed;
                 this.direction = Direction.Right;
             } else if (this.Game.EventManager.isLeftPressed) {
-                this.dx = -speed;
+                this.dx = -this.speed;
                 this.direction = Direction.Left;
             }
         }
