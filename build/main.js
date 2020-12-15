@@ -395,18 +395,14 @@ class Game {
             this.Enemies = new Enemies(this);
             if (this.EventManager.isLeftPressed) {
                 this.Player.x = this.Canvas.width - this.Player.width;
-                this.Player.y = (this.Canvas.height - this.Player.height) / 2;
             }
             else if (this.EventManager.isRightPressed) {
                 this.Player.x = 0;
-                this.Player.y = (this.Canvas.height - this.Player.height) / 2;
             }
             else if (this.EventManager.isUpPressed) {
-                this.Player.x = (this.Canvas.width - this.Player.width) / 2;
                 this.Player.y = this.Canvas.height - this.Player.height;
             }
             else if (this.EventManager.isDownPressed) {
-                this.Player.x = (this.Canvas.width - this.Player.width) / 2;
                 this.Player.y = 0;
             }
             this.Player.dx = 0;
