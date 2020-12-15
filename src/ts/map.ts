@@ -23,7 +23,7 @@ class Scene {
 
     nbRow = 11;
     nbCol = 16;
-    cellSize = 50;
+    cellSize = 64;
 
     hasEnemies = true;
 

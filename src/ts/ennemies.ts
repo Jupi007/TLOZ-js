@@ -25,8 +25,8 @@ class Octorok extends Enemy {
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
         super(game, x, y, speed, direction);
 
-        this.width = 40;
-        this.height = 40;
+        this.width = 64;
+        this.height = 64;
 
         this.animationSpeed = 20;
         this.nbAnimationStep = 2;

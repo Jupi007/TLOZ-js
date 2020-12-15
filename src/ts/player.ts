@@ -1,6 +1,6 @@
 class Player extends AnimatedMovingBox {
-    width = 40;
-    height = 40;
+    width = 64;
+    height = 64;
 
     speed = 2;
     speedUp = 3;

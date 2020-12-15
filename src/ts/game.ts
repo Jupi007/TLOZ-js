@@ -32,7 +32,7 @@ class Game {
         this.Hud.width = this.Landscape.width;
 
         this.Canvas.width = this.Landscape.width;
-        this.Canvas.height = 600;
+        this.Canvas.height = this.Landscape.height + this.Hud.height;
 
         this.status = GameStatus.Run;
     }

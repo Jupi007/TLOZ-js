@@ -84,8 +84,8 @@ class Enemy extends AnimatedMovingBox {
 class Octorok extends Enemy {
     constructor(game, x, y, speed, direction) {
         super(game, x, y, speed, direction);
-        this.width = 40;
-        this.height = 40;
+        this.width = 64;
+        this.height = 64;
         this.animationSpeed = 20;
         this.nbAnimationStep = 2;
         this.sprites[Direction.Up] = [];
@@ -377,7 +377,7 @@ class Game {
         this.Landscape.y = this.Hud.height;
         this.Hud.width = this.Landscape.width;
         this.Canvas.width = this.Landscape.width;
-        this.Canvas.height = 600;
+        this.Canvas.height = this.Landscape.height + this.Hud.height;
         this.status = GameStatus.Run;
     }
     changeScene() {
@@ -458,7 +458,7 @@ class Hud {
         this.Game = game;
         this.x = 0;
         this.y = 0;
-        this.height = 50;
+        this.height = 64;
     }
     draw() {
         this.Game.ctx.beginPath();
@@ -539,7 +539,7 @@ class Scene {
         this.cells = [];
         this.nbRow = 11;
         this.nbCol = 16;
-        this.cellSize = 50;
+        this.cellSize = 64;
         this.hasEnemies = true;
         this.Overworld = overworld;
         this.c = c;
@@ -598,8 +598,8 @@ class Overworld {
 class Player extends AnimatedMovingBox {
     constructor(game) {
         super(game);
-        this.width = 40;
-        this.height = 40;
+        this.width = 64;
+        this.height = 64;
         this.speed = 2;
         this.speedUp = 3;
         this.isMoving = false;

@@ -13,7 +13,7 @@ class Hud {
         this.x = 0;
         this.y = 0;
 
-        this.height = 50;
+        this.height = 64;
     }
 
     draw(): void {
