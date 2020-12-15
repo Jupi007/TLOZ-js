@@ -3,8 +3,8 @@ class Enemy extends AnimatedMovingBox {
 
     sprites: HTMLImageElement[][] = [];
 
-    constructor(x: number, y: number, speed: number, direction: Direction) {
-        super();
+    constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
+        super(game);
 
         this.x = x;
         this.y = y;
@@ -22,8 +22,8 @@ class Enemy extends AnimatedMovingBox {
 }
 
 class Goomba extends Enemy {
-    constructor(x: number, y: number, speed: number, direction: Direction) {
-        super(x, y, speed, direction);
+    constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
+        super(game, x, y, speed, direction);
 
         this.width = 40;
         this.height = 40;
@@ -41,7 +41,7 @@ class Goomba extends Enemy {
 }
 
 class Enemies {
-    private Game: Game;
+    Game: Game;
 
     img: HTMLImageElement = new Image();
 
@@ -54,6 +54,7 @@ class Enemies {
         if (this.Game.Landscape.currentScene.hasEnemies) {
             for (var i = 0; i < this.nbEnemies; i++) {
                 this.enemies[i] = new Goomba(
+                    this.Game,
                     getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)),
                     getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)),
                     getRandomIntInclusive(1, 3),

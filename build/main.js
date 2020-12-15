@@ -23,12 +23,15 @@ class MovingBox extends SimpleBox {
     }
 }
 class AnimatedMovingBox extends MovingBox {
-    constructor() {
-        super(...arguments);
+    constructor(game) {
+        super();
         this.currentFrame = 0;
         this.currentAnimationStep = 1;
+        this.Game = game;
     }
     requestNewFrameAnimation(animationSpeedModifier) {
+        if (this.Game.status !== GameStatus.Run)
+            return;
         this.currentFrame += 1 * animationSpeedModifier;
         if (this.currentFrame >= this.animationSpeed) {
             this.currentFrame = 0;
@@ -61,8 +64,8 @@ class BrickCollection {
 }
 
 class Enemy extends AnimatedMovingBox {
-    constructor(x, y, speed, direction) {
-        super();
+    constructor(game, x, y, speed, direction) {
+        super(game);
         this.sprites = [];
         this.x = x;
         this.y = y;
@@ -79,8 +82,8 @@ class Enemy extends AnimatedMovingBox {
     }
 }
 class Goomba extends Enemy {
-    constructor(x, y, speed, direction) {
-        super(x, y, speed, direction);
+    constructor(game, x, y, speed, direction) {
+        super(game, x, y, speed, direction);
         this.width = 40;
         this.height = 40;
         this.animationSpeed = 20;
@@ -99,7 +102,7 @@ class Enemies {
         this.Game = game;
         if (this.Game.Landscape.currentScene.hasEnemies) {
             for (var i = 0; i < this.nbEnemies; i++) {
-                this.enemies[i] = new Goomba(getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(1, 3), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down);
+                this.enemies[i] = new Goomba(this.Game, getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.width - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(this.Game.Landscape.cellSize + 60, this.Game.Landscape.height - (this.Game.Landscape.cellSize + 60)), getRandomIntInclusive(1, 3), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down);
             }
         }
     }
@@ -202,7 +205,13 @@ class EventManager {
                 break;
             case "q":
                 this.isAttackPressed = true;
-                console.log("attack");
+                break;
+            case "p":
+                if (this.Game.status === GameStatus.Run || this.Game.status === GameStatus.Paused) {
+                    this.Game.status = this.Game.status === GameStatus.Run
+                        ? GameStatus.Paused
+                        : GameStatus.Run;
+                }
                 break;
             default:
                 preventDefault = false;
@@ -339,6 +348,12 @@ function movingBoxCanvasCollision(box, canvas) {
     }
 }
 
+var GameStatus;
+(function (GameStatus) {
+    GameStatus[GameStatus["Run"] = 0] = "Run";
+    GameStatus[GameStatus["Paused"] = 1] = "Paused";
+})(GameStatus || (GameStatus = {}));
+;
 class Game {
     constructor(canvas) {
         this.Canvas = canvas;
@@ -352,11 +367,12 @@ class Game {
         this.Enemies = new Enemies(this);
         this.Canvas.width = this.Landscape.width;
         this.Canvas.height = this.Landscape.height;
+        this.status = GameStatus.Run;
     }
     changeScene() {
         let c = this.Landscape.currentScene.c; // TODO: Rename vars names
         let r = this.Landscape.currentScene.r;
-        this.Overworld.map[c][r] = this.Landscape.currentScene; // TODO: ???? what is it ????
+        //this.Overworld.map[c][r] = this.Landscape.currentScene;
         let dc = 0;
         let dr = 0;
         if (this.EventManager.isLeftPressed && !this.EventManager.isRightPressed && !this.EventManager.isUpPressed && !this.EventManager.isDownPressed) {
@@ -404,25 +420,29 @@ class Game {
         this.ctx.fillStyle = "#000000";
         this.ctx.fillText("HP: " + this.Player.hp + " Score: " + this.Player.score + "/" + (this.Overworld.nbRow * this.Overworld.nbCol), 8, 20);
     }
-    draw() {
+    loop() {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
-        this.Player.checkInvicibility();
-        this.Sword.events();
+        if (this.status === GameStatus.Run) {
+            this.Player.checkInvicibility();
+            this.Sword.events();
+        }
         this.Landscape.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
         this.drawHud();
-        this.Player.listenEvents();
-        this.Enemies.listenEvents();
-        this.Player.collisions();
-        this.Sword.collisions();
-        this.Enemies.collisions();
-        this.Landscape.collisions();
-        this.Player.move();
-        this.Enemies.move();
-        this.Sword.reset();
-        this.EventManager.newFrame();
+        if (this.status === GameStatus.Run) {
+            this.Player.listenEvents();
+            this.Enemies.listenEvents();
+            this.Player.collisions();
+            this.Sword.collisions();
+            this.Enemies.collisions();
+            this.Landscape.collisions();
+            this.Player.move();
+            this.Enemies.move();
+            this.Sword.reset();
+            this.EventManager.newFrame();
+        }
     }
 }
 
@@ -547,7 +567,7 @@ class Overworld {
 
 class Player extends AnimatedMovingBox {
     constructor(game) {
-        super();
+        super(game);
         this.width = 40;
         this.height = 40;
         this.speed = 2;
@@ -560,7 +580,6 @@ class Player extends AnimatedMovingBox {
         this.score = 0;
         this.sprites = [];
         this.spritesAttack = [];
-        this.Game = game;
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
         this.direction = Direction.Down;

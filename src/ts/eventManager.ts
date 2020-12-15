@@ -1,5 +1,5 @@
 class EventManager {
-    private Game: Game;
+    Game: Game;
 
     isRightPressed = false;
     isLeftPressed = false;
@@ -44,8 +44,13 @@ class EventManager {
                 break;
             case "q":
                 this.isAttackPressed = true;
-                console.log("attack");
-
+                break;
+            case "p":
+                if (this.Game.status === GameStatus.Run || this.Game.status === GameStatus.Paused) {
+                    this.Game.status = this.Game.status === GameStatus.Run
+                                     ? GameStatus.Paused
+                                     : GameStatus.Run;
+                }
                 break;
             default:
                 preventDefault = false;

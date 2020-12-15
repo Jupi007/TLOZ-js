@@ -22,13 +22,22 @@ abstract class MovingBox extends SimpleBox {
 }
 
 abstract class AnimatedMovingBox extends MovingBox {
+    Game: Game;
+
     currentFrame = 0;
     animationSpeed:number;
 
     currentAnimationStep = 1;
     nbAnimationStep: number;
 
+    constructor(game: Game) {
+        super(); 
+        this.Game = game;
+    }
+
     requestNewFrameAnimation(animationSpeedModifier): void {
+        if (this.Game.status !== GameStatus.Run) return;
+
         this.currentFrame += 1 * animationSpeedModifier;
 
         if (this.currentFrame >= this.animationSpeed) {

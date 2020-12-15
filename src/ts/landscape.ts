@@ -1,5 +1,5 @@
 class Landscape {
-    private Game: Game;
+    Game: Game;
     private Scene: Scene;
 
     constructor(game: Game, scene: Scene) {

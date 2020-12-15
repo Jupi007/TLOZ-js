@@ -1,3 +1,5 @@
+enum GameStatus {Run, Paused};
+
 class Game {
     Canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
@@ -9,6 +11,8 @@ class Game {
     Sword: Sword;
     Enemies: Enemies;
     EventManager: EventManager;
+
+    status: GameStatus;
 
     constructor(canvas: HTMLCanvasElement) {
         this.Canvas = canvas;
@@ -24,14 +28,15 @@ class Game {
 
         this.Canvas.width = this.Landscape.width;
         this.Canvas.height = this.Landscape.height;
+
+        this.status = GameStatus.Run;
     }
 
     changeScene(): void {
         let c = this.Landscape.currentScene.c; // TODO: Rename vars names
         let r = this.Landscape.currentScene.r;
 
-
-        this.Overworld.map[c][r] = this.Landscape.currentScene; // TODO: ???? what is it ????
+        //this.Overworld.map[c][r] = this.Landscape.currentScene;
 
         let dc = 0;
         let dr = 0;
@@ -79,12 +84,14 @@ class Game {
         this.ctx.fillText("HP: " + this.Player.hp + " Score: " + this.Player.score + "/" + (this.Overworld.nbRow * this.Overworld.nbCol), 8, 20);
     }
 
-    draw(): void {
+    loop(): void {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
-        this.Player.checkInvicibility();
+        if (this.status === GameStatus.Run) {
+            this.Player.checkInvicibility();
 
-        this.Sword.events();
+            this.Sword.events();
+        }
 
         this.Landscape.draw();
         this.Enemies.draw();
@@ -92,19 +99,21 @@ class Game {
         this.Player.draw();
         this.drawHud();
 
-        this.Player.listenEvents();
-        this.Enemies.listenEvents();
+        if (this.status === GameStatus.Run) {
+            this.Player.listenEvents();
+            this.Enemies.listenEvents();
 
-        this.Player.collisions();
-        this.Sword.collisions();
-        this.Enemies.collisions();
-        this.Landscape.collisions();
+            this.Player.collisions();
+            this.Sword.collisions();
+            this.Enemies.collisions();
+            this.Landscape.collisions();
 
-        this.Player.move();
-        this.Enemies.move();
+            this.Player.move();
+            this.Enemies.move();
 
-        this.Sword.reset();
+            this.Sword.reset();
 
-        this.EventManager.newFrame();
+            this.EventManager.newFrame();
+        }
     }
 }

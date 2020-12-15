@@ -1,6 +1,4 @@
 class Player extends AnimatedMovingBox {
-    private Game: Game;
-
     width = 40;
     height = 40;
 
@@ -20,9 +18,7 @@ class Player extends AnimatedMovingBox {
     spritesAttack: HTMLImageElement[] = [];
 
     constructor(game: Game) {
-        super();
-
-        this.Game = game;
+        super(game);
 
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;

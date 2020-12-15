@@ -1,5 +1,5 @@
 class Sword extends SimpleBox {
-    private Game: Game;
+    Game: Game;
 
     swordWidth = 32;
     swordHeight = 14;

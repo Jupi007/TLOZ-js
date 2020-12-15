@@ -73,7 +73,7 @@ class Scene {
 }
 
 class Overworld {
-    private Game: Game;
+    Game: Game;
 
     map: Scene[][] = [];
 
