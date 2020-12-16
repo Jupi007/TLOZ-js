@@ -42,6 +42,47 @@ class AnimatedMovingBox extends MovingBox {
         }
     }
 }
+class MovingBoxLandscapeHitBox {
+    constructor(player) {
+        this.Box = player;
+    }
+    get x() {
+        return this.Box.x;
+    }
+    set x(x) {
+        this.Box.x = x;
+    }
+    get y() {
+        return this.Box.y + this.Box.height / 2;
+    }
+    set y(y) {
+        this.Box.y = y - this.Box.height / 2;
+    }
+    get width() {
+        return this.Box.width;
+    }
+    get height() {
+        return this.Box.height;
+    }
+    get dx() {
+        return this.Box.dx;
+    }
+    set dx(dx) {
+        this.Box.dx = dx;
+    }
+    get dy() {
+        return this.Box.dy;
+    }
+    set dy(dy) {
+        this.Box.dy = dy;
+    }
+    get direction() {
+        return this.Box.direction;
+    }
+    set direction(direction) {
+        this.Box.direction = direction;
+    }
+}
 
 class Brick {
     constructor(src, hasCollisions = false) {
@@ -71,6 +112,7 @@ class Enemy extends AnimatedMovingBox {
         this.y = y;
         this.speed = speed;
         this.direction = direction;
+        this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
     }
     invertDirection() {
         if (this.direction == Direction.Up) {
@@ -141,7 +183,7 @@ class Enemies {
         });
         this.Game.Landscape.loopCollision((cell, col, row) => {
             this.Game.Enemies.loopEnemies((enemy) => {
-                if (movingBoxCollision(enemy, cell)) {
+                if (movingBoxCollision(enemy.landscapeHitBox, cell)) {
                     enemy.invertDirection();
                 }
             });
@@ -604,6 +646,7 @@ class Player extends AnimatedMovingBox {
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
         this.direction = Direction.Down;
+        this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
         this.animationSpeed = 8;
         this.nbAnimationStep = 2;
         this.sprites[Direction.Up] = [];
@@ -650,7 +693,7 @@ class Player extends AnimatedMovingBox {
             this.Game.Landscape.changeScene(this.direction);
         }
         this.Game.Landscape.loopCollision((cell, col, row) => {
-            movingBoxCollision(this, cell);
+            movingBoxCollision(this.landscapeHitBox, cell);
         });
     }
     listenEvents() {

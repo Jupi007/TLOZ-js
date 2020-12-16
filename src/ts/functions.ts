@@ -12,7 +12,7 @@ function getRandomIntInclusive(min: number, max: number): number {
 // Collision helper functions
 // **************************
 
-function simpleMovingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolean { // TODO: implement interface
+function simpleMovingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolean {
     if (
         (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
         (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||

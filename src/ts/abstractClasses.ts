@@ -50,3 +50,54 @@ abstract class AnimatedMovingBox extends MovingBox {
         }
     }
 }
+
+class MovingBoxLandscapeHitBox {
+    Box: MovingBox;
+
+    constructor(player: MovingBox) {
+        this.Box = player
+    }
+
+    get x(): number {
+        return this.Box.x;
+    }
+    set x(x: number) {
+        this.Box.x = x;
+    }
+
+    get y(): number {
+        return this.Box.y + this.Box.height / 2;
+    }
+    set y(y: number) {
+        this.Box.y = y - this.Box.height / 2;
+    }
+
+    get width(): number {
+        return this.Box.width;
+    }
+
+    get height(): number {
+        return this.Box.height;
+    }
+
+    get dx(): number {
+        return this.Box.dx;
+    }
+    set dx(dx: number) {
+        this.Box.dx = dx;
+    }
+
+    get dy(): number {
+        return this.Box.dy;
+    }
+    set dy(dy: number) {
+        this.Box.dy = dy;
+    }
+
+    get direction(): number {
+        return this.Box.direction;
+    }
+    set direction(direction: number) {
+        this.Box.direction = direction;
+    }
+}

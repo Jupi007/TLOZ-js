@@ -16,6 +16,8 @@ class Player extends AnimatedMovingBox {
     sprites: HTMLImageElement[][] = [];
     spritesAttack: HTMLImageElement[] = [];
 
+    landscapeHitBox: MovingBoxLandscapeHitBox;
+
     constructor(game: Game) {
         super(game);
 
@@ -23,6 +25,8 @@ class Player extends AnimatedMovingBox {
         this.y = this.Game.Landscape.cellSize;
 
         this.direction = Direction.Down;
+
+        this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
 
         this.animationSpeed = 8;
         this.nbAnimationStep = 2;
@@ -89,7 +93,7 @@ class Player extends AnimatedMovingBox {
         }
 
         this.Game.Landscape.loopCollision((cell, col, row) => {
-            movingBoxCollision(this, cell);
+            movingBoxCollision(this.landscapeHitBox, cell);
         });
     }
 
