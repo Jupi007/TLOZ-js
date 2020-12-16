@@ -1,4 +1,4 @@
-enum GameStatus {Run, Paused};
+enum GameStatus {Run, Paused, Stopped};
 
 class Game {
     Canvas: HTMLCanvasElement;

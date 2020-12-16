@@ -395,6 +395,7 @@ var GameStatus;
 (function (GameStatus) {
     GameStatus[GameStatus["Run"] = 0] = "Run";
     GameStatus[GameStatus["Paused"] = 1] = "Paused";
+    GameStatus[GameStatus["Stopped"] = 2] = "Stopped";
 })(GameStatus || (GameStatus = {}));
 ;
 class Game {
@@ -739,6 +740,7 @@ class Player extends AnimatedMovingBox {
         }
         this.setInvicibility();
         if (this.hp <= 0) {
+            this.Game.status = GameStatus.Stopped;
             alert("Game Over !");
             document.location.reload();
         }

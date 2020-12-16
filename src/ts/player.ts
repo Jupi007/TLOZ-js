@@ -144,6 +144,7 @@ class Player extends AnimatedMovingBox {
         this.setInvicibility();
 
         if (this.hp <= 0) {
+            this.Game.status = GameStatus.Stopped;
             alert("Game Over !");
             document.location.reload();
         }
