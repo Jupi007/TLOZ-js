@@ -31,7 +31,7 @@ class Hud {
             this.Game.ctx.font = "16px Ubuntu";
             this.Game.ctx.fillStyle = "#fff";
             this.Game.ctx.fillText(
-                "HP: " + this.Game.Player.hp + " Score: " + this.Game.Player.score + "/" + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol),
+                "HP: " + this.Game.Player.hp + " Score: " + this.Game.Player.score + "/" + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol) + " Player: x" + this.Game.Player.x + " y" + this.Game.Player.y,
                 8 + this.x,
                 20 + this.y
             );

@@ -36,8 +36,6 @@ abstract class AnimatedMovingBox extends MovingBox {
     }
 
     requestNewFrameAnimation(animationSpeedModifier: number = 1): void {
-        if (this.Game.status !== GameStatus.Run) return;
-
         this.currentFrame += 1 * animationSpeedModifier;
 
         if (this.currentFrame >= this.animationSpeed) {
@@ -77,7 +75,7 @@ class MovingBoxLandscapeHitBox {
     }
 
     get height(): number {
-        return this.Box.height;
+        return this.Box.height / 2;
     }
 
     get dx(): number {

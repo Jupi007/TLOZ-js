@@ -91,9 +91,10 @@ class Enemies {
 
     draw(): void {
         this.loopEnemies((enemy) => {
-            enemy.requestNewFrameAnimation(enemy.speed);
+            if (this.Game.status === GameStatus.Run) enemy.requestNewFrameAnimation(enemy.speed);
 
-            this.Game.Landscape.drawImage(
+
+            this.Game.Landscape.currentScene.drawImage(
                 enemy.sprites[enemy.direction][enemy.currentAnimationStep],
                 enemy.x,
                 enemy.y,

@@ -42,9 +42,9 @@ class EventManager {
                 this.isAttackPressed = true;
                 break;
             case "p":
-                if (this.Game.status === GameStatus.Run || this.Game.status === GameStatus.Paused) {
+                if (this.Game.status === GameStatus.Run || this.Game.status === GameStatus.Stopped) {
                     this.Game.status = this.Game.status === GameStatus.Run
-                                     ? GameStatus.Paused
+                                     ? GameStatus.Stopped
                                      : GameStatus.Run;
                 }
                 break;

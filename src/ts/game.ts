@@ -1,4 +1,4 @@
-enum GameStatus {Run, Paused, Stopped};
+enum GameStatus {Run, Stopped, SlideScene};
 
 class Game {
     Canvas: HTMLCanvasElement;
@@ -39,12 +39,38 @@ class Game {
 
     loop(): void {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
+        
+        switch (this.status) {
+            case GameStatus.Run:
+                this.runLoop();
+                break;
+            case GameStatus.Stopped:
+                this.stoppedLoop();
+                break;
+            case GameStatus.SlideScene:
+                this.slideSceneLoop();
+                break;
 
-        if (this.status === GameStatus.Run) {
-            this.Player.checkInvicibility();
-
-            this.Sword.events();
+            default:
+                this.runLoop();
+                break;
         }
+    }
+
+    runLoop(): void {
+        this.Player.checkInvicibility();
+
+        this.Sword.listenEvents();
+        this.Player.listenEvents();
+        this.Enemies.listenEvents();
+
+        this.Player.collisions();
+        this.Sword.collisions();
+        this.Enemies.collisions();
+        this.Landscape.collisions();
+
+        this.Player.move();
+        this.Enemies.move();
 
         this.Landscape.draw();
         this.Enemies.draw();
@@ -52,22 +78,28 @@ class Game {
         this.Player.draw();
         this.Hud.draw();
 
-        if (this.status === GameStatus.Run) {
-            this.Player.listenEvents();
-            this.Enemies.listenEvents();
+        this.Sword.reset();
 
-            this.Player.collisions();
-            this.Sword.collisions();
-            this.Enemies.collisions();
-            this.Landscape.collisions();
+        this.EventManager.newFrame();
+    }
 
-            this.Player.move();
-            this.Enemies.move();
+    stoppedLoop(): void {
+        this.Landscape.draw();
+        this.Enemies.draw();
+        this.Sword.draw();
+        this.Player.draw();
+        this.Hud.draw();
+    }
 
-            this.Sword.reset();
+    slideSceneLoop(): void {
+        this.Landscape.slideSceneAnimationMove();
+        this.Player.slideSceneAnimationMove();
 
-            this.EventManager.newFrame();
-        }
+        this.Landscape.draw();
+        this.Enemies.draw();
+        this.Sword.draw();
+        this.Player.draw();
+        this.Hud.draw();
     }
 
     drawImage(

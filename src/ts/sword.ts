@@ -40,7 +40,7 @@ class Sword extends SimpleBox {
         }
     }
 
-    events(): void {
+    listenEvents(): void {
         if (this.Game.Player.isAttack) {
             if (this.Game.Player.direction == Direction.Up) {
                this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;

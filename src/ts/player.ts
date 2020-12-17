@@ -62,7 +62,7 @@ class Player extends AnimatedMovingBox {
     }
 
     draw(): void {
-        if (this.isMoving) {
+        if (this.isMoving && this.Game.status !== GameStatus.Stopped) {
             this.requestNewFrameAnimation();
         }
 
@@ -87,9 +87,25 @@ class Player extends AnimatedMovingBox {
         this.dy = 0;
     }
 
+    slideSceneAnimationMove(): void {
+        if (this.Game.Landscape.dc === 1) {
+            this.dx = -this.Game.Landscape.slideSceneAnimationSpeed;
+        } else if (this.Game.Landscape.dc === -1) {
+            this.dx = this.Game.Landscape.slideSceneAnimationSpeed;
+        } else if (this.Game.Landscape.dr === 1) {
+            this.dy = -this.Game.Landscape.slideSceneAnimationSpeed;
+        } else if (this.Game.Landscape.dr === -1) {
+            this.dy = this.Game.Landscape.slideSceneAnimationSpeed;
+        }
+
+        movingBoxCanvasCollision(this, this.Game.Landscape);
+        this.isMoving = true;
+        this.move();
+    }
+
     collisions(): void {
-        if (simpleMovingBoxCanvasCollision(this, this.Game.Landscape)) {
-            this.Game.Landscape.changeScene(this.direction);
+        if (movingBoxCanvasCollision(this, this.Game.Landscape)) {
+            this.Game.Landscape.slideScene(this.direction);
         }
 
         this.Game.Landscape.loopCollision((cell, col, row) => {

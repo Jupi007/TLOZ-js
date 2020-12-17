@@ -1,46 +1,54 @@
 class Landscape {
     Game: Game;
-    Scene: Scene;
+    currentScene: Scene;
+    nextScene: Scene;
 
     x: number;
     y: number;
 
+    dc:number;
+    dr:number;
+
+    slideSceneAnimationSpeed: number;
+
     constructor(game: Game, scene: Scene) {
         this.Game = game;
-        this.Scene = scene;
+        this.currentScene = scene;
+        this.nextScene = null;
 
         this.x = 0;
         this.y = 0;
-    }
 
-    get currentScene(): Scene {
-        return this.Scene;
+        this.dr = 0;
+        this.dc = 0;
+
+        this.slideSceneAnimationSpeed = 8;
     }
 
     get cellSize(): number {
-        return this.Scene.cellSize;
+        return this.currentScene.cellSize;
     }
 
     get nbRow(): number {
-        return this.Scene.nbRow;
+        return this.currentScene.nbRow;
     }
 
     get nbCol(): number {
-        return this.Scene.nbCol;
+        return this.currentScene.nbCol;
     }
 
     get width(): number {
-        return this.Scene.cellSize * this.Scene.nbCol;
+        return this.currentScene.cellSize * this.currentScene.nbCol;
     }
 
     get height(): number {
-        return this.Scene.cellSize * this.Scene.nbRow;
+        return this.currentScene.cellSize * this.currentScene.nbRow;
     }
 
-    loopCells(callback: Function): void {
+    loopCells(callback: Function, scene: Scene = this.currentScene): void {
         for (let col = 0; col < this.nbCol; col++) {
             for (let row = 0; row < this.nbRow; row++) {
-                callback(this.Scene.getCell(col, row), col, row);
+                callback(scene.getCell(col, row), col, row);
             }
         }
     }
@@ -55,7 +63,7 @@ class Landscape {
 
     draw(): void {
         this.loopCells((cell, col, row) => {
-            this.drawImage(
+            this.currentScene.drawImage(
                 this.Game.BrickCollection.get(cell.brick).sprite,
                 this.cellSize * col,
                 this.cellSize * row,
@@ -63,6 +71,56 @@ class Landscape {
                 this.cellSize
             );
         });
+
+        if (this.nextScene !== null) {
+            this.loopCells((cell, col, row) => {
+                this.nextScene.drawImage(
+                    this.Game.BrickCollection.get(cell.brick).sprite,
+                    this.cellSize * col,
+                    this.cellSize * row,
+                    this.cellSize,
+                    this.cellSize
+                );
+            }, this.nextScene);
+        }
+    }
+
+    slideSceneAnimationMove(): void {
+        if (this.dc === 1) {
+            this.currentScene.x -= this.slideSceneAnimationSpeed;
+            this.nextScene.x -= this.slideSceneAnimationSpeed;
+        }
+        else if (this.dc === -1) {
+            this.currentScene.x += this.slideSceneAnimationSpeed;
+            this.nextScene.x += this.slideSceneAnimationSpeed;
+        }
+        else if (this.dr === 1) {
+            this.currentScene.y -= this.slideSceneAnimationSpeed;
+            this.nextScene.y -= this.slideSceneAnimationSpeed;
+        }
+        else if (this.dr === -1) {
+            this.currentScene.y += this.slideSceneAnimationSpeed;
+            this.nextScene.y += this.slideSceneAnimationSpeed;
+        }
+
+        if (
+            (this.nextScene.y <= 0 && this.dr ===  1) ||
+            (this.nextScene.y >= 0 && this.dr === -1) ||
+            (this.nextScene.x <= 0 && this.dc ===  1) ||
+            (this.nextScene.x >= 0 && this.dc === -1)
+        ) {
+            this.nextScene.y = 0;
+            this.nextScene.x = 0;
+
+            this.dr = 0;
+            this.dc = 0;
+
+            this.currentScene = this.nextScene;
+            this.nextScene = null;
+
+            this.Game.Enemies = new Enemies(this.Game);
+            this.Game.status = GameStatus.Run;
+        }
     }
 
     collisions(): void {
@@ -84,43 +142,60 @@ class Landscape {
         );
     }
 
-    changeScene(direction: Direction): void {
-        let c = this.currentScene.c; // TODO: Rename vars names
-        let r = this.currentScene.r;
-
-        let dc = 0;
-        let dr = 0;
+    slideScene(direction: Direction): void {
+        let currentSceneCol = this.currentScene.c;
+        let currentSceneRow = this.currentScene.r;
 
         if (direction === Direction.Left) {
-            dc = -1;
-        } else if (direction === Direction.Right) {
-            dc = 1;
-        } else if (direction === Direction.Up) {
-            dr = -1;
-        } else if (direction === Direction.Down) {
-            dr = 1;
-        } else {
-            this.Game.Player.dx = 0;
-            this.Game.Player.dy = 0;
+            this.dc = -1;
+        }
+        else if (direction === Direction.Right) {
+            this.dc = 1;
+        }
+        else if (direction === Direction.Up) {
+            this.dr = -1;
+        }
+        else if (direction === Direction.Down) {
+            this.dr = 1;
+        }
+        else {
             return;
         }
 
-        if (!(c + dc < 0 || c + dc > this.Game.Overworld.nbCol - 1 || r + dr < 0 || r + dr > this.Game.Overworld.nbRow - 1)) {
-            this.Scene = this.Game.Overworld.map[c + dc][r + dr];
-            this.Game.Enemies = new Enemies(this.Game);
+        if ( !(
+            currentSceneCol + this.dc < 0 ||
+            currentSceneCol + this.dc > this.Game.Overworld.nbCol - 1 ||
+            currentSceneRow + this.dr < 0 ||
+            currentSceneRow + this.dr > this.Game.Overworld.nbRow - 1
+        ) ) {
+            this.nextScene = this.Game.Overworld.map[currentSceneCol + this.dc][currentSceneRow + this.dr];
 
             if (direction === Direction.Left) {
-                this.Game.Player.x = this.width - this.Game.Player.width;
-            } else if (direction === Direction.Right) {
-                this.Game.Player.x = 0;
-            } else if (direction === Direction.Up) {
-                this.Game.Player.y = this.height - this.Game.Player.height;
-            } else if (direction === Direction.Down) {
-                this.Game.Player.y = 0;
+                this.nextScene.x = -this.width;
+                this.nextScene.y = 0;
+            }
+            else if (direction === Direction.Right) {
+                this.nextScene.x = this.width;
+                this.nextScene.y = 0;
+            }
+            else if (direction === Direction.Up) {
+                this.nextScene.y = -this.height;
+                this.nextScene.x = 0;
+            }
+            else if (direction === Direction.Down) {
+                this.nextScene.y = this.height;
+                this.nextScene.x = 0;
             }
 
             this.Game.Player.dx = 0;
             this.Game.Player.dy = 0;
+
+            this.Game.status = GameStatus.SlideScene;
+
+            return;
         }
+
+        this.dc = 0;
+        this.dr = 0;
     }
 }

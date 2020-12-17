@@ -13,9 +13,13 @@ class Cell extends SimpleBox {
 }
 
 class Scene {
+    Game: Game;
     Overworld: Overworld;
 
     cells: Cell[][] = [];
+
+    x:number;
+    y:number;
 
     // Coordinates of the scene in the overworld
     c:number;
@@ -27,8 +31,12 @@ class Scene {
 
     hasEnemies = true;
 
-    constructor(overworld: Overworld, c: number, r: number) {
+    constructor(game: Game, overworld: Overworld, c: number, r: number) {
+        this.Game = game;
         this.Overworld = overworld;
+
+        this.x = 0;
+        this.y = 0;
 
         this.c = c;
         this.r = r;
@@ -70,6 +78,22 @@ class Scene {
     getCell(col: number, row: number): Cell {
         return this.cells[col][row];
     }
+
+    drawImage(
+        sprite: HTMLImageElement,
+        x: number,
+        y: number,
+        width: number,
+        height: number
+    ) {
+        this.Game.Landscape.drawImage(
+            sprite,
+            x + this.x,
+            y + this.y,
+            width,
+            height
+        );
+    }
 }
 
 class Overworld {
@@ -89,7 +113,7 @@ class Overworld {
         for (let c = 0; c < this.nbCol; c++) {
             this.map[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
-                this.map[c][r] = new Scene(this, c, r);
+                this.map[c][r] = new Scene(this.Game, this, c, r);
             }
         }
     }

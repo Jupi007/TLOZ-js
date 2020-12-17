@@ -30,8 +30,6 @@ class AnimatedMovingBox extends MovingBox {
         this.Game = game;
     }
     requestNewFrameAnimation(animationSpeedModifier = 1) {
-        if (this.Game.status !== GameStatus.Run)
-            return;
         this.currentFrame += 1 * animationSpeedModifier;
         if (this.currentFrame >= this.animationSpeed) {
             this.currentFrame = 0;
@@ -62,7 +60,7 @@ class MovingBoxLandscapeHitBox {
         return this.Box.width;
     }
     get height() {
-        return this.Box.height;
+        return this.Box.height / 2;
     }
     get dx() {
         return this.Box.dx;
@@ -167,8 +165,9 @@ class Enemies {
     }
     draw() {
         this.loopEnemies((enemy) => {
-            enemy.requestNewFrameAnimation(enemy.speed);
-            this.Game.Landscape.drawImage(enemy.sprites[enemy.direction][enemy.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
+            if (this.Game.status === GameStatus.Run)
+                enemy.requestNewFrameAnimation(enemy.speed);
+            this.Game.Landscape.currentScene.drawImage(enemy.sprites[enemy.direction][enemy.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
         });
     }
     collisions() {
@@ -245,9 +244,9 @@ class EventManager {
                 this.isAttackPressed = true;
                 break;
             case "p":
-                if (this.Game.status === GameStatus.Run || this.Game.status === GameStatus.Paused) {
+                if (this.Game.status === GameStatus.Run || this.Game.status === GameStatus.Stopped) {
                     this.Game.status = this.Game.status === GameStatus.Run
-                        ? GameStatus.Paused
+                        ? GameStatus.Stopped
                         : GameStatus.Run;
                 }
                 break;
@@ -394,8 +393,8 @@ function movingBoxCanvasCollision(movingBox, canvas) {
 var GameStatus;
 (function (GameStatus) {
     GameStatus[GameStatus["Run"] = 0] = "Run";
-    GameStatus[GameStatus["Paused"] = 1] = "Paused";
-    GameStatus[GameStatus["Stopped"] = 2] = "Stopped";
+    GameStatus[GameStatus["Stopped"] = 1] = "Stopped";
+    GameStatus[GameStatus["SlideScene"] = 2] = "SlideScene";
 })(GameStatus || (GameStatus = {}));
 ;
 class Game {
@@ -418,27 +417,55 @@ class Game {
     }
     loop() {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
-        if (this.status === GameStatus.Run) {
-            this.Player.checkInvicibility();
-            this.Sword.events();
+        switch (this.status) {
+            case GameStatus.Run:
+                this.runLoop();
+                break;
+            case GameStatus.Stopped:
+                this.stoppedLoop();
+                break;
+            case GameStatus.SlideScene:
+                this.slideSceneLoop();
+                break;
+            default:
+                this.runLoop();
+                break;
         }
+    }
+    runLoop() {
+        this.Player.checkInvicibility();
+        this.Sword.listenEvents();
+        this.Player.listenEvents();
+        this.Enemies.listenEvents();
+        this.Player.collisions();
+        this.Sword.collisions();
+        this.Enemies.collisions();
+        this.Landscape.collisions();
+        this.Player.move();
+        this.Enemies.move();
         this.Landscape.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
         this.Hud.draw();
-        if (this.status === GameStatus.Run) {
-            this.Player.listenEvents();
-            this.Enemies.listenEvents();
-            this.Player.collisions();
-            this.Sword.collisions();
-            this.Enemies.collisions();
-            this.Landscape.collisions();
-            this.Player.move();
-            this.Enemies.move();
-            this.Sword.reset();
-            this.EventManager.newFrame();
-        }
+        this.Sword.reset();
+        this.EventManager.newFrame();
+    }
+    stoppedLoop() {
+        this.Landscape.draw();
+        this.Enemies.draw();
+        this.Sword.draw();
+        this.Player.draw();
+        this.Hud.draw();
+    }
+    slideSceneLoop() {
+        this.Landscape.slideSceneAnimationMove();
+        this.Player.slideSceneAnimationMove();
+        this.Landscape.draw();
+        this.Enemies.draw();
+        this.Sword.draw();
+        this.Player.draw();
+        this.Hud.draw();
     }
     drawImage(sprite, x, y, width, height) {
         this.ctx.beginPath();
@@ -462,7 +489,7 @@ class Hud {
         this.Game.ctx.beginPath();
         this.Game.ctx.font = "16px Ubuntu";
         this.Game.ctx.fillStyle = "#fff";
-        this.Game.ctx.fillText("HP: " + this.Game.Player.hp + " Score: " + this.Game.Player.score + "/" + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol), 8 + this.x, 20 + this.y);
+        this.Game.ctx.fillText("HP: " + this.Game.Player.hp + " Score: " + this.Game.Player.score + "/" + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol) + " Player: x" + this.Game.Player.x + " y" + this.Game.Player.y, 8 + this.x, 20 + this.y);
         this.Game.ctx.closePath();
     }
 }
@@ -470,32 +497,33 @@ class Hud {
 class Landscape {
     constructor(game, scene) {
         this.Game = game;
-        this.Scene = scene;
+        this.currentScene = scene;
+        this.nextScene = null;
         this.x = 0;
         this.y = 0;
-    }
-    get currentScene() {
-        return this.Scene;
+        this.dr = 0;
+        this.dc = 0;
+        this.slideSceneAnimationSpeed = 8;
     }
     get cellSize() {
-        return this.Scene.cellSize;
+        return this.currentScene.cellSize;
     }
     get nbRow() {
-        return this.Scene.nbRow;
+        return this.currentScene.nbRow;
     }
     get nbCol() {
-        return this.Scene.nbCol;
+        return this.currentScene.nbCol;
     }
     get width() {
-        return this.Scene.cellSize * this.Scene.nbCol;
+        return this.currentScene.cellSize * this.currentScene.nbCol;
     }
     get height() {
-        return this.Scene.cellSize * this.Scene.nbRow;
+        return this.currentScene.cellSize * this.currentScene.nbRow;
     }
-    loopCells(callback) {
+    loopCells(callback, scene = this.currentScene) {
         for (let col = 0; col < this.nbCol; col++) {
             for (let row = 0; row < this.nbRow; row++) {
-                callback(this.Scene.getCell(col, row), col, row);
+                callback(scene.getCell(col, row), col, row);
             }
         }
     }
@@ -508,54 +536,96 @@ class Landscape {
     }
     draw() {
         this.loopCells((cell, col, row) => {
-            this.drawImage(this.Game.BrickCollection.get(cell.brick).sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
+            this.currentScene.drawImage(this.Game.BrickCollection.get(cell.brick).sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
         });
+        if (this.nextScene !== null) {
+            this.loopCells((cell, col, row) => {
+                this.nextScene.drawImage(this.Game.BrickCollection.get(cell.brick).sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
+            }, this.nextScene);
+        }
+    }
+    slideSceneAnimationMove() {
+        if (this.dc === 1) {
+            this.currentScene.x -= this.slideSceneAnimationSpeed;
+            this.nextScene.x -= this.slideSceneAnimationSpeed;
+        }
+        else if (this.dc === -1) {
+            this.currentScene.x += this.slideSceneAnimationSpeed;
+            this.nextScene.x += this.slideSceneAnimationSpeed;
+        }
+        else if (this.dr === 1) {
+            this.currentScene.y -= this.slideSceneAnimationSpeed;
+            this.nextScene.y -= this.slideSceneAnimationSpeed;
+        }
+        else if (this.dr === -1) {
+            this.currentScene.y += this.slideSceneAnimationSpeed;
+            this.nextScene.y += this.slideSceneAnimationSpeed;
+        }
+        if ((this.nextScene.y <= 0 && this.dr === 1) ||
+            (this.nextScene.y >= 0 && this.dr === -1) ||
+            (this.nextScene.x <= 0 && this.dc === 1) ||
+            (this.nextScene.x >= 0 && this.dc === -1)) {
+            this.nextScene.y = 0;
+            this.nextScene.x = 0;
+            this.dr = 0;
+            this.dc = 0;
+            this.currentScene = this.nextScene;
+            this.nextScene = null;
+            this.Game.Enemies = new Enemies(this.Game);
+            this.Game.status = GameStatus.Run;
+        }
     }
     collisions() {
     }
     drawImage(sprite, x, y, width, height) {
         this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
     }
-    changeScene(direction) {
-        let c = this.currentScene.c; // TODO: Rename vars names
-        let r = this.currentScene.r;
-        let dc = 0;
-        let dr = 0;
+    slideScene(direction) {
+        let currentSceneCol = this.currentScene.c;
+        let currentSceneRow = this.currentScene.r;
         if (direction === Direction.Left) {
-            dc = -1;
+            this.dc = -1;
         }
         else if (direction === Direction.Right) {
-            dc = 1;
+            this.dc = 1;
         }
         else if (direction === Direction.Up) {
-            dr = -1;
+            this.dr = -1;
         }
         else if (direction === Direction.Down) {
-            dr = 1;
+            this.dr = 1;
         }
         else {
-            this.Game.Player.dx = 0;
-            this.Game.Player.dy = 0;
             return;
         }
-        if (!(c + dc < 0 || c + dc > this.Game.Overworld.nbCol - 1 || r + dr < 0 || r + dr > this.Game.Overworld.nbRow - 1)) {
-            this.Scene = this.Game.Overworld.map[c + dc][r + dr];
-            this.Game.Enemies = new Enemies(this.Game);
+        if (!(currentSceneCol + this.dc < 0 ||
+            currentSceneCol + this.dc > this.Game.Overworld.nbCol - 1 ||
+            currentSceneRow + this.dr < 0 ||
+            currentSceneRow + this.dr > this.Game.Overworld.nbRow - 1)) {
+            this.nextScene = this.Game.Overworld.map[currentSceneCol + this.dc][currentSceneRow + this.dr];
             if (direction === Direction.Left) {
-                this.Game.Player.x = this.width - this.Game.Player.width;
+                this.nextScene.x = -this.width;
+                this.nextScene.y = 0;
             }
             else if (direction === Direction.Right) {
-                this.Game.Player.x = 0;
+                this.nextScene.x = this.width;
+                this.nextScene.y = 0;
             }
             else if (direction === Direction.Up) {
-                this.Game.Player.y = this.height - this.Game.Player.height;
+                this.nextScene.y = -this.height;
+                this.nextScene.x = 0;
             }
             else if (direction === Direction.Down) {
-                this.Game.Player.y = 0;
+                this.nextScene.y = this.height;
+                this.nextScene.x = 0;
             }
             this.Game.Player.dx = 0;
             this.Game.Player.dy = 0;
+            this.Game.status = GameStatus.SlideScene;
+            return;
         }
+        this.dc = 0;
+        this.dr = 0;
     }
 }
 
@@ -570,13 +640,16 @@ class Cell extends SimpleBox {
     }
 }
 class Scene {
-    constructor(overworld, c, r) {
+    constructor(game, overworld, c, r) {
         this.cells = [];
         this.nbRow = 11;
         this.nbCol = 16;
         this.cellSize = 64;
         this.hasEnemies = true;
+        this.Game = game;
         this.Overworld = overworld;
+        this.x = 0;
+        this.y = 0;
         this.c = c;
         this.r = r;
         for (let c = 0; c < this.nbCol; c++) {
@@ -609,6 +682,9 @@ class Scene {
     getCell(col, row) {
         return this.cells[col][row];
     }
+    drawImage(sprite, x, y, width, height) {
+        this.Game.Landscape.drawImage(sprite, x + this.x, y + this.y, width, height);
+    }
 }
 class Overworld {
     constructor(game) {
@@ -621,7 +697,7 @@ class Overworld {
         for (let c = 0; c < this.nbCol; c++) {
             this.map[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
-                this.map[c][r] = new Scene(this, c, r);
+                this.map[c][r] = new Scene(this.Game, this, c, r);
             }
         }
     }
@@ -675,7 +751,7 @@ class Player extends AnimatedMovingBox {
         }
     }
     draw() {
-        if (this.isMoving) {
+        if (this.isMoving && this.Game.status !== GameStatus.Stopped) {
             this.requestNewFrameAnimation();
         }
         let sprite = this.isAttack
@@ -689,9 +765,26 @@ class Player extends AnimatedMovingBox {
         this.dx = 0;
         this.dy = 0;
     }
+    slideSceneAnimationMove() {
+        if (this.Game.Landscape.dc === 1) {
+            this.dx = -this.Game.Landscape.slideSceneAnimationSpeed;
+        }
+        else if (this.Game.Landscape.dc === -1) {
+            this.dx = this.Game.Landscape.slideSceneAnimationSpeed;
+        }
+        else if (this.Game.Landscape.dr === 1) {
+            this.dy = -this.Game.Landscape.slideSceneAnimationSpeed;
+        }
+        else if (this.Game.Landscape.dr === -1) {
+            this.dy = this.Game.Landscape.slideSceneAnimationSpeed;
+        }
+        movingBoxCanvasCollision(this, this.Game.Landscape);
+        this.isMoving = true;
+        this.move();
+    }
     collisions() {
-        if (simpleMovingBoxCanvasCollision(this, this.Game.Landscape)) {
-            this.Game.Landscape.changeScene(this.direction);
+        if (movingBoxCanvasCollision(this, this.Game.Landscape)) {
+            this.Game.Landscape.slideScene(this.direction);
         }
         this.Game.Landscape.loopCollision((cell, col, row) => {
             movingBoxCollision(this.landscapeHitBox, cell);
@@ -803,7 +896,7 @@ class Sword extends SimpleBox {
             });
         }
     }
-    events() {
+    listenEvents() {
         if (this.Game.Player.isAttack) {
             if (this.Game.Player.direction == Direction.Up) {
                 this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
