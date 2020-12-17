@@ -114,36 +114,39 @@ class Player extends AnimatedMovingBox {
     }
 
     listenEvents(): void {
-        if (this.Game.EventManager.isAttackPressed) {
-            this.isAttack = true;
-            return;
-        }
+        this.isAttack = this.Game.EventManager.isAttackPressed
+                      ? true
+                      : false;
 
-        this.isAttack = false;
-
-        if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) && !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
+        if (
+            (this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) && !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)
+        ) {
             if (this.Game.EventManager.isDownPressed) {
-                this.dy = this.speed;
+                if (!this.Game.EventManager.isAttackPressed) this.dy = this.speed;
                 this.direction = Direction.Down;
-            } else if (this.Game.EventManager.isUpPressed) {
-                this.dy = -this.speed;
+            }
+            else if (this.Game.EventManager.isUpPressed) {
+                if (!this.Game.EventManager.isAttackPressed) this.dy = -this.speed;
                 this.direction = Direction.Up;
             }
-        } else if ((this.Game.EventManager.isRightPressed || this.Game.EventManager.isLeftPressed) && !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)) {
+        }
+        else if (
+            (this.Game.EventManager.isRightPressed || this.Game.EventManager.isLeftPressed) &&
+            !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)
+        ) {
             if (this.Game.EventManager.isRightPressed) {
-                this.dx = this.speed;
+                if (!this.Game.EventManager.isAttackPressed) this.dx = this.speed;
                 this.direction = Direction.Right;
-            } else if (this.Game.EventManager.isLeftPressed) {
-                this.dx = -this.speed;
+            }
+            else if (this.Game.EventManager.isLeftPressed) {
+                if (!this.Game.EventManager.isAttackPressed) this.dx = -this.speed;
                 this.direction = Direction.Left;
             }
         }
 
-        this.isMoving =
-            this.dx != 0 || this.dy != 0
-            ? true
-            : false
-        ;
+        this.isMoving = this.dx != 0 || this.dy != 0
+                      ? true
+                      : false;
     }
 
     takeDamage(damage: number): void {
