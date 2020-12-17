@@ -226,7 +226,6 @@ class EventManager {
             return;
         }
         ;
-        let preventDefault = true;
         switch (e.key) {
             case "ArrowRight":
                 this.isRightPressed = true;
@@ -250,15 +249,10 @@ class EventManager {
                         : GameStatus.Run;
                 }
                 break;
-            default:
-                preventDefault = false;
-                break;
         }
-        if (preventDefault)
-            e.preventDefault();
+        e.preventDefault();
     }
     keyupEvent(e) {
-        let preventDefault = true;
         switch (e.key) {
             case "ArrowRight":
                 this.isRightPressed = false;
@@ -275,12 +269,8 @@ class EventManager {
             case "q":
                 this.isAttackPressed = false;
                 break;
-            default:
-                preventDefault = false;
-                break;
         }
-        if (preventDefault)
-            e.preventDefault();
+        e.preventDefault();
     }
     newFrame() {
         if (this.isAttackPressed) {
