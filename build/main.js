@@ -1,3 +1,6 @@
+class SoundEffectPlayer {
+}
+
 class SpriteLoader {
     static load(src) {
         let sprite = new Image();
@@ -388,6 +391,10 @@ class Game {
         this.Canvas.height = this.Landscape.height + this.Hud.height;
         this.status = GameStatus.Run;
     }
+    run() {
+        window.requestAnimationFrame(() => this.run());
+        this.loop();
+    }
     loop() {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
         switch (this.status) {
@@ -633,7 +640,7 @@ class Scene {
         this.y = 0;
         this.c = c;
         this.r = r;
-        this.music = AudioLoader.load("./sounds/overworld.mp3", true);
+        this.music = AudioLoader.load("./sounds/music/overworld.mp3", true);
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
@@ -682,7 +689,7 @@ class Overworld {
                 this.map[c][r] = new Scene(this.Game, this, c, r);
             }
         }
-        this.map[1][1].music = AudioLoader.load("./sounds/dungeon.mp3", true);
+        this.map[1][1].music = AudioLoader.load("./sounds/music/dungeon.mp3", true);
     }
     getSpawnScene() {
         return this.map[this.spawnSceneColl - 1][this.spawnSceneRow - 1];
@@ -866,6 +873,7 @@ class Sword extends SimpleBox {
         this.sprites[Direction.Right] = SpriteLoader.load("./sprites/png/sword-right.png");
         this.sprites[Direction.Down] = SpriteLoader.load("./sprites/png/sword-down.png");
         this.sprites[Direction.Left] = SpriteLoader.load("./sprites/png/sword-left.png");
+        this.slashSound = AudioLoader.load("./sounds/effect/Sword_Slash.wav");
     }
     draw() {
         if (this.Game.Player.isAttack) {
@@ -907,6 +915,7 @@ class Sword extends SimpleBox {
                 this.width = this.swordWidth;
                 this.height = this.swordHeight;
             }
+            this.slashSound.play();
         }
     }
     reset() {

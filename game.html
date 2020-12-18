@@ -25,16 +25,8 @@
     <script src="./build/main.js"></script>
 
     <script type="text/javascript">
-        let canvas = document.getElementById("canvas");
-
-        Game = new Game(canvas);
-
-        function main() {
-            Game.loop();
-            requestAnimationFrame( main );
-        }
-
-        main();
+        Game = new Game(document.getElementById("canvas"));
+        Game.run();
     </script>
 </body>
 </html>
