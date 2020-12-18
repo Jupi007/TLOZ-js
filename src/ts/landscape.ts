@@ -11,10 +11,15 @@ class Landscape {
 
     slideSceneAnimationSpeed: number;
 
-    constructor(game: Game, scene: Scene) {
+    music: HTMLAudioElement;
+
+    constructor(game: Game) {
         this.Game = game;
-        this.currentScene = scene;
+        this.currentScene = this.Game.Overworld.getSpawnScene();
         this.nextScene = null;
+
+        this.music = this.currentScene.music;
+        this.music.play();
 
         this.x = 0;
         this.y = 0;
@@ -114,6 +119,13 @@ class Landscape {
 
             this.dr = 0;
             this.dc = 0;
+
+            if (this.music.src != this.nextScene.music.src) {
+                this.music.pause();
+                this.music.currentTime = 0;
+                this.music = this.nextScene.music;
+                this.music.play();
+            }
 
             this.currentScene = this.nextScene;
             this.nextScene = null;

@@ -6,6 +6,14 @@ class SpriteLoader {
     }
 }
 
+class AudioLoader {
+    static load(src: string, loop:boolean = false): HTMLAudioElement {
+        let audio = new Audio(src);
+        audio.loop = loop;
+        return audio;
+    }
+}
+
 abstract class SimpleBox {
     x: number;
     y: number;

@@ -5,6 +5,13 @@ class SpriteLoader {
         return sprite;
     }
 }
+class AudioLoader {
+    static load(src, loop = false) {
+        let audio = new Audio(src);
+        audio.loop = loop;
+        return audio;
+    }
+}
 class SimpleBox {
 }
 var Direction;
@@ -370,7 +377,7 @@ class Game {
         this.ctx = this.Canvas.getContext("2d");
         this.EventManager = new EventManager(this);
         this.Overworld = new Overworld(this);
-        this.Landscape = new Landscape(this, this.Overworld.getSpawnScene());
+        this.Landscape = new Landscape(this);
         this.Player = new Player(this);
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
@@ -461,10 +468,12 @@ class Hud {
 }
 
 class Landscape {
-    constructor(game, scene) {
+    constructor(game) {
         this.Game = game;
-        this.currentScene = scene;
+        this.currentScene = this.Game.Overworld.getSpawnScene();
         this.nextScene = null;
+        this.music = this.currentScene.music;
+        this.music.play();
         this.x = 0;
         this.y = 0;
         this.dr = 0;
@@ -535,6 +544,12 @@ class Landscape {
             this.nextScene.x = 0;
             this.dr = 0;
             this.dc = 0;
+            if (this.music.src != this.nextScene.music.src) {
+                this.music.pause();
+                this.music.currentTime = 0;
+                this.music = this.nextScene.music;
+                this.music.play();
+            }
             this.currentScene = this.nextScene;
             this.nextScene = null;
             this.Game.Enemies = new Enemies(this.Game);
@@ -618,6 +633,7 @@ class Scene {
         this.y = 0;
         this.c = c;
         this.r = r;
+        this.music = AudioLoader.load("./sounds/overworld.mp3", true);
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
@@ -666,6 +682,7 @@ class Overworld {
                 this.map[c][r] = new Scene(this.Game, this, c, r);
             }
         }
+        this.map[1][1].music = AudioLoader.load("./sounds/dungeon.mp3", true);
     }
     getSpawnScene() {
         return this.map[this.spawnSceneColl - 1][this.spawnSceneRow - 1];

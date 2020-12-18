@@ -31,6 +31,8 @@ class Scene {
 
     hasEnemies = true;
 
+    music: HTMLAudioElement;
+
     constructor(game: Game, overworld: Overworld, c: number, r: number) {
         this.Game = game;
         this.Overworld = overworld;
@@ -40,6 +42,8 @@ class Scene {
 
         this.c = c;
         this.r = r;
+
+        this.music = AudioLoader.load("./sounds/overworld.mp3", true);
 
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
@@ -116,6 +120,8 @@ class Overworld {
                 this.map[c][r] = new Scene(this.Game, this, c, r);
             }
         }
+
+        this.map[1][1].music = AudioLoader.load("./sounds/dungeon.mp3", true);
     }
 
     getSpawnScene(): Scene {

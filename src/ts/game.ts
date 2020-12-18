@@ -20,7 +20,7 @@ class Game {
 
         this.EventManager = new EventManager(this);
         this.Overworld = new Overworld(this);
-        this.Landscape = new Landscape(this, this.Overworld.getSpawnScene());
+        this.Landscape = new Landscape(this);
         this.Player = new Player(this);
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
