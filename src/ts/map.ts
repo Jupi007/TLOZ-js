@@ -1,7 +1,7 @@
 class Cell extends SimpleBox {
-    brick: string;
+    brick: Brick;
 
-    constructor(x: number, y: number, size: number, brick: string) {
+    constructor(x: number, y: number, size: number, brick: Brick) {
         super();
 
         this.x = x;
@@ -48,29 +48,29 @@ class Scene {
                     this.cellSize * c,
                     this.cellSize * r,
                     this.cellSize,
-                    "default"
+                    new DefaultBrick()
                 );
             }
         }
 
         if (this.c == 0) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[0][r].brick = "wall";
+                this.cells[0][r].brick = new WallBrick();
             }
         }
         if (this.c == this.Overworld.nbCol-1) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[this.nbCol-1][r].brick = "wall";
+                this.cells[this.nbCol-1][r].brick = new WallBrick();
             }
         }
         if (this.r == 0) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][0].brick = "wall";
+                this.cells[c][0].brick = new WallBrick();
             }
         }
         if (this.r == this.Overworld.nbRow-1) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][this.nbRow-1].brick = "wall";
+                this.cells[c][this.nbRow-1].brick = new WallBrick();
             }
         }
     }

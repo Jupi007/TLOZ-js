@@ -55,7 +55,7 @@ class Landscape {
 
     loopCollision(callback: Function): void {
         this.loopCells((cell, col, row) => {
-            if (this.Game.BrickCollection.get(cell.brick).hasCollisions) {
+            if (cell.brick.hasCollisions) {
                 callback(cell, col, row);
             }
         });
@@ -64,7 +64,7 @@ class Landscape {
     draw(): void {
         this.loopCells((cell, col, row) => {
             this.currentScene.drawImage(
-                this.Game.BrickCollection.get(cell.brick).sprite,
+                cell.brick.sprite,
                 this.cellSize * col,
                 this.cellSize * row,
                 this.cellSize,
@@ -75,7 +75,7 @@ class Landscape {
         if (this.nextScene !== null) {
             this.loopCells((cell, col, row) => {
                 this.nextScene.drawImage(
-                    this.Game.BrickCollection.get(cell.brick).sprite,
+                    cell.brick.sprite,
                     this.cellSize * col,
                     this.cellSize * row,
                     this.cellSize,

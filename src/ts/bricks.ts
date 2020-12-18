@@ -8,16 +8,14 @@ class Brick {
     }
 }
 
-const defaultBrick = new Brick("./sprites/png/default.png");
-const wallBrick = new Brick("./sprites/png/wall.png", true);
+class DefaultBrick extends Brick {
+    constructor() {
+        super("./sprites/png/default.png");
+    }
+}
 
-class BrickCollection {
-    bricks = {
-        "default": defaultBrick,
-        "wall": wallBrick,
-    };
-
-    get(brick): Brick {
-        return this.bricks[brick];
+class WallBrick extends Brick {
+    constructor() {
+        super("./sprites/png/wall.png", true);
     }
 }

@@ -5,7 +5,6 @@ class Game {
     ctx: CanvasRenderingContext2D;
 
     Overworld: Overworld;
-    BrickCollection: BrickCollection;
     Landscape: Landscape;
     Player: Player;
     Sword: Sword;
@@ -21,7 +20,6 @@ class Game {
 
         this.EventManager = new EventManager(this);
         this.Overworld = new Overworld(this);
-        this.BrickCollection = new BrickCollection();
         this.Landscape = new Landscape(this, this.Overworld.getSpawnScene());
         this.Player = new Player(this);
         this.Sword = new Sword(this);
@@ -39,7 +37,7 @@ class Game {
 
     loop(): void {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
-        
+
         switch (this.status) {
             case GameStatus.Run:
                 this.runLoop();

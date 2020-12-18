@@ -88,17 +88,14 @@ class Brick {
         this.hasCollisions = hasCollisions;
     }
 }
-const defaultBrick = new Brick("./sprites/png/default.png");
-const wallBrick = new Brick("./sprites/png/wall.png", true);
-class BrickCollection {
+class DefaultBrick extends Brick {
     constructor() {
-        this.bricks = {
-            "default": defaultBrick,
-            "wall": wallBrick,
-        };
+        super("./sprites/png/default.png");
     }
-    get(brick) {
-        return this.bricks[brick];
+}
+class WallBrick extends Brick {
+    constructor() {
+        super("./sprites/png/wall.png", true);
     }
 }
 
@@ -373,7 +370,6 @@ class Game {
         this.ctx = this.Canvas.getContext("2d");
         this.EventManager = new EventManager(this);
         this.Overworld = new Overworld(this);
-        this.BrickCollection = new BrickCollection();
         this.Landscape = new Landscape(this, this.Overworld.getSpawnScene());
         this.Player = new Player(this);
         this.Sword = new Sword(this);
@@ -499,18 +495,18 @@ class Landscape {
     }
     loopCollision(callback) {
         this.loopCells((cell, col, row) => {
-            if (this.Game.BrickCollection.get(cell.brick).hasCollisions) {
+            if (cell.brick.hasCollisions) {
                 callback(cell, col, row);
             }
         });
     }
     draw() {
         this.loopCells((cell, col, row) => {
-            this.currentScene.drawImage(this.Game.BrickCollection.get(cell.brick).sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
+            this.currentScene.drawImage(cell.brick.sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
         });
         if (this.nextScene !== null) {
             this.loopCells((cell, col, row) => {
-                this.nextScene.drawImage(this.Game.BrickCollection.get(cell.brick).sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
+                this.nextScene.drawImage(cell.brick.sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
             }, this.nextScene);
         }
     }
@@ -625,27 +621,27 @@ class Scene {
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[c][r] = new Cell(this.cellSize * c, this.cellSize * r, this.cellSize, "default");
+                this.cells[c][r] = new Cell(this.cellSize * c, this.cellSize * r, this.cellSize, new DefaultBrick());
             }
         }
         if (this.c == 0) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[0][r].brick = "wall";
+                this.cells[0][r].brick = new WallBrick();
             }
         }
         if (this.c == this.Overworld.nbCol - 1) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[this.nbCol - 1][r].brick = "wall";
+                this.cells[this.nbCol - 1][r].brick = new WallBrick();
             }
         }
         if (this.r == 0) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][0].brick = "wall";
+                this.cells[c][0].brick = new WallBrick();
             }
         }
         if (this.r == this.Overworld.nbRow - 1) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][this.nbRow - 1].brick = "wall";
+                this.cells[c][this.nbRow - 1].brick = new WallBrick();
             }
         }
     }
