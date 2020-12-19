@@ -387,6 +387,7 @@ class Game {
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
         this.Hud = new Hud(this);
+        this.GameOverScreen = new GameOverScreen(this);
         this.Landscape.y = this.Hud.height;
         this.Hud.width = this.Landscape.width;
         this.Canvas.width = this.Landscape.width;
@@ -410,9 +411,9 @@ class Game {
                 this.slideSceneLoop();
                 break;
             case GameStatus.GameOver:
-                this.Landscape.music.pause();
-                window.alert("Game Over!");
-                document.location.reload();
+                this.gameOverLoop();
+                //window.alert("Game Over!");
+                //document.location.reload();
                 break;
             default:
                 this.runLoop();
@@ -420,7 +421,6 @@ class Game {
         }
     }
     runLoop() {
-        this.Player.checkInvicibility();
         this.Sword.listenEvents();
         this.Player.listenEvents();
         this.Enemies.listenEvents();
@@ -436,6 +436,7 @@ class Game {
         this.Player.draw();
         this.Hud.draw();
         this.Sword.reset();
+        this.Player.reset();
         this.EventManager.newFrame();
     }
     stoppedLoop() {
@@ -444,6 +445,14 @@ class Game {
         this.Sword.draw();
         this.Player.draw();
         this.Hud.draw();
+    }
+    gameOverLoop() {
+        this.Landscape.draw();
+        this.Enemies.draw();
+        this.Sword.draw();
+        this.Player.draw();
+        this.Hud.draw();
+        this.GameOverScreen.draw();
     }
     slideSceneLoop() {
         this.Landscape.slideSceneAnimationMove();
@@ -461,6 +470,54 @@ class Game {
     }
 }
 
+class GameOverScreen {
+    constructor(game) {
+        this.currentFrame = 0;
+        this.Game = game;
+        this.playerRotationAnimationDuration = 100;
+        this.playerRotationAnimationSpeed = 8;
+        this.blackScreen = 180; // die music duration is 156
+        this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
+    }
+    draw() {
+        this.currentFrame++;
+        if (this.currentFrame < this.playerRotationAnimationDuration) {
+            if (this.currentFrame % thisplayerRotationAnimationSpeed === 0) {
+                switch (this.Game.Player.direction) {
+                    case Direction.Up:
+                        this.Game.Player.direction = Direction.Right;
+                        break;
+                    case Direction.Right:
+                        this.Game.Player.direction = Direction.Down;
+                        break;
+                    case Direction.Down:
+                        this.Game.Player.direction = Direction.Left;
+                        break;
+                    case Direction.Left:
+                        this.Game.Player.direction = Direction.Up;
+                        break;
+                }
+            }
+            return;
+        }
+        if (this.currentFrame < this.blackScreen) {
+            return;
+        }
+        this.music.play();
+        this.Game.ctx.beginPath();
+        this.Game.ctx.fillStyle = "#000";
+        this.Game.ctx.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height);
+        this.Game.ctx.closePath();
+        this.Game.ctx.beginPath();
+        this.Game.ctx.font = "24px NES-font";
+        this.Game.ctx.fillStyle = "#fff";
+        this.Game.ctx.textBaseline = 'middle';
+        this.Game.ctx.textAlign = 'center';
+        this.Game.ctx.fillText("GAME OVER", this.Game.Canvas.width / 2, this.Game.Canvas.height / 2);
+        this.Game.ctx.closePath();
+    }
+}
+
 class Hud {
     constructor(game) {
         this.Game = game;
@@ -474,9 +531,25 @@ class Hud {
         this.Game.ctx.fillRect(this.x, this.y, this.width, this.height);
         this.Game.ctx.closePath();
         this.Game.ctx.beginPath();
-        this.Game.ctx.font = "16px Ubuntu";
+        this.Game.ctx.font = "16px NES-font";
         this.Game.ctx.fillStyle = "#fff";
-        this.Game.ctx.fillText("HP: " + this.Game.Player.hp + " Score: " + this.Game.Player.score + "/" + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol) + " Player: x" + this.Game.Player.x + " y" + this.Game.Player.y, 8 + this.x, 20 + this.y);
+        this.Game.ctx.textBaseline = 'middle';
+        this.Game.ctx.textAlign = 'left';
+        this.Game.ctx.fillText("HP: " + this.Game.Player.hp, this.x + this.height / 2, this.y + this.height / 2);
+        this.Game.ctx.closePath();
+        this.Game.ctx.beginPath();
+        this.Game.ctx.font = "16px NES-font";
+        this.Game.ctx.fillStyle = "#fff";
+        this.Game.ctx.textBaseline = 'middle';
+        this.Game.ctx.textAlign = 'center';
+        this.Game.ctx.fillText("PLAYER: X" + this.Game.Player.x + " Y" + this.Game.Player.y, this.x + this.width / 2, this.y + this.height / 2);
+        this.Game.ctx.closePath();
+        this.Game.ctx.beginPath();
+        this.Game.ctx.font = "16px NES-font";
+        this.Game.ctx.fillStyle = "#fff";
+        this.Game.ctx.textBaseline = 'middle';
+        this.Game.ctx.textAlign = 'right';
+        this.Game.ctx.fillText(" SCORE: " + this.Game.Player.score + "/" + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol), this.width - (this.height / 2) + this.x, this.y + this.height / 2);
         this.Game.ctx.closePath();
     }
 }
@@ -836,6 +909,7 @@ class Player extends AnimatedMovingBox {
         }
         this.setInvicibility();
         if (this.hp <= 0) {
+            this.Game.Landscape.music.pause();
             this.dieSound.play();
             this.Game.status = GameStatus.GameOver;
         }
@@ -864,7 +938,8 @@ class Player extends AnimatedMovingBox {
         this.isInvincible = true;
         this.invincibleTime = performance.now();
     }
-    checkInvicibility() {
+    reset() {
+        this.isMoving = false;
         if (this.isInvincible && this.invincibleTime + 1000 < performance.now()) {
             this.isInvincible = false;
         }

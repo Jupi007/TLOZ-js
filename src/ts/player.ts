@@ -171,6 +171,7 @@ class Player extends AnimatedMovingBox {
         this.setInvicibility();
 
         if (this.hp <= 0) {
+            this.Game.Landscape.music.pause();
             this.dieSound.play();
             this.Game.status = GameStatus.GameOver;
         }
@@ -203,7 +204,9 @@ class Player extends AnimatedMovingBox {
         this.invincibleTime = performance.now()
     }
 
-    checkInvicibility(): void {
+    reset(): void {
+        this.isMoving = false;
+
         if (this.isInvincible && this.invincibleTime + 1000 < performance.now()) {
             this.isInvincible = false;
         }

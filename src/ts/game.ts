@@ -11,6 +11,7 @@ class Game {
     Enemies: Enemies;
     EventManager: EventManager;
     Hud: Hud;
+    GameOverScreen: GameOverScreen;
 
     status: GameStatus;
 
@@ -25,6 +26,7 @@ class Game {
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
         this.Hud = new Hud(this);
+        this.GameOverScreen = new GameOverScreen(this);
 
         this.Landscape.y = this.Hud.height;
         this.Hud.width = this.Landscape.width;
@@ -54,9 +56,9 @@ class Game {
                 this.slideSceneLoop();
                 break;
             case GameStatus.GameOver:
-                this.Landscape.music.pause();
-                window.alert("Game Over!");
-                document.location.reload();
+                this.gameOverLoop();
+                //window.alert("Game Over!");
+                //document.location.reload();
                 break;
 
             default:
@@ -66,8 +68,6 @@ class Game {
     }
 
     runLoop(): void {
-        this.Player.checkInvicibility();
-
         this.Sword.listenEvents();
         this.Player.listenEvents();
         this.Enemies.listenEvents();
@@ -87,6 +87,7 @@ class Game {
         this.Hud.draw();
 
         this.Sword.reset();
+        this.Player.reset();
 
         this.EventManager.newFrame();
     }
@@ -97,6 +98,16 @@ class Game {
         this.Sword.draw();
         this.Player.draw();
         this.Hud.draw();
+    }
+
+    gameOverLoop(): void {
+        this.Landscape.draw();
+        this.Enemies.draw();
+        this.Sword.draw();
+        this.Player.draw();
+        this.Hud.draw();
+
+        this.GameOverScreen.draw();
     }
 
     slideSceneLoop(): void {
