@@ -565,7 +565,7 @@ class Landscape {
         this.y = 0;
         this.dr = 0;
         this.dc = 0;
-        this.slideSceneAnimationSpeed = 8;
+        this.slideSceneAnimationSpeed = 10;
     }
     get cellSize() {
         return this.currentScene.cellSize;
@@ -794,7 +794,7 @@ class Player extends AnimatedMovingBox {
         this.y = this.Game.Landscape.cellSize;
         this.direction = Direction.Down;
         this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
-        this.animationSpeed = 8;
+        this.animationSpeed = 6;
         this.nbAnimationStep = 2;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");

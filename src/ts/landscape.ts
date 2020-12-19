@@ -27,7 +27,7 @@ class Landscape {
         this.dr = 0;
         this.dc = 0;
 
-        this.slideSceneAnimationSpeed = 8;
+        this.slideSceneAnimationSpeed = 10;
     }
 
     get cellSize(): number {

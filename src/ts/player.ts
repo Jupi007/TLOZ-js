@@ -31,7 +31,7 @@ class Player extends AnimatedMovingBox {
 
         this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
 
-        this.animationSpeed = 8;
+        this.animationSpeed = 6;
         this.nbAnimationStep = 2;
 
         this.sprites[Direction.Up] = [];
