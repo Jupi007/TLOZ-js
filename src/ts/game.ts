@@ -1,4 +1,4 @@
-enum GameStatus {Run, Stopped, SlideScene};
+enum GameStatus {Run, Stopped, SlideScene, GameOver};
 
 class Game {
     Canvas: HTMLCanvasElement;
@@ -35,6 +35,11 @@ class Game {
         this.status = GameStatus.Run;
     }
 
+    run(): void {
+        window.requestAnimationFrame(() => this.run());
+        this.loop();
+    }
+
     loop(): void {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
@@ -47,6 +52,11 @@ class Game {
                 break;
             case GameStatus.SlideScene:
                 this.slideSceneLoop();
+                break;
+            case GameStatus.GameOver:
+                this.Landscape.music.pause();
+                window.alert("Game Over!");
+                document.location.reload();
                 break;
 
             default:

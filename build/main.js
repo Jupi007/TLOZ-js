@@ -1,6 +1,3 @@
-class SoundEffectPlayer {
-}
-
 class SpriteLoader {
     static load(src) {
         let sprite = new Image();
@@ -141,6 +138,7 @@ class Octorok extends Enemy {
         this.sprites[Direction.Down] = [];
         this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/octorok-down1.png");
         this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/octorok-down2.png");
+        this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
     }
 }
 class Enemies {
@@ -161,6 +159,7 @@ class Enemies {
         });
     }
     killEnemy(enemy) {
+        enemy.dieSound.play();
         const enemyIndex = this.enemies.indexOf(enemy);
         if (enemyIndex > -1) {
             this.enemies.splice(enemyIndex, 1);
@@ -222,7 +221,7 @@ class EventManager {
         this.isDownPressed = false;
         this.isAttackPressed = false;
         this.currentAttackFrame = 0;
-        this.attackDuration = 20;
+        this.attackDuration = 10;
         this.Game = game;
         document.addEventListener("keydown", e => this.keyEvent(e, true));
         document.addEventListener("keyup", e => this.keyEvent(e, false));
@@ -247,7 +246,9 @@ class EventManager {
                 this.isDownPressed = keydown;
                 break;
             case "q":
-                this.isAttackPressed = keydown;
+                if (keydown) {
+                    this.isAttackPressed = true;
+                }
                 break;
             case "p":
                 if (keydown && (this.Game.status === GameStatus.Run || this.Game.status === GameStatus.Stopped)) {
@@ -372,6 +373,7 @@ var GameStatus;
     GameStatus[GameStatus["Run"] = 0] = "Run";
     GameStatus[GameStatus["Stopped"] = 1] = "Stopped";
     GameStatus[GameStatus["SlideScene"] = 2] = "SlideScene";
+    GameStatus[GameStatus["GameOver"] = 3] = "GameOver";
 })(GameStatus || (GameStatus = {}));
 ;
 class Game {
@@ -406,6 +408,11 @@ class Game {
                 break;
             case GameStatus.SlideScene:
                 this.slideSceneLoop();
+                break;
+            case GameStatus.GameOver:
+                this.Landscape.music.pause();
+                window.alert("Game Over!");
+                document.location.reload();
                 break;
             default:
                 this.runLoop();
@@ -732,6 +739,8 @@ class Player extends AnimatedMovingBox {
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/link-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
         this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
+        this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
+        this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
     }
     increaseScore() {
         this.score++;
@@ -815,9 +824,11 @@ class Player extends AnimatedMovingBox {
     }
     takeDamage(damage) {
         if (this.isInvincible) {
+            this.hurtSound.play();
             return;
         }
         if (this.hp - damage >= 0) {
+            this.hurtSound.play();
             this.hp -= damage;
         }
         else {
@@ -825,9 +836,8 @@ class Player extends AnimatedMovingBox {
         }
         this.setInvicibility();
         if (this.hp <= 0) {
-            this.Game.status = GameStatus.Stopped;
-            alert("Game Over !");
-            document.location.reload();
+            this.dieSound.play();
+            this.Game.status = GameStatus.GameOver;
         }
     }
     takeKnockBack() {

@@ -43,7 +43,7 @@ class Scene {
         this.c = c;
         this.r = r;
 
-        this.music = AudioLoader.load("./sounds/overworld.mp3", true);
+        this.music = AudioLoader.load("./sounds/music/overworld.mp3", true);
 
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
@@ -121,7 +121,7 @@ class Overworld {
             }
         }
 
-        this.map[1][1].music = AudioLoader.load("./sounds/dungeon.mp3", true);
+        this.map[1][1].music = AudioLoader.load("./sounds/music/dungeon.mp3", true);
     }
 
     getSpawnScene(): Scene {

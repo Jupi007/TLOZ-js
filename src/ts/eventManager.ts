@@ -8,7 +8,7 @@ class EventManager {
     isAttackPressed = false;
 
     currentAttackFrame = 0;
-    attackDuration = 20;
+    attackDuration = 10;
 
     constructor(game: Game) {
         this.Game = game;
@@ -37,7 +37,9 @@ class EventManager {
                 this.isDownPressed = keydown;
                 break;
             case "q":
-                this.isAttackPressed = keydown;
+                if (keydown) {
+                    this.isAttackPressed = true;
+                }
                 break;
             case "p":
                 if (keydown && (this.Game.status === GameStatus.Run || this.Game.status === GameStatus.Stopped)) {

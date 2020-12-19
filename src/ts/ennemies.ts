@@ -5,6 +5,8 @@ class Enemy extends AnimatedMovingBox {
 
     sprites: HTMLImageElement[][] = [];
 
+    dieSound: HTMLAudioElement;
+
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
         super(game);
 
@@ -39,10 +41,11 @@ class Octorok extends Enemy {
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/octorok-up2.png");
 
-
         this.sprites[Direction.Down] = [];
         this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/octorok-down1.png");
         this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/octorok-down2.png");
+
+        this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
     }
 }
 
@@ -77,6 +80,8 @@ class Enemies {
     }
 
     killEnemy(enemy: Enemy): void {
+        enemy.dieSound.play();
+
         const enemyIndex = this.enemies.indexOf(enemy);
 
         if (enemyIndex > -1) {

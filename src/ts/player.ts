@@ -18,6 +18,9 @@ class Player extends AnimatedMovingBox {
 
     landscapeHitBox: MovingBoxLandscapeHitBox;
 
+    hurtSound: HTMLAudioElement;
+    dieSound: HTMLAudioElement;
+
     constructor(game: Game) {
         super(game);
 
@@ -50,6 +53,9 @@ class Player extends AnimatedMovingBox {
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/link-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
         this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
+
+        this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
+        this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
     }
 
     increaseScore(): void {
@@ -151,10 +157,12 @@ class Player extends AnimatedMovingBox {
 
     takeDamage(damage: number): void {
         if (this.isInvincible) {
+            this.hurtSound.play();
             return;
         }
 
         if (this.hp - damage >= 0) {
+            this.hurtSound.play();
             this.hp -= damage;
         } else {
             this.hp = 0;
@@ -163,9 +171,8 @@ class Player extends AnimatedMovingBox {
         this.setInvicibility();
 
         if (this.hp <= 0) {
-            this.Game.status = GameStatus.Stopped;
-            alert("Game Over !");
-            document.location.reload();
+            this.dieSound.play();
+            this.Game.status = GameStatus.GameOver;
         }
     }
 

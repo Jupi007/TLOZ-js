@@ -8,6 +8,8 @@ class Sword extends SimpleBox {
 
     sprites: HTMLImageElement[] = [];
 
+    slashSound: HTMLAudioElement;
+
     constructor(game: Game) {
         super();
         this.Game = game;
@@ -16,6 +18,8 @@ class Sword extends SimpleBox {
         this.sprites[Direction.Right] = SpriteLoader.load("./sprites/png/sword-right.png");
         this.sprites[Direction.Down] = SpriteLoader.load("./sprites/png/sword-down.png");
         this.sprites[Direction.Left] = SpriteLoader.load("./sprites/png/sword-left.png");
+
+        this.slashSound = AudioLoader.load("./sounds/effect/Sword_Slash.wav");
     }
 
     draw(): void {
@@ -63,6 +67,8 @@ class Sword extends SimpleBox {
                 this.width = this.swordWidth;
                 this.height = this.swordHeight;
             }
+
+            this.slashSound.play();
         }
     }
 
