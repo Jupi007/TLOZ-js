@@ -2,7 +2,7 @@ class GameOverScreen {
     Game: Game;
 
     currentFrame = 0;
-    playerRotationAnimationDuration:number;
+    playerRotationAnimationDuration: number;
     blackScreen: number;
     playerRotationAnimationSpeed: number;
 
@@ -42,7 +42,7 @@ class GameOverScreen {
                         break;
                 }
             }
-            
+
             this.Game.Player.draw();
 
             return;

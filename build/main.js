@@ -29,16 +29,16 @@ class MovingBox extends SimpleBox {
         this.dy = 0;
     }
 }
-class AnimatedMovingBox extends MovingBox {
-    constructor(game) {
-        super();
+class GameAnimation {
+    constructor(animationStepDuration, nbAnimationStep) {
         this.currentFrame = 0;
         this.currentAnimationStep = 1;
-        this.Game = game;
+        this.animationStepDuration = animationStepDuration;
+        this.nbAnimationStep = nbAnimationStep;
     }
-    requestNewFrameAnimation(animationSpeedModifier = 1) {
-        this.currentFrame += 1 * animationSpeedModifier;
-        if (this.currentFrame >= this.animationSpeed) {
+    requestNewFrameAnimation() {
+        this.currentFrame++;
+        if (this.currentFrame >= this.animationStepDuration) {
             this.currentFrame = 0;
             this.currentAnimationStep =
                 (this.currentAnimationStep + 1 > this.nbAnimationStep)
@@ -106,10 +106,11 @@ class WallBrick extends Brick {
     }
 }
 
-class Enemy extends AnimatedMovingBox {
+class Enemy extends MovingBox {
     constructor(game, x, y, speed, direction) {
-        super(game);
+        super();
         this.sprites = [];
+        this.Game = game;
         this.x = x;
         this.y = y;
         this.speed = speed;
@@ -130,14 +131,13 @@ class Octorok extends Enemy {
         super(game, x, y, speed, direction);
         this.width = 64;
         this.height = 64;
-        this.animationSpeed = 20;
-        this.nbAnimationStep = 2;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/octorok-up2.png");
         this.sprites[Direction.Down] = [];
         this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/octorok-down1.png");
         this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/octorok-down2.png");
+        this.spritesAnimation = new GameAnimation(20 / speed, 2);
         this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
     }
 }
@@ -172,8 +172,8 @@ class Enemies {
     draw() {
         this.loopEnemies((enemy) => {
             if (this.Game.status === GameStatus.Run)
-                enemy.requestNewFrameAnimation(enemy.speed);
-            this.Game.Landscape.currentScene.drawImage(enemy.sprites[enemy.direction][enemy.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
+                enemy.spritesAnimation.requestNewFrameAnimation(enemy.speed);
+            this.Game.Landscape.currentScene.drawImage(enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
         });
     }
     collisions() {
@@ -786,9 +786,9 @@ class Overworld {
     }
 }
 
-class Player extends AnimatedMovingBox {
+class Player extends MovingBox {
     constructor(game) {
-        super(game);
+        super();
         this.width = 64;
         this.height = 64;
         this.speed = 5;
@@ -802,12 +802,11 @@ class Player extends AnimatedMovingBox {
         this.score = 0;
         this.sprites = [];
         this.spritesAttack = [];
+        this.Game = game;
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
         this.direction = Direction.Down;
         this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
-        this.animationSpeed = 6;
-        this.nbAnimationStep = 2;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/link-up2.png");
@@ -824,6 +823,8 @@ class Player extends AnimatedMovingBox {
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/link-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
         this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
+        this.spritesAnimation = new GameAnimation(6, 2);
+        this.invincibleAnimation = new GameAnimation(7, 2);
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
@@ -837,11 +838,16 @@ class Player extends AnimatedMovingBox {
     }
     draw() {
         if (this.isMoving && this.Game.status !== GameStatus.Stopped) {
-            this.requestNewFrameAnimation();
+            this.spritesAnimation.requestNewFrameAnimation();
         }
         let sprite = this.isAttack
             ? this.spritesAttack[this.direction]
-            : this.sprites[this.direction][this.currentAnimationStep];
+            : this.sprites[this.direction][this.spritesAnimation.currentAnimationStep];
+        if (this.isInvincible) {
+            this.invincibleAnimation.requestNewFrameAnimation();
+            if (this.invincibleAnimation.currentAnimationStep === 2)
+                sprite = new Image();
+        }
         this.Game.Landscape.drawImage(sprite, this.x, this.y, this.width, this.height);
     }
     move() {
@@ -920,6 +926,7 @@ class Player extends AnimatedMovingBox {
         }
         this.setInvicibility();
         if (this.hp <= 0) {
+            this.isInvincible = false;
             this.Game.Landscape.music.pause();
             this.lowHealthSound.pause();
             this.dieSound.play();

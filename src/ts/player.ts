@@ -1,4 +1,6 @@
-class Player extends AnimatedMovingBox {
+class Player extends MovingBox {
+    Game: Game;
+
     width = 64;
     height = 64;
 
@@ -13,19 +15,24 @@ class Player extends AnimatedMovingBox {
     isInvincible = false;
     invincibleTime = 0;
     invincibleDuration = 2000;
+    invincibleAnimation: GameAnimation;
 
     score = 0;
 
     sprites: HTMLImageElement[][] = [];
     spritesAttack: HTMLImageElement[] = [];
+    spritesAnimation: GameAnimation;
 
     landscapeHitBox: MovingBoxLandscapeHitBox;
 
     hurtSound: HTMLAudioElement;
     dieSound: HTMLAudioElement;
+    lowHealthSound: HTMLAudioElement;
 
     constructor(game: Game) {
-        super(game);
+        super();
+
+        this.Game = game;
 
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
@@ -33,9 +40,6 @@ class Player extends AnimatedMovingBox {
         this.direction = Direction.Down;
 
         this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
-
-        this.animationSpeed = 6;
-        this.nbAnimationStep = 2;
 
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
@@ -57,6 +61,9 @@ class Player extends AnimatedMovingBox {
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
         this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
 
+        this.spritesAnimation = new GameAnimation(6, 2);
+        this.invincibleAnimation = new GameAnimation(7, 2);
+
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
@@ -73,12 +80,17 @@ class Player extends AnimatedMovingBox {
 
     draw(): void {
         if (this.isMoving && this.Game.status !== GameStatus.Stopped) {
-            this.requestNewFrameAnimation();
+            this.spritesAnimation.requestNewFrameAnimation();
         }
 
         let sprite = this.isAttack
                    ? this.spritesAttack[this.direction]
-                   : this.sprites[this.direction][this.currentAnimationStep];
+                   : this.sprites[this.direction][this.spritesAnimation.currentAnimationStep];
+
+        if (this.isInvincible) {
+            this.invincibleAnimation.requestNewFrameAnimation();
+            if (this.invincibleAnimation.currentAnimationStep === 2) sprite = new Image();
+        }
 
         this.Game.Landscape.drawImage(
             sprite,
@@ -172,6 +184,7 @@ class Player extends AnimatedMovingBox {
         this.setInvicibility();
 
         if (this.hp <= 0) {
+            this.isInvincible = false;
             this.Game.Landscape.music.pause();
             this.lowHealthSound.pause();
             this.dieSound.play();

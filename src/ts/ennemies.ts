@@ -1,14 +1,18 @@
-class Enemy extends AnimatedMovingBox {
+class Enemy extends MovingBox {
+    Game: Game;
     speed: number;
 
     landscapeHitBox: MovingBoxLandscapeHitBox;
 
     sprites: HTMLImageElement[][] = [];
+    spritesAnimation: GameAnimation;
 
     dieSound: HTMLAudioElement;
 
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super(game);
+        super();
+
+        this.Game = game;
 
         this.x = x;
         this.y = y;
@@ -34,9 +38,6 @@ class Octorok extends Enemy {
         this.width = 64;
         this.height = 64;
 
-        this.animationSpeed = 20;
-        this.nbAnimationStep = 2;
-
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/octorok-up2.png");
@@ -44,6 +45,8 @@ class Octorok extends Enemy {
         this.sprites[Direction.Down] = [];
         this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/octorok-down1.png");
         this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/octorok-down2.png");
+
+        this.spritesAnimation = new GameAnimation(20 / speed, 2);
 
         this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
     }
@@ -96,11 +99,11 @@ class Enemies {
 
     draw(): void {
         this.loopEnemies((enemy) => {
-            if (this.Game.status === GameStatus.Run) enemy.requestNewFrameAnimation(enemy.speed);
+            if (this.Game.status === GameStatus.Run) enemy.spritesAnimation.requestNewFrameAnimation(enemy.speed);
 
 
             this.Game.Landscape.currentScene.drawImage(
-                enemy.sprites[enemy.direction][enemy.currentAnimationStep],
+                enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep],
                 enemy.x,
                 enemy.y,
                 enemy.width,
