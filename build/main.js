@@ -473,8 +473,8 @@ class Game {
 
 class GameOverScreen {
     constructor(game) {
-        this.currentFrame = 0;
         this.Game = game;
+        this.currentFrame = 0;
         this.playerRotationAnimationDuration = 100;
         this.playerRotationAnimationSpeed = 8;
         this.blackScreen = 180; // die music duration is 156
@@ -726,12 +726,12 @@ class Cell extends SimpleBox {
 class Scene {
     constructor(game, overworld, c, r) {
         this.cells = [];
+        this.Game = game;
+        this.Overworld = overworld;
         this.nbRow = 11;
         this.nbCol = 16;
         this.cellSize = 64;
         this.hasEnemies = true;
-        this.Game = game;
-        this.Overworld = overworld;
         this.x = 0;
         this.y = 0;
         this.c = c;
@@ -795,22 +795,21 @@ class Overworld {
 class Player extends MovingBox {
     constructor(game) {
         super();
-        this.width = 64;
-        this.height = 64;
-        this.speed = 5;
-        this.isMoving = false;
-        this.isAttack = false;
-        this.hp = 6;
-        this.maxHp = 6;
-        this.isInvincible = false;
-        this.invincibleTime = 0;
-        this.invincibleDuration = 2000;
-        this.score = 0;
         this.sprites = [];
         this.spritesAttack = [];
         this.Game = game;
+        this.isMoving = false;
+        this.isAttack = false;
+        this.isInvincible = false;
+        this.score = 0;
+        this.width = 64;
+        this.height = 64;
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
+        this.speed = 5;
+        this.maxHp = 6;
+        this.hp = this.maxHp;
+        this.invincibleDuration = 2000;
         this.direction = Direction.Down;
         this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
         this.sprites[Direction.Up] = [];
@@ -979,11 +978,11 @@ class Player extends MovingBox {
 class Sword extends SimpleBox {
     constructor(game) {
         super();
+        this.sprites = [];
+        this.Game = game;
         this.swordWidth = 64;
         this.swordHeight = 28;
         this.swordHandleWidth = 16;
-        this.sprites = [];
-        this.Game = game;
         this.sprites[Direction.Up] = SpriteLoader.load("./sprites/png/sword-up.png");
         this.sprites[Direction.Right] = SpriteLoader.load("./sprites/png/sword-right.png");
         this.sprites[Direction.Down] = SpriteLoader.load("./sprites/png/sword-down.png");

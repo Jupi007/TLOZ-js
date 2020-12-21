@@ -1,23 +1,23 @@
 class Player extends MovingBox {
     Game: Game;
 
-    width = 64;
-    height = 64;
+    width: number;
+    height: number;
 
-    speed = 5;
+    speed: number;
 
-    isMoving = false;
-    isAttack = false;
+    isMoving: boolean;
+    isAttack: boolean;
 
-    hp = 6;
-    maxHp = 6;
+    hp: number;
+    maxHp: number;
 
-    isInvincible = false;
-    invincibleTime = 0;
-    invincibleDuration = 2000;
+    isInvincible: boolean;
+    invincibleTime: number;
+    invincibleDuration: number;
     invincibleAnimation: GameAnimation;
 
-    score = 0;
+    score: number;
 
     sprites: HTMLImageElement[][] = [];
     spritesAttack: HTMLImageElement[] = [];
@@ -34,8 +34,23 @@ class Player extends MovingBox {
 
         this.Game = game;
 
+        this.isMoving = false;
+        this.isAttack = false;
+        this.isInvincible = false;
+
+        this.score = 0;
+
+        this.width = 64;
+        this.height = 64;
+
         this.x = this.Game.Landscape.cellSize;
         this.y = this.Game.Landscape.cellSize;
+
+        this.speed = 5;
+
+        this.maxHp = 6;
+        this.hp = this.maxHp;
+        this.invincibleDuration = 2000;
 
         this.direction = Direction.Down;
 

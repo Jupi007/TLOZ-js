@@ -1,10 +1,10 @@
 class Sword extends SimpleBox {
     Game: Game;
 
-    swordWidth = 64;
-    swordHeight = 28;
+    swordWidth: number;
+    swordHeight: number;
 
-    swordHandleWidth = 16;
+    swordHandleWidth: number;
 
     sprites: HTMLImageElement[] = [];
 
@@ -13,6 +13,10 @@ class Sword extends SimpleBox {
     constructor(game: Game) {
         super();
         this.Game = game;
+
+        this.swordWidth = 64;
+        this.swordHeight = 28;
+        this.swordHandleWidth = 16;
 
         this.sprites[Direction.Up] = SpriteLoader.load("./sprites/png/sword-up.png");
         this.sprites[Direction.Right] = SpriteLoader.load("./sprites/png/sword-right.png");

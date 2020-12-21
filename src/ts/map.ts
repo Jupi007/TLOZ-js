@@ -25,17 +25,23 @@ class Scene {
     c:number;
     r:number;
 
-    nbRow = 11;
-    nbCol = 16;
-    cellSize = 64;
+    nbRow: number;
+    nbCol: number;
+    cellSize: number;
 
-    hasEnemies = true;
+    hasEnemies: boolean;
 
     music: HTMLAudioElement;
 
     constructor(game: Game, overworld: Overworld, c: number, r: number) {
         this.Game = game;
         this.Overworld = overworld;
+
+        this.nbRow = 11;
+        this.nbCol = 16;
+        this.cellSize = 64;
+
+        this.hasEnemies = true;
 
         this.x = 0;
         this.y = 0;

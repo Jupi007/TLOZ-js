@@ -1,7 +1,7 @@
 class GameOverScreen {
     Game: Game;
 
-    currentFrame = 0;
+    currentFrame: number;
     playerRotationAnimationDuration: number;
     blackScreen: number;
     playerRotationAnimationSpeed: number;
@@ -11,6 +11,7 @@ class GameOverScreen {
     constructor(game: Game) {
         this.Game = game;
 
+        this.currentFrame = 0;
         this.playerRotationAnimationDuration = 100;
         this.playerRotationAnimationSpeed = 8;
         this.blackScreen = 180; // die music duration is 156
