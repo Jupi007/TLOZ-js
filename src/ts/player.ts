@@ -59,6 +59,7 @@ class Player extends AnimatedMovingBox {
 
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
+        this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
     }
 
     increaseScore(): void {
@@ -78,10 +79,6 @@ class Player extends AnimatedMovingBox {
         let sprite = this.isAttack
                    ? this.spritesAttack[this.direction]
                    : this.sprites[this.direction][this.currentAnimationStep];
-
-        if (this.isInvincible && this.currentAnimationStep == 1) {
-            sprite = new Image();
-        }
 
         this.Game.Landscape.drawImage(
             sprite,
@@ -163,10 +160,7 @@ class Player extends AnimatedMovingBox {
     }
 
     takeDamage(damage: number): void {
-        if (this.isInvincible) {
-            this.hurtSound.play();
-            return;
-        }
+        if (this.isInvincible)  return;
 
         if (this.hp - damage >= 0) {
             this.hurtSound.play();
@@ -179,8 +173,12 @@ class Player extends AnimatedMovingBox {
 
         if (this.hp <= 0) {
             this.Game.Landscape.music.pause();
+            this.lowHealthSound.pause();
             this.dieSound.play();
             this.Game.status = GameStatus.GameOver;
+        }
+        else if (this.hp <= 2) {
+            this.lowHealthSound.play();
         }
     }
 

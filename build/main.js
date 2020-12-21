@@ -826,6 +826,7 @@ class Player extends AnimatedMovingBox {
         this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
+        this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
     }
     increaseScore() {
         this.score++;
@@ -841,9 +842,6 @@ class Player extends AnimatedMovingBox {
         let sprite = this.isAttack
             ? this.spritesAttack[this.direction]
             : this.sprites[this.direction][this.currentAnimationStep];
-        if (this.isInvincible && this.currentAnimationStep == 1) {
-            sprite = new Image();
-        }
         this.Game.Landscape.drawImage(sprite, this.x, this.y, this.width, this.height);
     }
     move() {
@@ -911,10 +909,8 @@ class Player extends AnimatedMovingBox {
             : false;
     }
     takeDamage(damage) {
-        if (this.isInvincible) {
-            this.hurtSound.play();
+        if (this.isInvincible)
             return;
-        }
         if (this.hp - damage >= 0) {
             this.hurtSound.play();
             this.hp -= damage;
@@ -925,8 +921,12 @@ class Player extends AnimatedMovingBox {
         this.setInvicibility();
         if (this.hp <= 0) {
             this.Game.Landscape.music.pause();
+            this.lowHealthSound.pause();
             this.dieSound.play();
             this.Game.status = GameStatus.GameOver;
+        }
+        else if (this.hp <= 2) {
+            this.lowHealthSound.play();
         }
     }
     takeKnockBack() {
