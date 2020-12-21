@@ -179,7 +179,7 @@ class Enemies {
     collisions() {
         this.loopEnemies((enemy) => {
             if (movingBoxsCollision(this.Game.Player, enemy)) {
-                this.Game.Player.takeDamage(20);
+                this.Game.Player.takeDamage(1);
                 this.Game.Player.takeKnockBack();
             }
             if (movingBoxCanvasCollision(enemy, this.Game.Landscape)) {
@@ -447,11 +447,6 @@ class Game {
         this.Hud.draw();
     }
     gameOverLoop() {
-        this.Landscape.draw();
-        this.Enemies.draw();
-        this.Sword.draw();
-        this.Player.draw();
-        this.Hud.draw();
         this.GameOverScreen.draw();
     }
     slideSceneLoop() {
@@ -480,9 +475,13 @@ class GameOverScreen {
         this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
     }
     draw() {
+        this.Game.Landscape.draw();
+        this.Game.Enemies.draw();
+        this.Game.Sword.draw();
+        this.Game.Hud.draw();
         this.currentFrame++;
         if (this.currentFrame < this.playerRotationAnimationDuration) {
-            if (this.currentFrame % thisplayerRotationAnimationSpeed === 0) {
+            if (this.currentFrame % this.playerRotationAnimationSpeed === 0) {
                 switch (this.Game.Player.direction) {
                     case Direction.Up:
                         this.Game.Player.direction = Direction.Right;
@@ -498,6 +497,7 @@ class GameOverScreen {
                         break;
                 }
             }
+            this.Game.Player.draw();
             return;
         }
         if (this.currentFrame < this.blackScreen) {
@@ -524,26 +524,36 @@ class Hud {
         this.x = 0;
         this.y = 0;
         this.height = 64;
+        this.emptyHeartSprite = SpriteLoader.load('./sprites/png/empty-heart.png');
+        this.halfHeartSprite = SpriteLoader.load('./sprites/png/half-heart.png');
+        this.fullHeartSprite = SpriteLoader.load('./sprites/png/full-heart.png');
     }
     draw() {
         this.Game.ctx.beginPath();
         this.Game.ctx.fillStyle = "#000";
         this.Game.ctx.fillRect(this.x, this.y, this.width, this.height);
         this.Game.ctx.closePath();
-        this.Game.ctx.beginPath();
-        this.Game.ctx.font = "16px NES-font";
-        this.Game.ctx.fillStyle = "#fff";
-        this.Game.ctx.textBaseline = 'middle';
-        this.Game.ctx.textAlign = 'left';
-        this.Game.ctx.fillText("HP: " + this.Game.Player.hp, this.x + this.height / 2, this.y + this.height / 2);
-        this.Game.ctx.closePath();
-        this.Game.ctx.beginPath();
-        this.Game.ctx.font = "16px NES-font";
-        this.Game.ctx.fillStyle = "#fff";
-        this.Game.ctx.textBaseline = 'middle';
-        this.Game.ctx.textAlign = 'center';
-        this.Game.ctx.fillText("PLAYER: X" + this.Game.Player.x + " Y" + this.Game.Player.y, this.x + this.width / 2, this.y + this.height / 2);
-        this.Game.ctx.closePath();
+        this.drawHearts();
+        this.drawScore();
+    }
+    drawHearts() {
+        for (let i = 1; i <= this.Game.Player.maxHp / 2; i++) {
+            this.Game.ctx.beginPath();
+            this.Game.ctx.drawImage(this.emptyHeartSprite, 24 * i + 8 * i, this.height / 2 - 12, 24, 24);
+            this.Game.ctx.closePath();
+        }
+        for (let i = 1; i <= this.Game.Player.hp / 2; i++) {
+            this.Game.ctx.beginPath();
+            this.Game.ctx.drawImage(this.fullHeartSprite, 24 * i + 8 * i, this.height / 2 - 12, 24, 24);
+            this.Game.ctx.closePath();
+        }
+        if (this.Game.Player.hp % 2 === 1) {
+            this.Game.ctx.beginPath();
+            this.Game.ctx.drawImage(this.halfHeartSprite, 24 * (this.Game.Player.hp / 2 + 1) + 8 * (this.Game.Player.hp / 2 - 1), this.height / 2 - 12, 24, 24);
+            this.Game.ctx.closePath();
+        }
+    }
+    drawScore() {
         this.Game.ctx.beginPath();
         this.Game.ctx.font = "16px NES-font";
         this.Game.ctx.fillStyle = "#fff";
@@ -784,7 +794,8 @@ class Player extends AnimatedMovingBox {
         this.speed = 5;
         this.isMoving = false;
         this.isAttack = false;
-        this.hp = 100;
+        this.hp = 6;
+        this.maxHp = 6;
         this.isInvincible = false;
         this.invincibleTime = 0;
         this.score = 0;

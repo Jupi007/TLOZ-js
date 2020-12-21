@@ -18,10 +18,15 @@ class GameOverScreen {
     }
 
     draw(): void {
+        this.Game.Landscape.draw();
+        this.Game.Enemies.draw();
+        this.Game.Sword.draw();
+        this.Game.Hud.draw();
+
         this.currentFrame++;
 
         if (this.currentFrame < this.playerRotationAnimationDuration) {
-            if (this.currentFrame % thisplayerRotationAnimationSpeed === 0) {
+            if (this.currentFrame % this.playerRotationAnimationSpeed === 0) {
                 switch (this.Game.Player.direction) {
                     case Direction.Up:
                         this.Game.Player.direction = Direction.Right;
@@ -37,6 +42,8 @@ class GameOverScreen {
                         break;
                 }
             }
+            
+            this.Game.Player.draw();
 
             return;
         }

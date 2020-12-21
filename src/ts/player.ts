@@ -7,7 +7,8 @@ class Player extends AnimatedMovingBox {
     isMoving = false;
     isAttack = false;
 
-    hp = 100;
+    hp = 6;
+    maxHp = 6;
     isInvincible = false;
     invincibleTime = 0;
 

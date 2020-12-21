@@ -101,12 +101,6 @@ class Game {
     }
 
     gameOverLoop(): void {
-        this.Landscape.draw();
-        this.Enemies.draw();
-        this.Sword.draw();
-        this.Player.draw();
-        this.Hud.draw();
-
         this.GameOverScreen.draw();
     }
 
