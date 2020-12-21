@@ -73,8 +73,10 @@ class Player extends MovingBox {
         this.score++;
 
         if (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol <= this.score) {
-            alert("You win !");
-            document.location.reload();
+            this.isInvincible = false;
+            this.Game.Landscape.music.pause();
+            this.lowHealthSound.pause();
+            this.Game.status = GameStatus.Win;
         }
     }
 

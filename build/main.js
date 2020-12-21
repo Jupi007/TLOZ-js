@@ -374,6 +374,7 @@ var GameStatus;
     GameStatus[GameStatus["Stopped"] = 1] = "Stopped";
     GameStatus[GameStatus["SlideScene"] = 2] = "SlideScene";
     GameStatus[GameStatus["GameOver"] = 3] = "GameOver";
+    GameStatus[GameStatus["Win"] = 4] = "Win";
 })(GameStatus || (GameStatus = {}));
 ;
 class Game {
@@ -388,6 +389,7 @@ class Game {
         this.Enemies = new Enemies(this);
         this.Hud = new Hud(this);
         this.GameOverScreen = new GameOverScreen(this);
+        this.WinScreen = new WinScreen(this);
         this.Landscape.y = this.Hud.height;
         this.Hud.width = this.Landscape.width;
         this.Canvas.width = this.Landscape.width;
@@ -412,8 +414,9 @@ class Game {
                 break;
             case GameStatus.GameOver:
                 this.gameOverLoop();
-                //window.alert("Game Over!");
-                //document.location.reload();
+                break;
+            case GameStatus.Win:
+                this.winLoop();
                 break;
             default:
                 this.runLoop();
@@ -448,6 +451,9 @@ class Game {
     }
     gameOverLoop() {
         this.GameOverScreen.draw();
+    }
+    winLoop() {
+        this.WinScreen.draw();
     }
     slideSceneLoop() {
         this.Landscape.slideSceneAnimationMove();
@@ -832,8 +838,10 @@ class Player extends MovingBox {
     increaseScore() {
         this.score++;
         if (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol <= this.score) {
-            alert("You win !");
-            document.location.reload();
+            this.isInvincible = false;
+            this.Game.Landscape.music.pause();
+            this.lowHealthSound.pause();
+            this.Game.status = GameStatus.Win;
         }
     }
     draw() {
@@ -1030,5 +1038,26 @@ class Sword extends SimpleBox {
         this.y = 0;
         this.width = 0;
         this.height = 0;
+    }
+}
+
+class WinScreen {
+    constructor(game) {
+        this.Game = game;
+        this.music = AudioLoader.load("./sounds/music/ending.mp3", true);
+    }
+    draw() {
+        this.music.play();
+        this.Game.ctx.beginPath();
+        this.Game.ctx.fillStyle = "#000";
+        this.Game.ctx.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height);
+        this.Game.ctx.closePath();
+        this.Game.ctx.beginPath();
+        this.Game.ctx.font = "24px NES-font";
+        this.Game.ctx.fillStyle = "#fff";
+        this.Game.ctx.textBaseline = 'middle';
+        this.Game.ctx.textAlign = 'center';
+        this.Game.ctx.fillText("YOU WIN", this.Game.Canvas.width / 2, this.Game.Canvas.height / 2);
+        this.Game.ctx.closePath();
     }
 }

@@ -1,4 +1,4 @@
-enum GameStatus {Run, Stopped, SlideScene, GameOver};
+enum GameStatus {Run, Stopped, SlideScene, GameOver, Win};
 
 class Game {
     Canvas: HTMLCanvasElement;
@@ -12,6 +12,7 @@ class Game {
     EventManager: EventManager;
     Hud: Hud;
     GameOverScreen: GameOverScreen;
+    WinScreen: WinScreen;
 
     status: GameStatus;
 
@@ -27,6 +28,7 @@ class Game {
         this.Enemies = new Enemies(this);
         this.Hud = new Hud(this);
         this.GameOverScreen = new GameOverScreen(this);
+        this.WinScreen = new WinScreen(this);
 
         this.Landscape.y = this.Hud.height;
         this.Hud.width = this.Landscape.width;
@@ -57,8 +59,9 @@ class Game {
                 break;
             case GameStatus.GameOver:
                 this.gameOverLoop();
-                //window.alert("Game Over!");
-                //document.location.reload();
+                break;
+            case GameStatus.Win:
+                this.winLoop();
                 break;
 
             default:
@@ -102,6 +105,10 @@ class Game {
 
     gameOverLoop(): void {
         this.GameOverScreen.draw();
+    }
+
+    winLoop(): void {
+        this.WinScreen.draw();
     }
 
     slideSceneLoop(): void {
