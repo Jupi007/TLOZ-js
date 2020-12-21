@@ -798,6 +798,7 @@ class Player extends AnimatedMovingBox {
         this.maxHp = 6;
         this.isInvincible = false;
         this.invincibleTime = 0;
+        this.invincibleDuration = 2000;
         this.score = 0;
         this.sprites = [];
         this.spritesAttack = [];
@@ -840,6 +841,9 @@ class Player extends AnimatedMovingBox {
         let sprite = this.isAttack
             ? this.spritesAttack[this.direction]
             : this.sprites[this.direction][this.currentAnimationStep];
+        if (this.isInvincible && this.currentAnimationStep == 1) {
+            sprite = new Image();
+        }
         this.Game.Landscape.drawImage(sprite, this.x, this.y, this.width, this.height);
     }
     move() {
@@ -951,7 +955,7 @@ class Player extends AnimatedMovingBox {
     }
     reset() {
         this.isMoving = false;
-        if (this.isInvincible && this.invincibleTime + 1000 < performance.now()) {
+        if (this.isInvincible && this.invincibleTime + this.invincibleDuration < performance.now()) {
             this.isInvincible = false;
         }
     }
