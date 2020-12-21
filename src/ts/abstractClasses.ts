@@ -55,7 +55,7 @@ class GameAnimation {
     }
 }
 
-class MovingBoxLandscapeHitBox {
+class MovingBoxViewportHitBox {
     Box: MovingBox;
 
     constructor(player: MovingBox) {

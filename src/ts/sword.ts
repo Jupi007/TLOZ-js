@@ -28,7 +28,7 @@ class Sword extends SimpleBox {
 
     draw(): void {
         if (this.Game.Player.isAttack) {
-            this.Game.Landscape.drawImage(
+            this.Game.Viewport.drawImage(
                 this.sprites[this.Game.Player.direction],
                 this.x,
                 this.y,

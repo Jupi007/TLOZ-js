@@ -1,4 +1,4 @@
-class Landscape {
+class Viewport {
     Game: Game;
     currentScene: Scene;
     nextScene: Scene;

@@ -23,7 +23,7 @@ class Player extends MovingBox {
     spritesAttack: HTMLImageElement[] = [];
     spritesAnimation: GameAnimation;
 
-    landscapeHitBox: MovingBoxLandscapeHitBox;
+    landscapeHitBox: MovingBoxViewportHitBox;
 
     hurtSound: HTMLAudioElement;
     dieSound: HTMLAudioElement;
@@ -43,8 +43,8 @@ class Player extends MovingBox {
         this.width = 64;
         this.height = 64;
 
-        this.x = this.Game.Landscape.cellSize;
-        this.y = this.Game.Landscape.cellSize;
+        this.x = this.Game.Viewport.cellSize;
+        this.y = this.Game.Viewport.cellSize;
 
         this.speed = 5;
 
@@ -54,7 +54,7 @@ class Player extends MovingBox {
 
         this.direction = Direction.Down;
 
-        this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
+        this.landscapeHitBox = new MovingBoxViewportHitBox(this);
 
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
@@ -89,7 +89,7 @@ class Player extends MovingBox {
 
         if (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol <= this.score) {
             this.isInvincible = false;
-            this.Game.Landscape.music.pause();
+            this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
             this.Game.status = GameStatus.Win;
         }
@@ -109,7 +109,7 @@ class Player extends MovingBox {
             if (this.invincibleAnimation.currentAnimationStep === 2) sprite = new Image();
         }
 
-        this.Game.Landscape.drawImage(
+        this.Game.Viewport.drawImage(
             sprite,
             this.x,
             this.y,
@@ -127,27 +127,27 @@ class Player extends MovingBox {
     }
 
     slideSceneAnimationMove(): void {
-        if (this.Game.Landscape.dc === 1) {
-            this.dx = -this.Game.Landscape.slideSceneAnimationSpeed;
-        } else if (this.Game.Landscape.dc === -1) {
-            this.dx = this.Game.Landscape.slideSceneAnimationSpeed;
-        } else if (this.Game.Landscape.dr === 1) {
-            this.dy = -this.Game.Landscape.slideSceneAnimationSpeed;
-        } else if (this.Game.Landscape.dr === -1) {
-            this.dy = this.Game.Landscape.slideSceneAnimationSpeed;
+        if (this.Game.Viewport.dc === 1) {
+            this.dx = -this.Game.Viewport.slideSceneAnimationSpeed;
+        } else if (this.Game.Viewport.dc === -1) {
+            this.dx = this.Game.Viewport.slideSceneAnimationSpeed;
+        } else if (this.Game.Viewport.dr === 1) {
+            this.dy = -this.Game.Viewport.slideSceneAnimationSpeed;
+        } else if (this.Game.Viewport.dr === -1) {
+            this.dy = this.Game.Viewport.slideSceneAnimationSpeed;
         }
 
-        movingBoxCanvasCollision(this, this.Game.Landscape);
+        movingBoxCanvasCollision(this, this.Game.Viewport);
         this.isMoving = true;
         this.move();
     }
 
     collisions(): void {
-        if (movingBoxCanvasCollision(this, this.Game.Landscape)) {
-            this.Game.Landscape.slideScene(this.direction);
+        if (movingBoxCanvasCollision(this, this.Game.Viewport)) {
+            this.Game.Viewport.slideScene(this.direction);
         }
 
-        this.Game.Landscape.loopCollision((cell, col, row) => {
+        this.Game.Viewport.loopCollision((cell, col, row) => {
             movingBoxCollision(this.landscapeHitBox, cell);
         });
     }
@@ -202,7 +202,7 @@ class Player extends MovingBox {
 
         if (this.hp <= 0) {
             this.isInvincible = false;
-            this.Game.Landscape.music.pause();
+            this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
             this.dieSound.play();
             this.Game.status = GameStatus.GameOver;
@@ -215,21 +215,21 @@ class Player extends MovingBox {
     takeKnockBack(): void {
         switch (this.direction) {
             case Direction.Up:
-                this.dy = this.Game.Landscape.cellSize;
+                this.dy = this.Game.Viewport.cellSize;
                 break;
             case Direction.Right:
-                this.dx = -this.Game.Landscape.cellSize;
+                this.dx = -this.Game.Viewport.cellSize;
                 break;
             case Direction.Down:
-                this.dy = -this.Game.Landscape.cellSize;
+                this.dy = -this.Game.Viewport.cellSize;
                 break;
             case Direction.Left:
-                this.dx = this.Game.Landscape.cellSize;
+                this.dx = this.Game.Viewport.cellSize;
                 break;
         }
 
-        movingBoxCanvasCollision(this, this.Game.Landscape);
-        this.Game.Landscape.loopCollision((cell, col, row) => {
+        movingBoxCanvasCollision(this, this.Game.Viewport);
+        this.Game.Viewport.loopCollision((cell, col, row) => {
             movingBoxCollision(this, cell);
         });
     }

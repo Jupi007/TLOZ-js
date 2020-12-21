@@ -96,7 +96,7 @@ class Scene {
         width: number,
         height: number
     ) {
-        this.Game.Landscape.drawImage(
+        this.Game.Viewport.drawImage(
             sprite,
             x + this.x,
             y + this.y,

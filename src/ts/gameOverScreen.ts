@@ -19,7 +19,7 @@ class GameOverScreen {
     }
 
     draw(): void {
-        this.Game.Landscape.draw();
+        this.Game.Viewport.draw();
         this.Game.Enemies.draw();
         this.Game.Sword.draw();
         this.Game.Hud.draw();

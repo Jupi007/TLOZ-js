@@ -2,7 +2,7 @@ class Enemy extends MovingBox {
     Game: Game;
     speed: number;
 
-    landscapeHitBox: MovingBoxLandscapeHitBox;
+    landscapeHitBox: MovingBoxViewportHitBox;
 
     sprites: HTMLImageElement[][] = [];
     spritesAnimation: GameAnimation;
@@ -19,7 +19,7 @@ class Enemy extends MovingBox {
         this.speed = speed;
         this.direction = direction;
 
-        this.landscapeHitBox = new MovingBoxLandscapeHitBox(this);
+        this.landscapeHitBox = new MovingBoxViewportHitBox(this);
     }
 
     invertDirection(): void {
@@ -63,12 +63,12 @@ class Enemies {
     constructor(game: Game) {
         this.Game = game;
 
-        if (this.Game.Landscape.currentScene.hasEnemies) {
+        if (this.Game.Viewport.currentScene.hasEnemies) {
             for (var i = 0; i < this.nbEnemies; i++) {
                 this.enemies[i] = new Octorok(
                     this.Game,
-                    getRandomIntInclusive(this.Game.Landscape.cellSize * 2, this.Game.Landscape.width - (this.Game.Landscape.cellSize * 2)),
-                    getRandomIntInclusive(this.Game.Landscape.cellSize * 2, this.Game.Landscape.height - (this.Game.Landscape.cellSize * 2)),
+                    getRandomIntInclusive(this.Game.Viewport.cellSize * 2, this.Game.Viewport.width - (this.Game.Viewport.cellSize * 2)),
+                    getRandomIntInclusive(this.Game.Viewport.cellSize * 2, this.Game.Viewport.height - (this.Game.Viewport.cellSize * 2)),
                     getRandomIntInclusive(1, 2),
                     getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
                 );
@@ -93,7 +93,7 @@ class Enemies {
 
         if (this.Game.Enemies.enemies.length <= 0) {
             this.Game.Player.increaseScore();
-            this.Game.Landscape.currentScene.hasEnemies = false;
+            this.Game.Viewport.currentScene.hasEnemies = false;
         }
     }
 
@@ -102,7 +102,7 @@ class Enemies {
             if (this.Game.status === GameStatus.Run) enemy.spritesAnimation.requestNewFrameAnimation(enemy.speed);
 
 
-            this.Game.Landscape.currentScene.drawImage(
+            this.Game.Viewport.currentScene.drawImage(
                 enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep],
                 enemy.x,
                 enemy.y,
@@ -119,12 +119,12 @@ class Enemies {
                 this.Game.Player.takeKnockBack();
             }
 
-            if (movingBoxCanvasCollision(enemy, this.Game.Landscape)) {
+            if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
                 enemy.invertDirection();
             }
         });
 
-        this.Game.Landscape.loopCollision((cell, col, row) => {
+        this.Game.Viewport.loopCollision((cell, col, row) => {
             this.Game.Enemies.loopEnemies((enemy) => {
                 if (movingBoxCollision(enemy.landscapeHitBox, cell)) {
                     enemy.invertDirection();

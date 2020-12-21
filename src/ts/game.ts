@@ -5,7 +5,7 @@ class Game {
     ctx: CanvasRenderingContext2D;
 
     Overworld: Overworld;
-    Landscape: Landscape;
+    Viewport: Viewport;
     Player: Player;
     Sword: Sword;
     Enemies: Enemies;
@@ -22,7 +22,7 @@ class Game {
 
         this.EventManager = new EventManager(this);
         this.Overworld = new Overworld(this);
-        this.Landscape = new Landscape(this);
+        this.Viewport = new Viewport(this);
         this.Player = new Player(this);
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
@@ -30,11 +30,11 @@ class Game {
         this.GameOverScreen = new GameOverScreen(this);
         this.WinScreen = new WinScreen(this);
 
-        this.Landscape.y = this.Hud.height;
-        this.Hud.width = this.Landscape.width;
+        this.Viewport.y = this.Hud.height;
+        this.Hud.width = this.Viewport.width;
 
-        this.Canvas.width = this.Landscape.width;
-        this.Canvas.height = this.Landscape.height + this.Hud.height;
+        this.Canvas.width = this.Viewport.width;
+        this.Canvas.height = this.Viewport.height + this.Hud.height;
 
         this.status = GameStatus.Run;
     }
@@ -78,12 +78,12 @@ class Game {
         this.Player.collisions();
         this.Sword.collisions();
         this.Enemies.collisions();
-        this.Landscape.collisions();
+        this.Viewport.collisions();
 
         this.Player.move();
         this.Enemies.move();
 
-        this.Landscape.draw();
+        this.Viewport.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
@@ -96,7 +96,7 @@ class Game {
     }
 
     stoppedLoop(): void {
-        this.Landscape.draw();
+        this.Viewport.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
@@ -112,10 +112,10 @@ class Game {
     }
 
     slideSceneLoop(): void {
-        this.Landscape.slideSceneAnimationMove();
+        this.Viewport.slideSceneAnimationMove();
         this.Player.slideSceneAnimationMove();
 
-        this.Landscape.draw();
+        this.Viewport.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
