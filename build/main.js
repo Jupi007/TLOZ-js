@@ -469,6 +469,21 @@ class Game {
         this.ctx.drawImage(sprite, x, y, width, height);
         this.ctx.closePath();
     }
+    fillRect(x, y, width, height, color) {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(x, y, width, height);
+        this.ctx.closePath();
+    }
+    fillText(text, x, y, color, fontSize = '16px', textAlign = 'left', textBaseline = 'alphabetic') {
+        this.ctx.beginPath();
+        this.ctx.font = fontSize + ' NES-font';
+        this.ctx.fillStyle = color;
+        this.ctx.textAlign = textAlign;
+        this.ctx.textBaseline = textBaseline;
+        this.ctx.fillText(text, x, y);
+        this.ctx.closePath();
+    }
 }
 
 class GameOverScreen {
@@ -510,17 +525,8 @@ class GameOverScreen {
             return;
         }
         this.music.play();
-        this.Game.ctx.beginPath();
-        this.Game.ctx.fillStyle = "#000";
-        this.Game.ctx.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height);
-        this.Game.ctx.closePath();
-        this.Game.ctx.beginPath();
-        this.Game.ctx.font = "24px NES-font";
-        this.Game.ctx.fillStyle = "#fff";
-        this.Game.ctx.textBaseline = 'middle';
-        this.Game.ctx.textAlign = 'center';
-        this.Game.ctx.fillText("GAME OVER", this.Game.Canvas.width / 2, this.Game.Canvas.height / 2);
-        this.Game.ctx.closePath();
+        this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
+        this.Game.fillText("GAME OVER", this.Game.Canvas.width / 2, this.Game.Canvas.height / 2, '#fff', '24px', 'center', 'middle');
     }
 }
 
@@ -535,38 +541,23 @@ class Hud {
         this.fullHeartSprite = SpriteLoader.load('./sprites/png/full-heart.png');
     }
     draw() {
-        this.Game.ctx.beginPath();
-        this.Game.ctx.fillStyle = "#000";
-        this.Game.ctx.fillRect(this.x, this.y, this.width, this.height);
-        this.Game.ctx.closePath();
+        this.Game.fillRect(this.x, this.y, this.width, this.height, '#000');
         this.drawHearts();
         this.drawScore();
     }
     drawHearts() {
         for (let i = 1; i <= this.Game.Player.maxHp / 2; i++) {
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(this.emptyHeartSprite, 24 * i + 8 * i, this.height / 2 - 12, 24, 24);
-            this.Game.ctx.closePath();
+            this.Game.drawImage(this.emptyHeartSprite, 24 * i + 8 * i, this.height / 2 - 12, 24, 24);
         }
         for (let i = 1; i <= this.Game.Player.hp / 2; i++) {
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(this.fullHeartSprite, 24 * i + 8 * i, this.height / 2 - 12, 24, 24);
-            this.Game.ctx.closePath();
+            this.Game.drawImage(this.fullHeartSprite, 24 * i + 8 * i, this.height / 2 - 12, 24, 24);
         }
         if (this.Game.Player.hp % 2 === 1) {
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(this.halfHeartSprite, 24 * (this.Game.Player.hp / 2 + 1) + 8 * (this.Game.Player.hp / 2 - 1), this.height / 2 - 12, 24, 24);
-            this.Game.ctx.closePath();
+            this.Game.drawImage(this.halfHeartSprite, 24 * (this.Game.Player.hp / 2 + 1) + 8 * (this.Game.Player.hp / 2 - 1), this.height / 2 - 12, 24, 24);
         }
     }
     drawScore() {
-        this.Game.ctx.beginPath();
-        this.Game.ctx.font = "16px NES-font";
-        this.Game.ctx.fillStyle = "#fff";
-        this.Game.ctx.textBaseline = 'middle';
-        this.Game.ctx.textAlign = 'right';
-        this.Game.ctx.fillText(" SCORE: " + this.Game.Player.score + "/" + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol), this.width - (this.height / 2) + this.x, this.y + this.height / 2);
-        this.Game.ctx.closePath();
+        this.Game.fillText(' SCORE: ' + this.Game.Player.score + '/' + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol), this.width - (this.height / 2) + this.x, this.y + this.height / 2, '#fff', '16px', 'right', 'middle');
     }
 }
 
@@ -1047,16 +1038,7 @@ class WinScreen {
     }
     draw() {
         this.music.play();
-        this.Game.ctx.beginPath();
-        this.Game.ctx.fillStyle = "#000";
-        this.Game.ctx.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height);
-        this.Game.ctx.closePath();
-        this.Game.ctx.beginPath();
-        this.Game.ctx.font = "24px NES-font";
-        this.Game.ctx.fillStyle = "#fff";
-        this.Game.ctx.textBaseline = 'middle';
-        this.Game.ctx.textAlign = 'center';
-        this.Game.ctx.fillText("YOU WIN", this.Game.Canvas.width / 2, this.Game.Canvas.height / 2);
-        this.Game.ctx.closePath();
+        this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
+        this.Game.fillText("YOU WIN", this.Game.Canvas.width / 2, this.Game.Canvas.height / 2, '#fff', '24px', 'center', 'middle');
     }
 }

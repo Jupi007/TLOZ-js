@@ -25,15 +25,13 @@ class Hud {
     }
 
     draw(): void {
-        this.Game.ctx.beginPath();
-            this.Game.ctx.fillStyle = "#000";
-            this.Game.ctx.fillRect(
-                this.x,
-                this.y,
-                this.width,
-                this.height
-            );
-        this.Game.ctx.closePath();
+        this.Game.fillRect(
+            this.x,
+            this.y,
+            this.width,
+            this.height,
+            '#000'
+        );
 
         this.drawHearts();
         this.drawScore();
@@ -41,53 +39,45 @@ class Hud {
 
     drawHearts(): void {
         for (let i = 1; i <= this.Game.Player.maxHp / 2; i++) {
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(
+            this.Game.drawImage(
                 this.emptyHeartSprite,
                 24 * i + 8 * i,
                 this.height / 2 - 12,
                 24,
                 24
             );
-            this.Game.ctx.closePath();
         }
 
         for (let i = 1; i <= this.Game.Player.hp / 2; i++) {
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(
+            this.Game.drawImage(
                 this.fullHeartSprite,
                 24 * i + 8 * i,
                 this.height / 2 - 12,
                 24,
                 24
             );
-            this.Game.ctx.closePath();
         }
 
         if (this.Game.Player.hp % 2 === 1) {
-            this.Game.ctx.beginPath();
-            this.Game.ctx.drawImage(
+            this.Game.drawImage(
                 this.halfHeartSprite,
                 24 * (this.Game.Player.hp / 2 + 1) + 8 * (this.Game.Player.hp / 2 - 1),
                 this.height / 2 - 12,
                 24,
                 24
             );
-            this.Game.ctx.closePath();
         }
     }
 
     drawScore(): void {
-        this.Game.ctx.beginPath();
-            this.Game.ctx.font = "16px NES-font";
-            this.Game.ctx.fillStyle = "#fff";
-            this.Game.ctx.textBaseline = 'middle';
-            this.Game.ctx.textAlign = 'right';
-            this.Game.ctx.fillText(
-                " SCORE: " + this.Game.Player.score + "/" + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol),
-                this.width - (this.height / 2) + this.x,
-                this.y + this.height / 2
-            );
-        this.Game.ctx.closePath();
+        this.Game.fillText(
+            ' SCORE: ' + this.Game.Player.score + '/' + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol),
+            this.width - (this.height / 2) + this.x,
+            this.y + this.height / 2,
+            '#fff',
+            '16px',
+            'right',
+            'middle'
+        );
     }
 }

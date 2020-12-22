@@ -139,4 +139,40 @@ class Game {
         );
         this.ctx.closePath();
     }
+
+    fillRect(
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        color: string
+    ) {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(
+            x,
+            y,
+            width,
+            height
+        );
+        this.ctx.closePath();
+    }
+
+    fillText(
+        text: string,
+        x: number,
+        y: number,
+        color: string,
+        fontSize: string = '16px',
+        textAlign: CanvasTextAlign = 'left',
+        textBaseline: CanvasTextBaseline = 'alphabetic',
+    ) {
+        this.ctx.beginPath();
+            this.ctx.font = fontSize + ' NES-font';
+            this.ctx.fillStyle = color;
+            this.ctx.textAlign = textAlign;
+            this.ctx.textBaseline = textBaseline;
+            this.ctx.fillText(text, x, y);
+        this.ctx.closePath();
+    }
 }
