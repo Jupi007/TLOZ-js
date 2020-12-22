@@ -21,7 +21,7 @@ class WinScreen {
         );
 
         this.Game.fillText(
-            "YOU WIN",
+            "YOU WON",
             this.Game.Canvas.width / 2,
             this.Game.Canvas.height / 2,
             '#fff',
