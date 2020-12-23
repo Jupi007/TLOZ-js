@@ -4,7 +4,7 @@ class Game {
     Canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
-    Overworld: Overworld;
+    World: World;
     Viewport: Viewport;
     Player: Player;
     Sword: Sword;
@@ -21,7 +21,7 @@ class Game {
         this.ctx = this.Canvas.getContext("2d");
 
         this.EventManager = new EventManager(this);
-        this.Overworld = new Overworld(this);
+        this.World = new World(this);
         this.Viewport = new Viewport(this);
         this.Player = new Player(this);
         this.Sword = new Sword(this);
@@ -35,6 +35,9 @@ class Game {
 
         this.Canvas.width = this.Viewport.width;
         this.Canvas.height = this.Viewport.height + this.Hud.height;
+
+        this.Player.x = this.Viewport.cellSize * this.World.spawnCellColl;
+        this.Player.y = this.Viewport.cellSize * this.World.spawnCellRow;
 
         this.status = GameStatus.Run;
     }

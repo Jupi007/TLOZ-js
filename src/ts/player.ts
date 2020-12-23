@@ -43,8 +43,8 @@ class Player extends MovingBox {
         this.width = 64;
         this.height = 64;
 
-        this.x = this.Game.Viewport.cellSize;
-        this.y = this.Game.Viewport.cellSize;
+        this.x = 0;
+        this.y = 0;
 
         this.speed = 5;
 
@@ -87,7 +87,7 @@ class Player extends MovingBox {
     increaseScore(): void {
         this.score++;
 
-        if (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol <= this.score) {
+        if (this.Game.World.nbRow * this.Game.World.nbCol <= this.score) {
             this.isInvincible = false;
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();

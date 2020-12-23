@@ -14,7 +14,7 @@ class Cell extends SimpleBox {
 
 class Scene {
     Game: Game;
-    Overworld: Overworld;
+    World: World;
 
     cells: Cell[][] = [];
 
@@ -33,9 +33,9 @@ class Scene {
 
     music: HTMLAudioElement;
 
-    constructor(game: Game, overworld: Overworld, c: number, r: number) {
+    constructor(game: Game, overworld: World, c: number, r: number, defaultBrick: Brick, defaultWallBrick: Brick, music: HTMLAudioElement) {
         this.Game = game;
-        this.Overworld = overworld;
+        this.World = overworld;
 
         this.nbRow = 11;
         this.nbCol = 16;
@@ -49,7 +49,7 @@ class Scene {
         this.c = c;
         this.r = r;
 
-        this.music = AudioLoader.load("./sounds/music/overworld.mp3", true);
+        this.music = music;
 
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
@@ -58,29 +58,29 @@ class Scene {
                     this.cellSize * c,
                     this.cellSize * r,
                     this.cellSize,
-                    new DefaultBrick()
+                    defaultBrick
                 );
             }
         }
 
         if (this.c == 0) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[0][r].brick = new WallBrick();
+                this.cells[0][r].brick = defaultWallBrick;
             }
         }
-        if (this.c == this.Overworld.nbCol-1) {
+        if (this.c == this.World.nbCol-1) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[this.nbCol-1][r].brick = new WallBrick();
+                this.cells[this.nbCol-1][r].brick = defaultWallBrick;
             }
         }
         if (this.r == 0) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][0].brick = new WallBrick();
+                this.cells[c][0].brick = defaultWallBrick;
             }
         }
-        if (this.r == this.Overworld.nbRow-1) {
+        if (this.r == this.World.nbRow-1) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][this.nbRow-1].brick = new WallBrick();
+                this.cells[c][this.nbRow-1].brick = defaultWallBrick;
             }
         }
     }
@@ -106,24 +106,42 @@ class Scene {
     }
 }
 
-class Overworld {
+class World {
     Game: Game;
 
     map: Scene[][] = [];
 
-    nbRow = 3;
-    nbCol = 3;
+    nbRow: number;
+    nbCol: number;
 
-    spawnSceneColl = 1;
-    spawnSceneRow = 1;
+    spawnSceneColl: number;
+    spawnSceneRow: number;
+    spawnCellColl: number;
+    spawnCellRow: number;
 
     constructor(game: Game) {
         this.Game = game;
 
+        this.nbRow = 3;
+        this.nbCol = 3;
+
+        this.spawnSceneColl = 1;
+        this.spawnSceneRow = 2;
+        this.spawnCellColl = 1;
+        this.spawnCellRow = 1;
+
         for (let c = 0; c < this.nbCol; c++) {
             this.map[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
-                this.map[c][r] = new Scene(this.Game, this, c, r);
+                this.map[c][r] = new Scene(
+                    this.Game,
+                    this,
+                    c,
+                    r,
+                    new DefaultBrick(),
+                    new WallBrick(),
+                    AudioLoader.load("./sounds/music/overworld.mp3", true)
+                );
             }
         }
 
@@ -131,6 +149,6 @@ class Overworld {
     }
 
     getSpawnScene(): Scene {
-        return this.map[this.spawnSceneColl - 1][this.spawnSceneRow - 1];
+        return this.map[this.spawnSceneColl][this.spawnSceneRow];
     }
 }

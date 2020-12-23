@@ -15,7 +15,7 @@ class Viewport {
 
     constructor(game: Game) {
         this.Game = game;
-        this.currentScene = this.Game.Overworld.getSpawnScene();
+        this.currentScene = this.Game.World.getSpawnScene();
         this.nextScene = null;
 
         this.music = this.currentScene.music;
@@ -176,11 +176,11 @@ class Viewport {
 
         if ( !(
             currentSceneCol + this.dc < 0 ||
-            currentSceneCol + this.dc > this.Game.Overworld.nbCol - 1 ||
+            currentSceneCol + this.dc > this.Game.World.nbCol - 1 ||
             currentSceneRow + this.dr < 0 ||
-            currentSceneRow + this.dr > this.Game.Overworld.nbRow - 1
+            currentSceneRow + this.dr > this.Game.World.nbRow - 1
         ) ) {
-            this.nextScene = this.Game.Overworld.map[currentSceneCol + this.dc][currentSceneRow + this.dr];
+            this.nextScene = this.Game.World.map[currentSceneCol + this.dc][currentSceneRow + this.dr];
 
             if (direction === Direction.Left) {
                 this.nextScene.x = -this.width;

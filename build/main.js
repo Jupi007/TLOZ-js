@@ -382,7 +382,7 @@ class Game {
         this.Canvas = canvas;
         this.ctx = this.Canvas.getContext("2d");
         this.EventManager = new EventManager(this);
-        this.Overworld = new Overworld(this);
+        this.World = new World(this);
         this.Viewport = new Viewport(this);
         this.Player = new Player(this);
         this.Sword = new Sword(this);
@@ -394,6 +394,8 @@ class Game {
         this.Hud.width = this.Viewport.width;
         this.Canvas.width = this.Viewport.width;
         this.Canvas.height = this.Viewport.height + this.Hud.height;
+        this.Player.x = this.Viewport.cellSize * this.World.spawnCellColl;
+        this.Player.y = this.Viewport.cellSize * this.World.spawnCellRow;
         this.status = GameStatus.Run;
     }
     run() {
@@ -557,7 +559,7 @@ class Hud {
         }
     }
     drawScore() {
-        this.Game.fillText(' SCORE: ' + this.Game.Player.score + '/' + (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol), this.width - (this.height / 2) + this.x, this.y + this.height / 2, '#fff', '16px', 'right', 'middle');
+        this.Game.fillText(' SCORE: ' + this.Game.Player.score + '/' + (this.Game.World.nbRow * this.Game.World.nbCol), this.width - (this.height / 2) + this.x, this.y + this.height / 2, '#fff', '16px', 'right', 'middle');
     }
 }
 
@@ -572,10 +574,10 @@ class Cell extends SimpleBox {
     }
 }
 class Scene {
-    constructor(game, overworld, c, r) {
+    constructor(game, overworld, c, r, defaultBrick, defaultWallBrick, music) {
         this.cells = [];
         this.Game = game;
-        this.Overworld = overworld;
+        this.World = overworld;
         this.nbRow = 11;
         this.nbCol = 16;
         this.cellSize = 64;
@@ -584,31 +586,31 @@ class Scene {
         this.y = 0;
         this.c = c;
         this.r = r;
-        this.music = AudioLoader.load("./sounds/music/overworld.mp3", true);
+        this.music = music;
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[c][r] = new Cell(this.cellSize * c, this.cellSize * r, this.cellSize, new DefaultBrick());
+                this.cells[c][r] = new Cell(this.cellSize * c, this.cellSize * r, this.cellSize, defaultBrick);
             }
         }
         if (this.c == 0) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[0][r].brick = new WallBrick();
+                this.cells[0][r].brick = defaultWallBrick;
             }
         }
-        if (this.c == this.Overworld.nbCol - 1) {
+        if (this.c == this.World.nbCol - 1) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[this.nbCol - 1][r].brick = new WallBrick();
+                this.cells[this.nbCol - 1][r].brick = defaultWallBrick;
             }
         }
         if (this.r == 0) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][0].brick = new WallBrick();
+                this.cells[c][0].brick = defaultWallBrick;
             }
         }
-        if (this.r == this.Overworld.nbRow - 1) {
+        if (this.r == this.World.nbRow - 1) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][this.nbRow - 1].brick = new WallBrick();
+                this.cells[c][this.nbRow - 1].brick = defaultWallBrick;
             }
         }
     }
@@ -619,24 +621,26 @@ class Scene {
         this.Game.Viewport.drawImage(sprite, x + this.x, y + this.y, width, height);
     }
 }
-class Overworld {
+class World {
     constructor(game) {
         this.map = [];
+        this.Game = game;
         this.nbRow = 3;
         this.nbCol = 3;
         this.spawnSceneColl = 1;
-        this.spawnSceneRow = 1;
-        this.Game = game;
+        this.spawnSceneRow = 2;
+        this.spawnCellColl = 1;
+        this.spawnCellRow = 1;
         for (let c = 0; c < this.nbCol; c++) {
             this.map[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
-                this.map[c][r] = new Scene(this.Game, this, c, r);
+                this.map[c][r] = new Scene(this.Game, this, c, r, new DefaultBrick(), new WallBrick(), AudioLoader.load("./sounds/music/overworld.mp3", true));
             }
         }
         this.map[1][1].music = AudioLoader.load("./sounds/music/dungeon.mp3", true);
     }
     getSpawnScene() {
-        return this.map[this.spawnSceneColl - 1][this.spawnSceneRow - 1];
+        return this.map[this.spawnSceneColl][this.spawnSceneRow];
     }
 }
 
@@ -652,8 +656,8 @@ class Player extends MovingBox {
         this.score = 0;
         this.width = 64;
         this.height = 64;
-        this.x = this.Game.Viewport.cellSize;
-        this.y = this.Game.Viewport.cellSize;
+        this.x = 0;
+        this.y = 0;
         this.speed = 5;
         this.maxHp = 6;
         this.hp = this.maxHp;
@@ -684,7 +688,7 @@ class Player extends MovingBox {
     }
     increaseScore() {
         this.score++;
-        if (this.Game.Overworld.nbRow * this.Game.Overworld.nbCol <= this.score) {
+        if (this.Game.World.nbRow * this.Game.World.nbCol <= this.score) {
             this.isInvincible = false;
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
@@ -891,7 +895,7 @@ class Sword extends SimpleBox {
 class Viewport {
     constructor(game) {
         this.Game = game;
-        this.currentScene = this.Game.Overworld.getSpawnScene();
+        this.currentScene = this.Game.World.getSpawnScene();
         this.nextScene = null;
         this.music = this.currentScene.music;
         this.music.play();
@@ -1001,10 +1005,10 @@ class Viewport {
             return;
         }
         if (!(currentSceneCol + this.dc < 0 ||
-            currentSceneCol + this.dc > this.Game.Overworld.nbCol - 1 ||
+            currentSceneCol + this.dc > this.Game.World.nbCol - 1 ||
             currentSceneRow + this.dr < 0 ||
-            currentSceneRow + this.dr > this.Game.Overworld.nbRow - 1)) {
-            this.nextScene = this.Game.Overworld.map[currentSceneCol + this.dc][currentSceneRow + this.dr];
+            currentSceneRow + this.dr > this.Game.World.nbRow - 1)) {
+            this.nextScene = this.Game.World.map[currentSceneCol + this.dc][currentSceneRow + this.dr];
             if (direction === Direction.Left) {
                 this.nextScene.x = -this.width;
                 this.nextScene.y = 0;
