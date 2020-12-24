@@ -33,7 +33,10 @@ class Scene {
 
     music: HTMLAudioElement;
 
-    constructor(game: Game, overworld: World, c: number, r: number, defaultBrick: Brick, defaultWallBrick: Brick, music: HTMLAudioElement) {
+    defaultBrick: Brick;
+    defaultWallBrick: Brick;
+
+    constructor(game: Game, overworld: World, c: number, r: number, music: HTMLAudioElement) {
         this.Game = game;
         this.World = overworld;
 
@@ -41,7 +44,7 @@ class Scene {
         this.nbCol = 16;
         this.cellSize = 64;
 
-        this.hasEnemies = true;
+        this.hasEnemies = false;
 
         this.x = 0;
         this.y = 0;
@@ -51,6 +54,9 @@ class Scene {
 
         this.music = music;
 
+        this.defaultBrick = new DefaultBrick();
+        this.defaultWallBrick = new WallBrick();
+
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
@@ -58,35 +64,43 @@ class Scene {
                     this.cellSize * c,
                     this.cellSize * r,
                     this.cellSize,
-                    defaultBrick
+                    this.defaultBrick
                 );
             }
         }
 
         if (this.c == 0) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[0][r].brick = defaultWallBrick;
+                this.cells[0][r].brick = this.defaultWallBrick;
             }
         }
         if (this.c == this.World.nbCol-1) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[this.nbCol-1][r].brick = defaultWallBrick;
+                this.cells[this.nbCol-1][r].brick = this.defaultWallBrick;
             }
         }
         if (this.r == 0) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][0].brick = defaultWallBrick;
+                this.cells[c][0].brick = this.defaultWallBrick;
             }
         }
         if (this.r == this.World.nbRow-1) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][this.nbRow-1].brick = defaultWallBrick;
+                this.cells[c][this.nbRow-1].brick = this.defaultWallBrick;
             }
         }
     }
 
     getCell(col: number, row: number): Cell {
         return this.cells[col][row];
+    }
+
+    loadBricks(bricks: Brick[][]): void {
+        bricks.forEach((row, r) => {
+            row.forEach((brick, c) => {
+                this.cells[c][r].brick = brick;
+            });
+        });
     }
 
     drawImage(
@@ -127,8 +141,8 @@ class World {
 
         this.spawnSceneColl = 1;
         this.spawnSceneRow = 2;
-        this.spawnCellColl = 1;
-        this.spawnCellRow = 1;
+        this.spawnCellColl = 7;
+        this.spawnCellRow = 6;
 
         for (let c = 0; c < this.nbCol; c++) {
             this.map[c] = [];
@@ -138,14 +152,41 @@ class World {
                     this,
                     c,
                     r,
-                    new DefaultBrick(),
-                    new WallBrick(),
                     AudioLoader.load("./sounds/music/overworld.mp3", true)
                 );
             }
         }
 
         this.map[1][1].music = AudioLoader.load("./sounds/music/dungeon.mp3", true);
+
+        this.map[1][2].loadBricks([
+            [new WallBrick(),            new WallBrick(),            new WallBrick(),            new WallBrick(),    new WallBrick(),    new WallBrick(),            new DefaultBrick(), new DefaultBrick(), new WallBrick(),           new WallBrick(),           new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),        new WallBrick()   ],
+            [new WallBrick(),            new WallBrick(),            new WallBrick(),            new WallBrick(),    new WallBrick(),    new WallBrick(),            new DefaultBrick(), new DefaultBrick(), new WallBrick(),           new WallBrick(),           new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),        new WallBrick()   ],
+            [new WallBrick(),            new WallBrick(),            new WallBrick(),            new WallBrick(),    new WallBrick(),    new WallBottomRightBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(),           new WallBrick(),           new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),        new WallBrick()   ],
+            [new WallBrick(),            new WallBrick(),            new WallBottomRightBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new WallBottomLeftBrick(), new WallBrick(),           new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),        new WallBrick()   ],
+            [new WallBrick(),            new WallBottomRightBrick(), new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),        new WallBottomLeftBrick(), new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),        new WallBrick()   ],
+            [new WallBottomRightBrick(), new DefaultBrick(),         new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),        new DefaultBrick(),        new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),     new DefaultBrick()],
+            [new DefaultBrick(),         new DefaultBrick(),         new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),        new DefaultBrick(),        new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new WallTopLeftBrick(), new WallTopBrick()],
+            [new WallTopBrick(),         new WallTopRightBrick(),    new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),        new DefaultBrick(),        new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(),        new WallBrick()   ],
+            [new WallBrick(),            new WallBrick(),            new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(),        new DefaultBrick(),        new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(),        new WallBrick()   ],
+            [new WallBrick(),            new WallBrick(),            new WallTopBrick(),         new WallTopBrick(), new WallTopBrick(), new WallTopBrick(),         new WallTopBrick(), new WallTopBrick(), new WallTopBrick(),        new WallTopBrick(),        new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallBrick(),        new WallBrick()   ],
+            [new WallBrick(),            new WallBrick(),            new WallBrick(),            new WallBrick(),    new WallBrick(),    new WallBrick(),            new WallBrick(),    new WallBrick(),    new WallBrick(),           new WallBrick(),           new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),    new WallBrick(),        new WallBrick()   ]
+        ]);
+        this.map[1][2].hasEnemies = false;
+
+        this.map[2][2].loadBricks([
+            [new WallBrick(),            new WallBrick(),            new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick()],
+            [new WallBrick(),            new WallBrick(),            new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick()],
+            [new WallBrick(),            new WallBrick(),            new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick()],
+            [new WallBrick(),            new WallBottomRightBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick()],
+            [new WallBottomRightBrick(), new DefaultBrick(),         new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick()],
+            [new DefaultBrick(),         new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick()],
+            [new WallTopBrick(),         new DefaultBrick(),         new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick()],
+            [new WallBrick(),            new DefaultBrick(),         new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick(),    new DefaultBrick(), new TreeBrick()],
+            [new WallBrick(),            new WallTopRightBrick(),    new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick()],
+            [new WallBrick(),            new WallBrick(),            new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick()],
+            [new WallBrick(),            new WallBrick(),            new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick()],
+        ]);
     }
 
     getSpawnScene(): Scene {

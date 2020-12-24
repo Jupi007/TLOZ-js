@@ -133,6 +133,7 @@ class Game {
         height: number
     ) {
         this.ctx.beginPath();
+        this.ctx.imageSmoothingEnabled = false;
         this.ctx.drawImage(
             sprite,
             x,
