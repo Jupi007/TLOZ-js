@@ -184,21 +184,19 @@ class Player extends MovingBox {
             movingBoxCollision(this.hitBox, cell);
         });
 
+        // Helper to pass between two boxes in vertical direction
+
         if (halfLeftCollision && !halfRightCollision && (this.direction === Direction.Up || this.direction === Direction.Down)) {
             this.dx = this.speed;
             this.Game.Viewport.loopCollision((cell, col, row) => {
                 movingBoxCollision(this.halfRightHitBox, cell);
             });
-            console.log("left");
         }
-
-        if (!halfLeftCollision && halfRightCollision && (this.direction === Direction.Up || this.direction === Direction.Down)) {
+        else if (!halfLeftCollision && halfRightCollision && (this.direction === Direction.Up || this.direction === Direction.Down)) {
             this.dx = -this.speed;
             this.Game.Viewport.loopCollision((cell, col, row) => {
                 movingBoxCollision(this.halfLeftHitBox, cell);
             });
-            console.log("right");
-
         }
 
     }
