@@ -23,7 +23,9 @@ class Player extends MovingBox {
     spritesAttack: HTMLImageElement[] = [];
     spritesAnimation: GameAnimation;
 
-    landscapeHitBox: MovingBoxViewportHitBox;
+    hitBox: MovingBoxHitBox;
+    halfLeftHitBox: MovingBoxHitBox;
+    halfRightHitBox: MovingBoxHitBox;
 
     hurtSound: HTMLAudioElement;
     dieSound: HTMLAudioElement;
@@ -54,7 +56,29 @@ class Player extends MovingBox {
 
         this.direction = Direction.Down;
 
-        this.landscapeHitBox = new MovingBoxViewportHitBox(this);
+        this.hitBox = new MovingBoxHitBox(
+            this,
+            this.x,
+            this.y + this.height / 2,
+            this.width,
+            this.height / 2
+        );
+
+        this.halfLeftHitBox = new MovingBoxHitBox(
+            this,
+            this.x,
+            this.y,
+            this.width / 2,
+            this.height + 1 // 1px higher to fix a problem when go down (as go upper is use the half hitbox it doesn't need this fix)
+        );
+
+        this.halfRightHitBox = new MovingBoxHitBox(
+            this,
+            this.width / 2,
+            this.y,
+            this.width / 2,
+            this.height + 1 // Same as higher comment
+        );
 
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
@@ -147,9 +171,36 @@ class Player extends MovingBox {
             this.Game.Viewport.slideScene(this.direction);
         }
 
+        let halfLeftCollision = false;
+        let halfRightCollision = false;
+
         this.Game.Viewport.loopCollision((cell, col, row) => {
-            movingBoxCollision(this.landscapeHitBox, cell);
+            if (simpleMovingBoxCollision(this.halfLeftHitBox, cell)) {
+                halfLeftCollision = true;
+            }
+            if (simpleMovingBoxCollision(this.halfRightHitBox, cell)) {
+                halfRightCollision = true;
+            }
+            movingBoxCollision(this.hitBox, cell);
         });
+
+        if (halfLeftCollision && !halfRightCollision && (this.direction === Direction.Up || this.direction === Direction.Down)) {
+            this.dx = this.speed;
+            this.Game.Viewport.loopCollision((cell, col, row) => {
+                movingBoxCollision(this.halfRightHitBox, cell);
+            });
+            console.log("left");
+        }
+
+        if (!halfLeftCollision && halfRightCollision && (this.direction === Direction.Up || this.direction === Direction.Down)) {
+            this.dx = -this.speed;
+            this.Game.Viewport.loopCollision((cell, col, row) => {
+                movingBoxCollision(this.halfLeftHitBox, cell);
+            });
+            console.log("right");
+
+        }
+
     }
 
     listenEvents(): void {
@@ -158,7 +209,8 @@ class Player extends MovingBox {
                       : false;
 
         if (
-            (this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) && !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)
+            (this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) &&
+            !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)
         ) {
             if (this.Game.EventManager.isDownPressed) {
                 if (!this.Game.EventManager.isAttackPressed) this.dy = this.speed;

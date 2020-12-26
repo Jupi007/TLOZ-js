@@ -2,7 +2,7 @@ class Enemy extends MovingBox {
     Game: Game;
     speed: number;
 
-    landscapeHitBox: MovingBoxViewportHitBox;
+    landscapeHitBox: MovingBoxHitBox;
 
     sprites: HTMLImageElement[][] = [];
     spritesAnimation: GameAnimation;
@@ -19,7 +19,7 @@ class Enemy extends MovingBox {
         this.speed = speed;
         this.direction = direction;
 
-        this.landscapeHitBox = new MovingBoxViewportHitBox(this);
+        // this.landscapeHitBox = new MovingBoxHitBox(this);
     }
 
     invertDirection(): void {
@@ -126,7 +126,7 @@ class Enemies {
 
         this.Game.Viewport.loopCollision((cell, col, row) => {
             this.Game.Enemies.loopEnemies((enemy) => {
-                if (movingBoxCollision(enemy.landscapeHitBox, cell)) {
+                if (movingBoxCollision(enemy, cell)) {
                     enemy.invertDirection();
                 }
             });

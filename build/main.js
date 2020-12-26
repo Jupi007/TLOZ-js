@@ -47,27 +47,31 @@ class GameAnimation {
         }
     }
 }
-class MovingBoxViewportHitBox {
-    constructor(player) {
-        this.Box = player;
+class MovingBoxHitBox {
+    constructor(box, x, y, width, height) {
+        this.Box = box;
+        this.hitX = x;
+        this.hitY = y;
+        this.hitWidth = width;
+        this.hitHeight = height;
     }
     get x() {
-        return this.Box.x;
+        return this.Box.x + this.hitX;
     }
     set x(x) {
-        this.Box.x = x;
+        this.Box.x = x - this.hitX;
     }
     get y() {
-        return this.Box.y + this.Box.height / 2;
+        return this.Box.y + this.hitY;
     }
     set y(y) {
-        this.Box.y = y - this.Box.height / 2;
+        this.Box.y = y - this.hitY;
     }
     get width() {
-        return this.Box.width;
+        return this.hitWidth;
     }
     get height() {
-        return this.Box.height / 2;
+        return this.hitHeight;
     }
     get dx() {
         return this.Box.dx;
@@ -145,7 +149,7 @@ class Enemy extends MovingBox {
         this.y = y;
         this.speed = speed;
         this.direction = direction;
-        this.landscapeHitBox = new MovingBoxViewportHitBox(this);
+        // this.landscapeHitBox = new MovingBoxHitBox(this);
     }
     invertDirection() {
         if (this.direction == Direction.Up) {
@@ -218,7 +222,7 @@ class Enemies {
         });
         this.Game.Viewport.loopCollision((cell, col, row) => {
             this.Game.Enemies.loopEnemies((enemy) => {
-                if (movingBoxCollision(enemy.landscapeHitBox, cell)) {
+                if (movingBoxCollision(enemy, cell)) {
                     enemy.invertDirection();
                 }
             });
@@ -333,22 +337,18 @@ function movingBoxCollision(movingBox, box2) {
         if (movingBox.dx > 0 && movingBox.x + movingBox.width + movingBox.dx > box2.x && movingBox.x + movingBox.width <= box2.x) {
             movingBox.x = box2.x - movingBox.width;
             movingBox.dx = 0;
-            movingBox.dy = 0;
         }
         if (movingBox.dx < 0 && movingBox.x + movingBox.dx < box2.x + box2.width && movingBox.x >= box2.x + box2.width) {
             movingBox.x = box2.x + box2.width;
             movingBox.dx = 0;
-            movingBox.dy = 0;
         }
         if (movingBox.dy > 0 && movingBox.y + movingBox.height + movingBox.dy > box2.y && movingBox.y + movingBox.height <= box2.y) {
             movingBox.y = box2.y - movingBox.height;
             movingBox.dy = 0;
-            movingBox.dx = 0;
         }
         if (movingBox.dy < 0 && movingBox.y + movingBox.dy < box2.y + box2.height && movingBox.y >= box2.y + box2.height) {
             movingBox.y = box2.y + box2.height;
             movingBox.dy = 0;
-            movingBox.dx = 0;
         }
         return true;
     }
@@ -730,7 +730,11 @@ class Player extends MovingBox {
         this.hp = this.maxHp;
         this.invincibleDuration = 2000;
         this.direction = Direction.Down;
-        this.landscapeHitBox = new MovingBoxViewportHitBox(this);
+        this.hitBox = new MovingBoxHitBox(this, this.x, this.y + this.height / 2, this.width, this.height / 2);
+        this.halfLeftHitBox = new MovingBoxHitBox(this, this.x, this.y, this.width / 2, this.height + 1 // 1px higher to fix a problem when go down (as go upper is use the half hitbox it doesn't need this fix)
+        );
+        this.halfRightHitBox = new MovingBoxHitBox(this, this.width / 2, this.y, this.width / 2, this.height + 1 // Same as higher comment
+        );
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/link-up2.png");
@@ -803,15 +807,38 @@ class Player extends MovingBox {
         if (movingBoxCanvasCollision(this, this.Game.Viewport)) {
             this.Game.Viewport.slideScene(this.direction);
         }
+        let halfLeftCollision = false;
+        let halfRightCollision = false;
         this.Game.Viewport.loopCollision((cell, col, row) => {
-            movingBoxCollision(this.landscapeHitBox, cell);
+            if (simpleMovingBoxCollision(this.halfLeftHitBox, cell)) {
+                halfLeftCollision = true;
+            }
+            if (simpleMovingBoxCollision(this.halfRightHitBox, cell)) {
+                halfRightCollision = true;
+            }
+            movingBoxCollision(this.hitBox, cell);
         });
+        if (halfLeftCollision && !halfRightCollision && (this.direction === Direction.Up || this.direction === Direction.Down)) {
+            this.dx = this.speed;
+            this.Game.Viewport.loopCollision((cell, col, row) => {
+                movingBoxCollision(this.halfRightHitBox, cell);
+            });
+            console.log("left");
+        }
+        if (!halfLeftCollision && halfRightCollision && (this.direction === Direction.Up || this.direction === Direction.Down)) {
+            this.dx = -this.speed;
+            this.Game.Viewport.loopCollision((cell, col, row) => {
+                movingBoxCollision(this.halfLeftHitBox, cell);
+            });
+            console.log("right");
+        }
     }
     listenEvents() {
         this.isAttack = this.Game.EventManager.isAttackPressed
             ? true
             : false;
-        if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) && !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
+        if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) &&
+            !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
             if (this.Game.EventManager.isDownPressed) {
                 if (!this.Game.EventManager.isAttackPressed)
                     this.dy = this.speed;

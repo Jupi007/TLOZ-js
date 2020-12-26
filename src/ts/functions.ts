@@ -36,22 +36,18 @@ function movingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolean {
         if (movingBox.dx > 0 && movingBox.x + movingBox.width + movingBox.dx > box2.x && movingBox.x + movingBox.width <= box2.x) {
             movingBox.x = box2.x - movingBox.width;
             movingBox.dx = 0;
-            movingBox.dy = 0;
         }
         if (movingBox.dx < 0 && movingBox.x + movingBox.dx < box2.x + box2.width && movingBox.x >= box2.x + box2.width) {
             movingBox.x = box2.x + box2.width;
             movingBox.dx = 0;
-            movingBox.dy = 0;
         }
         if (movingBox.dy > 0 && movingBox.y + movingBox.height + movingBox.dy > box2.y && movingBox.y + movingBox.height <= box2.y) {
             movingBox.y = box2.y - movingBox.height;
             movingBox.dy = 0;
-            movingBox.dx = 0;
         }
         if (movingBox.dy < 0 && movingBox.y + movingBox.dy < box2.y + box2.height && movingBox.y >= box2.y + box2.height) {
             movingBox.y = box2.y + box2.height;
             movingBox.dy = 0;
-            movingBox.dx = 0;
         }
 
         return true;

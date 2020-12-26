@@ -55,33 +55,42 @@ class GameAnimation {
     }
 }
 
-class MovingBoxViewportHitBox {
+class MovingBoxHitBox {
     Box: MovingBox;
 
-    constructor(player: MovingBox) {
-        this.Box = player
+    hitX: number;
+    hitY: number;
+    hitWidth: number;
+    hitHeight: number;
+
+    constructor(box: MovingBox, x: number, y: number, width: number, height: number) {
+        this.Box = box;
+        this.hitX = x;
+        this.hitY = y;
+        this.hitWidth = width;
+        this.hitHeight = height;
     }
 
     get x(): number {
-        return this.Box.x;
+        return this.Box.x + this.hitX;
     }
     set x(x: number) {
-        this.Box.x = x;
+        this.Box.x = x - this.hitX;
     }
 
     get y(): number {
-        return this.Box.y + this.Box.height / 2;
+        return this.Box.y + this.hitY;
     }
     set y(y: number) {
-        this.Box.y = y - this.Box.height / 2;
+        this.Box.y = y - this.hitY;
     }
 
     get width(): number {
-        return this.Box.width;
+        return this.hitWidth;
     }
 
     get height(): number {
-        return this.Box.height / 2;
+        return this.hitHeight;
     }
 
     get dx(): number {
