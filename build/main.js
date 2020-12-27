@@ -730,11 +730,31 @@ class Player extends MovingBox {
         this.hp = this.maxHp;
         this.invincibleDuration = 2000;
         this.direction = Direction.Down;
+        // | -- | -- |
+        // | -- | -- |
+        // | ** | ** |
+        // | ** | ** |
         this.hitBox = new MovingBoxHitBox(this, 0, this.height / 2, this.width, this.height / 2);
         // HalfHitBoxs are used by the passBetweenHelper() function
+        // | -- | -- |
+        // | -- | -- |
+        // | ** | -- |
+        // | ** | -- |
         this.halfLeftHitBox = new MovingBoxHitBox(this, 0, this.height / 2, this.width / 2, this.height / 2);
+        // | -- | -- |
+        // | -- | -- |
+        // | -- | ** |
+        // | -- | ** |
         this.halfRightHitBox = new MovingBoxHitBox(this, this.width / 2, this.height / 2, this.width / 2, this.height / 2);
+        // | -- | -- |
+        // | -- | -- |
+        // | ** | ** |
+        // | -- | -- |
         this.halfUpHitBox = new MovingBoxHitBox(this, 0, this.height / 2, this.width, this.height / 4);
+        // | -- | -- |
+        // | -- | -- |
+        // | -- | -- |
+        // | ** | ** |
         this.halfDownHitBox = new MovingBoxHitBox(this, 0, (this.height / 4) * 3, this.width, this.height / 4);
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
