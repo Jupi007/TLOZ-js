@@ -58,6 +58,11 @@ class Player extends MovingBox {
 
         this.direction = Direction.Down;
 
+        // | -- | -- |
+        // | -- | -- |
+        // | ** | ** |
+        // | ** | ** |
+
         this.hitBox = new MovingBoxHitBox(
             this,
             0,
@@ -68,6 +73,11 @@ class Player extends MovingBox {
 
         // HalfHitBoxs are used by the passBetweenHelper() function
 
+        // | -- | -- |
+        // | -- | -- |
+        // | ** | -- |
+        // | ** | -- |
+
         this.halfLeftHitBox = new MovingBoxHitBox(
             this,
             0,
@@ -75,6 +85,11 @@ class Player extends MovingBox {
             this.width / 2,
             this.height / 2
         );
+
+        // | -- | -- |
+        // | -- | -- |
+        // | -- | ** |
+        // | -- | ** |
 
         this.halfRightHitBox = new MovingBoxHitBox(
             this,
@@ -84,6 +99,11 @@ class Player extends MovingBox {
             this.height / 2
         );
 
+        // | -- | -- |
+        // | -- | -- |
+        // | ** | ** |
+        // | -- | -- |
+
         this.halfUpHitBox = new MovingBoxHitBox(
             this,
             0,
@@ -91,6 +111,11 @@ class Player extends MovingBox {
             this.width,
             this.height / 4
         );
+
+        // | -- | -- |
+        // | -- | -- |
+        // | -- | -- |
+        // | ** | ** |
 
         this.halfDownHitBox = new MovingBoxHitBox(
             this,
