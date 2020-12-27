@@ -730,11 +730,12 @@ class Player extends MovingBox {
         this.hp = this.maxHp;
         this.invincibleDuration = 2000;
         this.direction = Direction.Down;
-        this.hitBox = new MovingBoxHitBox(this, this.x, this.y + this.height / 2, this.width, this.height / 2);
-        this.halfLeftHitBox = new MovingBoxHitBox(this, this.x, this.y, this.width / 2, this.height + 1 // 1px higher to fix a problem when go down (as go upper is use the half hitbox it doesn't need this fix)
-        );
-        this.halfRightHitBox = new MovingBoxHitBox(this, this.width / 2, this.y, this.width / 2, this.height + 1 // Same as higher comment
-        );
+        this.hitBox = new MovingBoxHitBox(this, 0, this.height / 2, this.width, this.height / 2);
+        // HalfHitBoxs are used by the passBetweenHelper() function
+        this.halfLeftHitBox = new MovingBoxHitBox(this, 0, this.height / 2, this.width / 2, this.height / 2);
+        this.halfRightHitBox = new MovingBoxHitBox(this, this.width / 2, this.height / 2, this.width / 2, this.height / 2);
+        this.halfUpHitBox = new MovingBoxHitBox(this, 0, this.height / 2, this.width, this.height / 4);
+        this.halfDownHitBox = new MovingBoxHitBox(this, 0, (this.height / 4) * 3, this.width, this.height / 4);
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/link-up2.png");
@@ -803,12 +804,12 @@ class Player extends MovingBox {
         this.isMoving = true;
         this.move();
     }
-    collisions() {
-        if (movingBoxCanvasCollision(this, this.Game.Viewport)) {
-            this.Game.Viewport.slideScene(this.direction);
-        }
+    // Helper to pass between two boxes
+    passBetweenBoxesHelper() {
         let halfLeftCollision = false;
         let halfRightCollision = false;
+        let halfUpCollision = false;
+        let halfDownCollision = false;
         this.Game.Viewport.loopCollision((cell, col, row) => {
             if (simpleMovingBoxCollision(this.halfLeftHitBox, cell)) {
                 halfLeftCollision = true;
@@ -816,21 +817,38 @@ class Player extends MovingBox {
             if (simpleMovingBoxCollision(this.halfRightHitBox, cell)) {
                 halfRightCollision = true;
             }
+            if (simpleMovingBoxCollision(this.halfUpHitBox, cell)) {
+                halfUpCollision = true;
+            }
+            if (simpleMovingBoxCollision(this.halfDownHitBox, cell)) {
+                halfDownCollision = true;
+            }
+        });
+        if (this.direction === Direction.Up || this.direction === Direction.Down) {
+            if (halfLeftCollision && !halfRightCollision) {
+                this.dx = this.speed;
+            }
+            else if (!halfLeftCollision && halfRightCollision) {
+                this.dx = -this.speed;
+            }
+        }
+        else if (this.direction === Direction.Left || this.direction === Direction.Right) {
+            if (halfUpCollision && !halfDownCollision) {
+                this.dy = this.speed;
+            }
+            else if (!halfUpCollision && halfDownCollision) {
+                this.dy = -this.speed;
+            }
+        }
+    }
+    collisions() {
+        if (movingBoxCanvasCollision(this, this.Game.Viewport)) {
+            this.Game.Viewport.slideScene(this.direction);
+        }
+        this.passBetweenBoxesHelper();
+        this.Game.Viewport.loopCollision((cell, col, row) => {
             movingBoxCollision(this.hitBox, cell);
         });
-        // Helper to pass between two boxes in vertical direction
-        if (halfLeftCollision && !halfRightCollision && (this.direction === Direction.Up || this.direction === Direction.Down)) {
-            this.dx = this.speed;
-            this.Game.Viewport.loopCollision((cell, col, row) => {
-                movingBoxCollision(this.halfRightHitBox, cell);
-            });
-        }
-        else if (!halfLeftCollision && halfRightCollision && (this.direction === Direction.Up || this.direction === Direction.Down)) {
-            this.dx = -this.speed;
-            this.Game.Viewport.loopCollision((cell, col, row) => {
-                movingBoxCollision(this.halfLeftHitBox, cell);
-            });
-        }
     }
     listenEvents() {
         this.isAttack = this.Game.EventManager.isAttackPressed
