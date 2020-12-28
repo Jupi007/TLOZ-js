@@ -1,13 +1,11 @@
 class Player extends MovingBox {
     Game: Game;
 
-    width: number;
-    height: number;
-
     speed: number;
 
     isMoving: boolean;
     isAttack: boolean;
+    isAttackLastFrame: boolean;
 
     hp: number;
     maxHp: number;
@@ -40,6 +38,7 @@ class Player extends MovingBox {
 
         this.isMoving = false;
         this.isAttack = false;
+        this.isAttackLastFrame = false;
         this.isInvincible = false;
 
         this.score = 0;
@@ -151,6 +150,10 @@ class Player extends MovingBox {
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
+    }
+
+    get isFullLife(): boolean {
+        return this.hp === this.maxHp;
     }
 
     increaseScore(): void {
@@ -352,6 +355,7 @@ class Player extends MovingBox {
 
     reset(): void {
         this.isMoving = false;
+        this.isAttackLastFrame = this.isAttack;
 
         if (this.isInvincible && this.invincibleTime + this.invincibleDuration < performance.now()) {
             this.isInvincible = false;

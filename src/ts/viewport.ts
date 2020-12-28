@@ -131,6 +131,8 @@ class Viewport {
             this.nextScene = null;
 
             this.Game.Enemies = new Enemies(this.Game);
+            this.Game.Projectiles.deleteAllProjectiles();
+
             this.Game.status = GameStatus.Run;
         }
     }

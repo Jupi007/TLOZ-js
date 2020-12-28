@@ -9,6 +9,9 @@ class Sword extends SimpleBox {
     sprites: HTMLImageElement[] = [];
 
     slashSound: HTMLAudioElement;
+    flyingSound: HTMLAudioElement;
+
+    isFlying: boolean;
 
     constructor(game: Game) {
         super();
@@ -24,6 +27,9 @@ class Sword extends SimpleBox {
         this.sprites[Direction.Left] = SpriteLoader.load("./sprites/png/sword-left.png");
 
         this.slashSound = AudioLoader.load("./sounds/effect/Sword_Slash.wav");
+        this.flyingSound = AudioLoader.load("./sounds/effect/Sword_Shoot.wav");
+
+        this.isFlying = false;
     }
 
     draw(): void {
@@ -74,12 +80,33 @@ class Sword extends SimpleBox {
 
             this.slashSound.play();
         }
+
+        if (
+            !this.isFlying
+            && this.Game.Player.isAttackLastFrame
+            && !this.Game.Player.isAttack
+            && this.Game.Player.isFullLife
+        ) {
+            this.flyingSound.play();
+
+            this.isFlying = true;
+
+            this.Game.Projectiles.addProjectile(new Projectile(
+                this.x,
+                this.y,
+                this.width,
+                this.height,
+                this.Game.Player.speed * 2,
+                this.Game.Player.direction,
+                this.sprites[this.Game.Player.direction],
+                false, // Disable collision on Player
+                true, // Enable collisions on Ennemies
+                () => this.isFlying = false
+            ));
+        }
     }
 
     reset(): void {
-        this.x = 0;
-        this.y = 0;
-        this.width = 0;
-        this.height = 0;
+
     }
 }

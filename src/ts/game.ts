@@ -9,6 +9,7 @@ class Game {
     Player: Player;
     Sword: Sword;
     Enemies: Enemies;
+    Projectiles: Projectiles;
     EventManager: EventManager;
     Hud: Hud;
     GameOverScreen: GameOverScreen;
@@ -26,6 +27,7 @@ class Game {
         this.Player = new Player(this);
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
+        this.Projectiles = new Projectiles(this);
         this.Hud = new Hud(this);
         this.GameOverScreen = new GameOverScreen(this);
         this.WinScreen = new WinScreen(this);
@@ -74,22 +76,25 @@ class Game {
     }
 
     runLoop(): void {
-        this.Sword.listenEvents();
         this.Player.listenEvents();
+        this.Sword.listenEvents();
         this.Enemies.listenEvents();
 
         this.Player.collisions();
         this.Sword.collisions();
         this.Enemies.collisions();
         this.Viewport.collisions();
+        this.Projectiles.collisions();
 
         this.Player.move();
         this.Enemies.move();
+        this.Projectiles.move();
 
         this.Viewport.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
+        this.Projectiles.draw();
         this.Hud.draw();
 
         this.Sword.reset();
@@ -103,6 +108,7 @@ class Game {
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
+        this.Projectiles.draw();
         this.Hud.draw();
     }
 
@@ -122,6 +128,7 @@ class Game {
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
+        this.Projectiles.draw();
         this.Hud.draw();
     }
 

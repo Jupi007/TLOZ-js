@@ -255,7 +255,7 @@ class EventManager {
         this.isDownPressed = false;
         this.isAttackPressed = false;
         this.currentAttackFrame = 0;
-        this.attackDuration = 15;
+        this.attackDuration = 10;
         this.Game = game;
         document.addEventListener("keydown", e => this.keyEvent(e, true));
         document.addEventListener("keyup", e => this.keyEvent(e, false));
@@ -417,6 +417,7 @@ class Game {
         this.Player = new Player(this);
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
+        this.Projectiles = new Projectiles(this);
         this.Hud = new Hud(this);
         this.GameOverScreen = new GameOverScreen(this);
         this.WinScreen = new WinScreen(this);
@@ -456,19 +457,22 @@ class Game {
         }
     }
     runLoop() {
-        this.Sword.listenEvents();
         this.Player.listenEvents();
+        this.Sword.listenEvents();
         this.Enemies.listenEvents();
         this.Player.collisions();
         this.Sword.collisions();
         this.Enemies.collisions();
         this.Viewport.collisions();
+        this.Projectiles.collisions();
         this.Player.move();
         this.Enemies.move();
+        this.Projectiles.move();
         this.Viewport.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
+        this.Projectiles.draw();
         this.Hud.draw();
         this.Sword.reset();
         this.Player.reset();
@@ -479,6 +483,7 @@ class Game {
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
+        this.Projectiles.draw();
         this.Hud.draw();
     }
     gameOverLoop() {
@@ -494,6 +499,7 @@ class Game {
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
+        this.Projectiles.draw();
         this.Hud.draw();
     }
     drawImage(sprite, x, y, width, height) {
@@ -719,6 +725,7 @@ class Player extends MovingBox {
         this.Game = game;
         this.isMoving = false;
         this.isAttack = false;
+        this.isAttackLastFrame = false;
         this.isInvincible = false;
         this.score = 0;
         this.width = 64;
@@ -777,6 +784,9 @@ class Player extends MovingBox {
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
+    }
+    get isFullLife() {
+        return this.hp === this.maxHp;
     }
     increaseScore() {
         this.score++;
@@ -952,9 +962,90 @@ class Player extends MovingBox {
     }
     reset() {
         this.isMoving = false;
+        this.isAttackLastFrame = this.isAttack;
         if (this.isInvincible && this.invincibleTime + this.invincibleDuration < performance.now()) {
             this.isInvincible = false;
         }
+    }
+}
+
+class Projectile extends MovingBox {
+    constructor(x, y, width, height, speed, direction, sprite, hasPlayerCollision, hasEnemiesCollision, collisionCallback) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.speed = speed;
+        this.direction = direction;
+        this.sprite = sprite;
+        this.hasPlayerCollision = hasPlayerCollision;
+        this.hasEnemiesCollision = hasEnemiesCollision;
+        this.collisionCallback = collisionCallback;
+        switch (this.direction) {
+            case Direction.Up:
+                this.dy = -this.speed;
+                break;
+            case Direction.Right:
+                this.dx = this.speed;
+                break;
+            case Direction.Down:
+                this.dy = this.speed;
+                break;
+            case Direction.Left:
+                this.dx = -this.speed;
+                break;
+        }
+    }
+}
+class Projectiles {
+    constructor(game) {
+        this.Game = game;
+        this.projectiles = [];
+    }
+    collisions() {
+        this.loopProjectiles((projectile) => {
+            this.Game.Enemies.loopEnemies((enemy) => {
+                if (movingBoxsCollision(enemy, projectile)) {
+                    this.Game.Enemies.killEnemy(enemy);
+                    this.deleteProjectile(projectile);
+                }
+            });
+        });
+        this.loopProjectiles((projectile) => {
+            if (movingBoxCanvasCollision(projectile, this.Game.Viewport)) {
+                this.deleteProjectile(projectile);
+            }
+        });
+    }
+    move() {
+        this.loopProjectiles((projectile) => {
+            projectile.x += projectile.dx;
+            projectile.y += projectile.dy;
+        });
+    }
+    draw() {
+        this.loopProjectiles((projectile) => {
+            this.Game.Viewport.currentScene.drawImage(projectile.sprite, projectile.x, projectile.y, projectile.width, projectile.height);
+        });
+    }
+    addProjectile(projectile) {
+        this.projectiles.push(projectile);
+    }
+    deleteProjectile(projectile) {
+        projectile.collisionCallback();
+        this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
+    }
+    deleteAllProjectiles() {
+        this.loopProjectiles((projectile) => {
+            projectile.collisionCallback();
+        });
+        this.projectiles = [];
+    }
+    loopProjectiles(callback) {
+        this.projectiles.forEach((projectile) => {
+            callback(projectile);
+        });
     }
 }
 
@@ -971,6 +1062,8 @@ class Sword extends SimpleBox {
         this.sprites[Direction.Down] = SpriteLoader.load("./sprites/png/sword-down.png");
         this.sprites[Direction.Left] = SpriteLoader.load("./sprites/png/sword-left.png");
         this.slashSound = AudioLoader.load("./sounds/effect/Sword_Slash.wav");
+        this.flyingSound = AudioLoader.load("./sounds/effect/Sword_Shoot.wav");
+        this.isFlying = false;
     }
     draw() {
         if (this.Game.Player.isAttack) {
@@ -1014,12 +1107,18 @@ class Sword extends SimpleBox {
             }
             this.slashSound.play();
         }
+        if (!this.isFlying
+            && this.Game.Player.isAttackLastFrame
+            && !this.Game.Player.isAttack
+            && this.Game.Player.isFullLife) {
+            this.flyingSound.play();
+            this.isFlying = true;
+            this.Game.Projectiles.addProjectile(new Projectile(this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.Game.Player.direction, this.sprites[this.Game.Player.direction], false, // Disable collision on Player
+            true, // Enable collisions on Ennemies
+            () => this.isFlying = false));
+        }
     }
     reset() {
-        this.x = 0;
-        this.y = 0;
-        this.width = 0;
-        this.height = 0;
     }
 }
 
@@ -1109,6 +1208,7 @@ class Viewport {
             this.currentScene = this.nextScene;
             this.nextScene = null;
             this.Game.Enemies = new Enemies(this.Game);
+            this.Game.Projectiles.deleteAllProjectiles();
             this.Game.status = GameStatus.Run;
         }
     }
