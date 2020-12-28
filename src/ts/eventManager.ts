@@ -8,7 +8,7 @@ class EventManager {
     isAttackPressed = false;
 
     currentAttackFrame = 0;
-    attackDuration = 10;
+    attackDuration = 15;
 
     constructor(game: Game) {
         this.Game = game;

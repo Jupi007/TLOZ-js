@@ -255,7 +255,7 @@ class EventManager {
         this.isDownPressed = false;
         this.isAttackPressed = false;
         this.currentAttackFrame = 0;
-        this.attackDuration = 10;
+        this.attackDuration = 15;
         this.Game = game;
         document.addEventListener("keydown", e => this.keyEvent(e, true));
         document.addEventListener("keyup", e => this.keyEvent(e, false));
