@@ -71,7 +71,7 @@ class Hud {
 
     drawScore(): void {
         this.Game.fillText(
-            ' SCORE: ' + this.Game.Player.score + '/' + (this.Game.World.nbRow * this.Game.World.nbCol),
+            ' SCORE: ' + this.Game.Player.score + '/' + this.Game.Player.targetScore,
             this.width - (this.height / 2) + this.x,
             this.y + this.height / 2,
             '#fff',

@@ -16,6 +16,7 @@ class Player extends MovingBox {
     invincibleAnimation: GameAnimation;
 
     score: number;
+    targetScore: number;
 
     sprites: HTMLImageElement[][] = [];
     spritesAttack: HTMLImageElement[] = [];
@@ -42,6 +43,7 @@ class Player extends MovingBox {
         this.isInvincible = false;
 
         this.score = 0;
+        this.targetScore = 0;
 
         this.width = 64;
         this.height = 64;
@@ -159,7 +161,7 @@ class Player extends MovingBox {
     increaseScore(): void {
         this.score++;
 
-        if (this.Game.World.nbRow * this.Game.World.nbCol <= this.score) {
+        if (this.targetScore <= this.score) {
             this.isInvincible = false;
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();

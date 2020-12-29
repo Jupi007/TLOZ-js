@@ -41,6 +41,12 @@ class Game {
         this.Player.x = this.Viewport.cellSize * this.World.spawnCellColl;
         this.Player.y = this.Viewport.cellSize * this.World.spawnCellRow;
 
+        this.World.loopScenes((scene) => {
+            if (scene.hasEnemies) {
+                this.Player.targetScore++;
+            }
+        });
+
         this.status = GameStatus.Run;
     }
 

@@ -427,6 +427,11 @@ class Game {
         this.Canvas.height = this.Viewport.height + this.Hud.height;
         this.Player.x = this.Viewport.cellSize * this.World.spawnCellColl;
         this.Player.y = this.Viewport.cellSize * this.World.spawnCellRow;
+        this.World.loopScenes((scene) => {
+            if (scene.hasEnemies) {
+                this.Player.targetScore++;
+            }
+        });
         this.status = GameStatus.Run;
     }
     run() {
@@ -596,7 +601,7 @@ class Hud {
         }
     }
     drawScore() {
-        this.Game.fillText(' SCORE: ' + this.Game.Player.score + '/' + (this.Game.World.nbRow * this.Game.World.nbCol), this.width - (this.height / 2) + this.x, this.y + this.height / 2, '#fff', '16px', 'right', 'middle');
+        this.Game.fillText(' SCORE: ' + this.Game.Player.score + '/' + this.Game.Player.targetScore, this.width - (this.height / 2) + this.x, this.y + this.height / 2, '#fff', '16px', 'right', 'middle');
     }
 }
 
@@ -618,7 +623,7 @@ class Scene {
         this.nbRow = 11;
         this.nbCol = 16;
         this.cellSize = 64;
-        this.hasEnemies = false;
+        this.hasEnemies = true;
         this.x = 0;
         this.y = 0;
         this.c = c;
@@ -715,6 +720,13 @@ class World {
     getSpawnScene() {
         return this.map[this.spawnSceneColl][this.spawnSceneRow];
     }
+    loopScenes(callback) {
+        this.map.forEach((col, c) => {
+            col.forEach((scene, r) => {
+                callback(scene);
+            });
+        });
+    }
 }
 
 class Player extends MovingBox {
@@ -728,6 +740,7 @@ class Player extends MovingBox {
         this.isAttackLastFrame = false;
         this.isInvincible = false;
         this.score = 0;
+        this.targetScore = 0;
         this.width = 64;
         this.height = 64;
         this.x = 0;
@@ -790,7 +803,7 @@ class Player extends MovingBox {
     }
     increaseScore() {
         this.score++;
-        if (this.Game.World.nbRow * this.Game.World.nbCol <= this.score) {
+        if (this.targetScore <= this.score) {
             this.isInvincible = false;
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();

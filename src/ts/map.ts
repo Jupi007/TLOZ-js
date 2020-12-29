@@ -44,7 +44,7 @@ class Scene {
         this.nbCol = 16;
         this.cellSize = 64;
 
-        this.hasEnemies = false;
+        this.hasEnemies = true;
 
         this.x = 0;
         this.y = 0;
@@ -191,5 +191,13 @@ class World {
 
     getSpawnScene(): Scene {
         return this.map[this.spawnSceneColl][this.spawnSceneRow];
+    }
+
+    loopScenes(callback: Function): void {
+        this.map.forEach((col, c) => {
+            col.forEach((scene, r) => {
+                callback(scene);
+            });
+        });
     }
 }
