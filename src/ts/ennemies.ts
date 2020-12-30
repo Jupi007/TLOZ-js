@@ -23,10 +23,19 @@ class Enemy extends MovingBox {
     }
 
     invertDirection(): void {
-        if (this.direction == Direction.Up) {
-            this.direction = Direction.Down;
-        } else {
-            this.direction = Direction.Up;
+        switch (this.direction) {
+            case Direction.Up:
+                this.direction = Direction.Down;
+                break;
+            case Direction.Down:
+                this.direction = Direction.Up;
+                break;
+            case Direction.Left:
+                this.direction = Direction.Right;
+                break;
+            case Direction.Right:
+                this.direction = Direction.Left;
+                break;
         }
     }
 }
@@ -46,6 +55,14 @@ class Octorok extends Enemy {
         this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/octorok-down1.png");
         this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/octorok-down2.png");
 
+        this.sprites[Direction.Right] = [];
+        this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/octorok-right1.png");
+        this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/octorok-right2.png");
+
+        this.sprites[Direction.Left] = [];
+        this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/octorok-left1.png");
+        this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
+
         this.spritesAnimation = new GameAnimation(20 / speed, 2);
 
         this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
@@ -55,24 +72,13 @@ class Octorok extends Enemy {
 class Enemies {
     Game: Game;
 
-    img: HTMLImageElement = new Image();
-
-    nbEnemies = 3;
     enemies: Enemy[] = [];
 
     constructor(game: Game) {
         this.Game = game;
 
         if (this.Game.Viewport.currentScene.hasEnemies) {
-            for (var i = 0; i < this.nbEnemies; i++) {
-                this.enemies[i] = new Octorok(
-                    this.Game,
-                    this.Game.Viewport.cellSize * 2 + getRandomIntInclusive(0, 11) * this.Game.Viewport.cellSize,
-                    this.Game.Viewport.cellSize * 2 + getRandomIntInclusive(0, 6) * this.Game.Viewport.cellSize,
-                    getRandomIntInclusive(1, 2),
-                    getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
-                );
-            }
+            this.enemies = this.Game.Viewport.currentScene.enemies;
         }
     }
 
@@ -93,14 +99,12 @@ class Enemies {
 
         if (this.Game.Enemies.enemies.length <= 0) {
             this.Game.Player.increaseScore();
-            this.Game.Viewport.currentScene.hasEnemies = false;
         }
     }
 
     draw(): void {
         this.loopEnemies((enemy) => {
             if (this.Game.status === GameStatus.Run) enemy.spritesAnimation.requestNewFrameAnimation(enemy.speed);
-
 
             this.Game.Viewport.currentScene.drawImage(
                 enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep],
@@ -135,12 +139,19 @@ class Enemies {
 
     listenEvents(): void {
         this.loopEnemies((enemy) => {
-            enemy.dx = 0;
-
-            if (enemy.direction == Direction.Down) {
-                enemy.dy = enemy.speed;
-            } else {
-                enemy.dy = -enemy.speed;
+            switch (enemy.direction) {
+                case Direction.Down:
+                    enemy.dy = enemy.speed;
+                    break;
+                case Direction.Up:
+                    enemy.dy = -enemy.speed;
+                    break;
+                case Direction.Right:
+                    enemy.dx = enemy.speed;
+                    break;
+                case Direction.Left:
+                    enemy.dx = -enemy.speed;
+                    break;
             }
         });
     }

@@ -232,11 +232,19 @@ class Enemy extends MovingBox {
         // this.landscapeHitBox = new MovingBoxHitBox(this);
     }
     invertDirection() {
-        if (this.direction == Direction.Up) {
-            this.direction = Direction.Down;
-        }
-        else {
-            this.direction = Direction.Up;
+        switch (this.direction) {
+            case Direction.Up:
+                this.direction = Direction.Down;
+                break;
+            case Direction.Down:
+                this.direction = Direction.Up;
+                break;
+            case Direction.Left:
+                this.direction = Direction.Right;
+                break;
+            case Direction.Right:
+                this.direction = Direction.Left;
+                break;
         }
     }
 }
@@ -251,20 +259,22 @@ class Octorok extends Enemy {
         this.sprites[Direction.Down] = [];
         this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/octorok-down1.png");
         this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/octorok-down2.png");
+        this.sprites[Direction.Right] = [];
+        this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/octorok-right1.png");
+        this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/octorok-right2.png");
+        this.sprites[Direction.Left] = [];
+        this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/octorok-left1.png");
+        this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
         this.spritesAnimation = new GameAnimation(20 / speed, 2);
         this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
     }
 }
 class Enemies {
     constructor(game) {
-        this.img = new Image();
-        this.nbEnemies = 3;
         this.enemies = [];
         this.Game = game;
         if (this.Game.Viewport.currentScene.hasEnemies) {
-            for (var i = 0; i < this.nbEnemies; i++) {
-                this.enemies[i] = new Octorok(this.Game, this.Game.Viewport.cellSize * 2 + getRandomIntInclusive(0, 11) * this.Game.Viewport.cellSize, this.Game.Viewport.cellSize * 2 + getRandomIntInclusive(0, 6) * this.Game.Viewport.cellSize, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down);
-            }
+            this.enemies = this.Game.Viewport.currentScene.enemies;
         }
     }
     loopEnemies(callback) {
@@ -280,7 +290,6 @@ class Enemies {
         }
         if (this.Game.Enemies.enemies.length <= 0) {
             this.Game.Player.increaseScore();
-            this.Game.Viewport.currentScene.hasEnemies = false;
         }
     }
     draw() {
@@ -310,12 +319,19 @@ class Enemies {
     }
     listenEvents() {
         this.loopEnemies((enemy) => {
-            enemy.dx = 0;
-            if (enemy.direction == Direction.Down) {
-                enemy.dy = enemy.speed;
-            }
-            else {
-                enemy.dy = -enemy.speed;
+            switch (enemy.direction) {
+                case Direction.Down:
+                    enemy.dy = enemy.speed;
+                    break;
+                case Direction.Up:
+                    enemy.dy = -enemy.speed;
+                    break;
+                case Direction.Right:
+                    enemy.dx = enemy.speed;
+                    break;
+                case Direction.Left:
+                    enemy.dx = -enemy.speed;
+                    break;
             }
         });
     }
@@ -703,7 +719,7 @@ class Scene {
         this.nbRow = 11;
         this.nbCol = 16;
         this.cellSize = 64;
-        this.hasEnemies = true;
+        this.enemies = [];
         this.x = 0;
         this.y = 0;
         this.c = c;
@@ -737,6 +753,9 @@ class Scene {
                 this.cells[c][this.nbRow - 1].brick = this.defaultWallBrick;
             }
         }
+    }
+    get hasEnemies() {
+        return this.enemies.length > 0;
     }
     getCell(col, row) {
         return this.cells[col][row];
@@ -782,6 +801,11 @@ class World {
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new StairsBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()]
         ]);
         this.map[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
+        this.map[0][0].enemies = [
+            new Octorok(this.Game, 2 * 64, 2 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Down),
+            new Octorok(this.Game, 5 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 13 * 64, 3 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+        ];
         this.map[1][0].loadBricks([
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()],
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()],
@@ -796,6 +820,11 @@ class World {
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()]
         ]);
         this.map[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
+        this.map[1][0].enemies = [
+            new Octorok(this.Game, 5 * 64, 8 * 64, getRandomIntInclusive(1, 2), Direction.Up),
+            new Octorok(this.Game, 8 * 64, 4 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 10 * 64, 2 * 64, getRandomIntInclusive(1, 2), Direction.Down),
+        ];
         this.map[2][0].loadBricks([
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()],
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()],
@@ -810,6 +839,11 @@ class World {
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()]
         ]);
         this.map[2][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
+        this.map[2][0].enemies = [
+            new Octorok(this.Game, 5 * 64, 4 * 64, getRandomIntInclusive(1, 2), Direction.Down),
+            new Octorok(this.Game, 9 * 64, 6 * 64, getRandomIntInclusive(1, 2), Direction.Right),
+            new Octorok(this.Game, 12 * 64, 3 * 64, getRandomIntInclusive(1, 2), Direction.Down),
+        ];
         this.map[0][1].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new StairsBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new StairsBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
@@ -823,6 +857,12 @@ class World {
             [new WallBrick(), new WallBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopRightBrick(), new DefaultBrick(), new DefaultBrick(), new WallTopLeftBrick(), new WallBrick(), new WallBrick()],
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
+        this.map[0][1].enemies = [
+            new Octorok(this.Game, 6 * 64, 4 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 4 * 64, 6 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 7 * 64, 2 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 13 * 64, 2 * 64, getRandomIntInclusive(1, 2), Direction.Down),
+        ];
         this.map[1][1].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
@@ -836,6 +876,12 @@ class World {
             [new WallBrick(), new WallBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
+        this.map[1][1].enemies = [
+            new Octorok(this.Game, 4 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 10 * 64, 3 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 13 * 64, 7 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 12 * 64, 6 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+        ];
         this.map[2][1].loadBricks([
             [new WallBrick(), new WallBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick()],
             [new WallBrick(), new WallBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick()],
@@ -849,6 +895,12 @@ class World {
             [new WallBrick(), new WallBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick()],
             [new WallBrick(), new WallBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick()],
         ]);
+        this.map[2][1].enemies = [
+            new Octorok(this.Game, 3 * 64, 4 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 5 * 64, 6 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 10 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 14 * 64, 2 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Left : Direction.Down),
+        ];
         this.map[0][2].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBottomRightBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
@@ -862,6 +914,11 @@ class World {
             [new WallBrick(), new WallBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
+        this.map[0][2].enemies = [
+            new Octorok(this.Game, 3 * 64, 4 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 5 * 64, 7 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 10 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+        ];
         // Spawn scene
         this.map[1][2].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
@@ -876,7 +933,6 @@ class World {
             [new WallBrick(), new WallBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallTopBrick(), new WallBrick(), new WallBrick()],
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
-        this.map[1][2].hasEnemies = false;
         this.map[2][2].loadBricks([
             [new WallBrick(), new WallBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick()],
             [new WallBrick(), new WallBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick()],
@@ -890,6 +946,12 @@ class World {
             [new WallBrick(), new WallBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick()],
             [new WallBrick(), new WallBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick()],
         ]);
+        this.map[2][2].enemies = [
+            new Octorok(this.Game, 3 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 5 * 64, 7 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 10 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 12 * 64, 7 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+        ];
     }
     getSpawnScene() {
         return this.map[this.spawnSceneColl][this.spawnSceneRow];
