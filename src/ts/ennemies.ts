@@ -67,8 +67,8 @@ class Enemies {
             for (var i = 0; i < this.nbEnemies; i++) {
                 this.enemies[i] = new Octorok(
                     this.Game,
-                    getRandomIntInclusive(this.Game.Viewport.cellSize * 2, this.Game.Viewport.width - (this.Game.Viewport.cellSize * 2)),
-                    getRandomIntInclusive(this.Game.Viewport.cellSize * 2, this.Game.Viewport.height - (this.Game.Viewport.cellSize * 2)),
+                    this.Game.Viewport.cellSize * 2 + getRandomIntInclusive(0, 11) * this.Game.Viewport.cellSize,
+                    this.Game.Viewport.cellSize * 2 + getRandomIntInclusive(0, 6) * this.Game.Viewport.cellSize,
                     getRandomIntInclusive(1, 2),
                     getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
                 );
