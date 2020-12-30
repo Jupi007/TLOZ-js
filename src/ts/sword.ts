@@ -35,7 +35,7 @@ class Sword extends SimpleBox {
     draw(): void {
         if (this.Game.Player.isAttack) {
             this.Game.Viewport.drawImage(
-                this.sprites[this.Game.Player.direction],
+                this.sprites[this.direction],
                 this.x,
                 this.y,
                 this.width,
@@ -56,22 +56,24 @@ class Sword extends SimpleBox {
 
     listenEvents(): void {
         if (this.Game.Player.isAttack) {
-            if (this.Game.Player.direction == Direction.Up) {
+            this.direction = this.Game.Player.direction;
+
+            if (this.direction === Direction.Up) {
                this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
                this.y = this.Game.Player.y - this.swordWidth + this.swordHandleWidth;
                this.width = this.swordHeight;
                this.height = this.swordWidth;
-           } else if (this.Game.Player.direction == Direction.Down) {
+           } else if (this.direction === Direction.Down) {
                this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
                this.y = this.Game.Player.y + this.Game.Player.width - this.swordHandleWidth;
                this.width = this.swordHeight;
                this.height = this.swordWidth;
-           } else if (this.Game.Player.direction == Direction.Left) {
+           } else if (this.direction === Direction.Left) {
                 this.x = this.Game.Player.x - this.swordWidth + this.swordHandleWidth;
                 this.y = this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
                 this.width = this.swordWidth;
                 this.height = this.swordHeight;
-            } else if (this.Game.Player.direction == Direction.Right) {
+            } else if (this.direction === Direction.Right) {
                 this.x = this.Game.Player.x + this.Game.Player.width - this.swordHandleWidth;
                 this.y = this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
                 this.width = this.swordWidth;
@@ -98,7 +100,7 @@ class Sword extends SimpleBox {
                 this.height,
                 this.Game.Player.speed * 2,
                 this.Game.Player.direction,
-                this.sprites[this.Game.Player.direction],
+                this.sprites[this.direction],
                 false, // Disable collision on Player
                 true, // Enable collisions on Ennemies
                 () => this.isFlying = false
