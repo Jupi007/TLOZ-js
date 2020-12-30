@@ -114,7 +114,7 @@ class Enemies {
 
     collisions(): void {
         this.loopEnemies((enemy) => {
-            if (movingBoxsCollision(this.Game.Player, enemy) && !this.Game.Player.isInvincible) {
+            if (movingBoxsCollision(this.Game.Player.hitBox, enemy) && !this.Game.Player.isInvincible) {
                 this.Game.Player.takeDamage(1);
                 this.Game.Player.takeKnockBack();
             }

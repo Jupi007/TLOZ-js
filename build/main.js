@@ -292,7 +292,7 @@ class Enemies {
     }
     collisions() {
         this.loopEnemies((enemy) => {
-            if (movingBoxsCollision(this.Game.Player, enemy) && !this.Game.Player.isInvincible) {
+            if (movingBoxsCollision(this.Game.Player.hitBox, enemy) && !this.Game.Player.isInvincible) {
                 this.Game.Player.takeDamage(1);
                 this.Game.Player.takeKnockBack();
             }
@@ -1301,7 +1301,7 @@ class Sword extends SimpleBox {
             && this.Game.Player.isFullLife) {
             this.flyingSound.play();
             this.isFlying = true;
-            this.Game.Projectiles.addProjectile(new Projectile(this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.Game.Player.direction, this.sprites[this.direction], false, // Disable collision on Player
+            this.Game.Projectiles.addProjectile(new Projectile(this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.direction, this.sprites[this.direction], false, // Disable collision on Player
             true, // Enable collisions on Ennemies
             () => this.isFlying = false));
         }

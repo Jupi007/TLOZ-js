@@ -13,6 +13,8 @@ class Sword extends SimpleBox {
 
     isFlying: boolean;
 
+    direction: Direction;
+
     constructor(game: Game) {
         super();
         this.Game = game;
@@ -99,7 +101,7 @@ class Sword extends SimpleBox {
                 this.width,
                 this.height,
                 this.Game.Player.speed * 2,
-                this.Game.Player.direction,
+                this.direction,
                 this.sprites[this.direction],
                 false, // Disable collision on Player
                 true, // Enable collisions on Ennemies
