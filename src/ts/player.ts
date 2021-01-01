@@ -3,24 +3,22 @@ class Player extends MovingBox {
 
     speed: number;
 
-    isMoving: boolean;
-    isAttack: boolean;
-    isAttackLastFrame: boolean;
+    isMovingObserver: StateObserver;
+    isAttackObserver: StateObserver;
 
     hp: number;
     maxHp: number;
 
-    isInvincible: boolean;
-    invincibleTime: number;
+    isInvincibleObserver: StateObserver;
     invincibleDuration: number;
-    invincibleAnimation: GameAnimation;
+    invincibleAnimation: AnimationObserver;
 
     score: number;
     targetScore: number;
 
     sprites: HTMLImageElement[][] = [];
     spritesAttack: HTMLImageElement[] = [];
-    spritesAnimation: GameAnimation;
+    spritesAnimation: AnimationObserver;
 
     hitBox: MovingBoxHitBox;
     halfLeftHitBox: MovingBoxHitBox;
@@ -37,10 +35,9 @@ class Player extends MovingBox {
 
         this.Game = game;
 
-        this.isMoving = false;
-        this.isAttack = false;
-        this.isAttackLastFrame = false;
-        this.isInvincible = false;
+        this.isMovingObserver = new StateObserver(false);
+        this.isAttackObserver = new StateObserver(false);
+        this.isInvincibleObserver = new StateObserver(false);
 
         this.score = 0;
         this.targetScore = 0;
@@ -55,7 +52,7 @@ class Player extends MovingBox {
 
         this.maxHp = 6;
         this.hp = this.maxHp;
-        this.invincibleDuration = 2000;
+        this.invincibleDuration = 200;
 
         this.direction = Direction.Down;
 
@@ -146,8 +143,8 @@ class Player extends MovingBox {
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
         this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
 
-        this.spritesAnimation = new GameAnimation(6, 2);
-        this.invincibleAnimation = new GameAnimation(7, 2);
+        this.spritesAnimation = new AnimationObserver(6, 2);
+        this.invincibleAnimation = new AnimationObserver(7, 2);
 
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
@@ -162,24 +159,22 @@ class Player extends MovingBox {
         this.score++;
 
         if (this.targetScore <= this.score) {
-            this.isInvincible = false;
+            this.isInvincibleObserver.set(false);
+            this.isAttackObserver.set(false);
+            this.isMovingObserver.set(false);
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
-            this.Game.status = GameStatus.Win;
+            this.Game.status.set(GameStatus.Win);
         }
     }
 
     draw(): void {
-        if (this.isMoving && this.Game.status !== GameStatus.Stopped) {
-            this.spritesAnimation.requestNewFrameAnimation();
-        }
-
-        let sprite = this.isAttack
+        let sprite = this.isAttackObserver.get()
                    ? this.spritesAttack[this.direction]
                    : this.sprites[this.direction][this.spritesAnimation.currentAnimationStep];
 
-        if (this.isInvincible) {
-            this.invincibleAnimation.requestNewFrameAnimation();
+        if (this.isInvincibleObserver.get()) {
+            this.invincibleAnimation.update();
             if (this.invincibleAnimation.currentAnimationStep === 2) sprite = new Image();
         }
 
@@ -190,6 +185,10 @@ class Player extends MovingBox {
             this.width,
             this.height
         );
+
+        if (this.isMovingObserver.get() && !this.Game.status.is(GameStatus.Stopped)) {
+            this.spritesAnimation.update();
+        }
     }
 
     move(): void {
@@ -212,7 +211,6 @@ class Player extends MovingBox {
         }
 
         movingBoxCanvasCollision(this, this.Game.Viewport);
-        this.isMoving = true;
         this.move();
     }
 
@@ -268,20 +266,18 @@ class Player extends MovingBox {
     }
 
     listenEvents(): void {
-        this.isAttack = this.Game.EventManager.isAttackPressed
-                      ? true
-                      : false;
+        this.isAttackObserver.set(this.Game.EventManager.isAttackObserverPressed ? true : false);
 
         if (
             (this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) &&
             !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)
         ) {
             if (this.Game.EventManager.isDownPressed) {
-                if (!this.Game.EventManager.isAttackPressed) this.dy = this.speed;
+                if (!this.Game.EventManager.isAttackObserverPressed) this.dy = this.speed;
                 this.direction = Direction.Down;
             }
             else if (this.Game.EventManager.isUpPressed) {
-                if (!this.Game.EventManager.isAttackPressed) this.dy = -this.speed;
+                if (!this.Game.EventManager.isAttackObserverPressed) this.dy = -this.speed;
                 this.direction = Direction.Up;
             }
         }
@@ -290,38 +286,36 @@ class Player extends MovingBox {
             !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)
         ) {
             if (this.Game.EventManager.isRightPressed) {
-                if (!this.Game.EventManager.isAttackPressed) this.dx = this.speed;
+                if (!this.Game.EventManager.isAttackObserverPressed) this.dx = this.speed;
                 this.direction = Direction.Right;
             }
             else if (this.Game.EventManager.isLeftPressed) {
-                if (!this.Game.EventManager.isAttackPressed) this.dx = -this.speed;
+                if (!this.Game.EventManager.isAttackObserverPressed) this.dx = -this.speed;
                 this.direction = Direction.Left;
             }
         }
 
-        this.isMoving = this.dx != 0 || this.dy != 0
-                      ? true
-                      : false;
+        this.isMovingObserver.set((this.dx != 0 || this.dy != 0) ? true : false);
     }
 
     takeDamage(damage: number): void {
-        if (this.isInvincible)  return;
+        if (this.isInvincibleObserver.get())  return;
 
         if (this.hp - damage >= 0) {
             this.hurtSound.play();
             this.hp -= damage;
+            this.setInvicibility();
+            this.takeKnockBack();
         } else {
             this.hp = 0;
         }
 
-        this.setInvicibility();
-
         if (this.hp <= 0) {
-            this.isInvincible = false;
+            this.isInvincibleObserver.set(false);
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
             this.dieSound.play();
-            this.Game.status = GameStatus.GameOver;
+            this.Game.status.set(GameStatus.GameOver);
         }
         else if (this.hp <= 2) {
             this.lowHealthSound.play();
@@ -351,16 +345,16 @@ class Player extends MovingBox {
     }
 
     setInvicibility(): void {
-        this.isInvincible = true;
-        this.invincibleTime = performance.now()
+        this.isInvincibleObserver.set(true);
     }
 
-    reset(): void {
-        this.isMoving = false;
-        this.isAttackLastFrame = this.isAttack;
+    updateObservers(): void {
+        this.isMovingObserver.update();
+        this.isAttackObserver.update();
+        this.isInvincibleObserver.update();
 
-        if (this.isInvincible && this.invincibleTime + this.invincibleDuration < performance.now()) {
-            this.isInvincible = false;
+        if (this.isInvincibleObserver.get() && this.isInvincibleObserver.currentFrame > this.invincibleDuration) {
+            this.isInvincibleObserver.set(false);
         }
     }
 }

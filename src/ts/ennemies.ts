@@ -5,7 +5,7 @@ class Enemy extends MovingBox {
     landscapeHitBox: MovingBoxHitBox;
 
     sprites: HTMLImageElement[][] = [];
-    spritesAnimation: GameAnimation;
+    spritesAnimation: AnimationObserver;
 
     dieSound: HTMLAudioElement;
 
@@ -63,7 +63,7 @@ class Octorok extends Enemy {
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/octorok-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
 
-        this.spritesAnimation = new GameAnimation(20 / speed, 2);
+        this.spritesAnimation = new AnimationObserver(20 / speed, 2);
 
         this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
     }
@@ -104,8 +104,6 @@ class Enemies {
 
     draw(): void {
         this.loopEnemies((enemy) => {
-            if (this.Game.status === GameStatus.Run) enemy.spritesAnimation.requestNewFrameAnimation(enemy.speed);
-
             this.Game.Viewport.currentScene.drawImage(
                 enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep],
                 enemy.x,
@@ -113,14 +111,15 @@ class Enemies {
                 enemy.width,
                 enemy.height
             );
+
+            if (this.Game.status.is(GameStatus.Run)) enemy.spritesAnimation.update();
         });
     }
 
     collisions(): void {
         this.loopEnemies((enemy) => {
-            if (movingBoxsCollision(this.Game.Player.hitBox, enemy) && !this.Game.Player.isInvincible) {
+            if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
                 this.Game.Player.takeDamage(1);
-                this.Game.Player.takeKnockBack();
             }
 
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {

@@ -133,7 +133,7 @@ class Viewport {
             this.Game.Enemies = new Enemies(this.Game);
             this.Game.Projectiles.deleteAllProjectiles();
 
-            this.Game.status = GameStatus.Run;
+            this.Game.status.set(GameStatus.Run);
         }
     }
 
@@ -204,7 +204,7 @@ class Viewport {
             this.Game.Player.dx = 0;
             this.Game.Player.dy = 0;
 
-            this.Game.status = GameStatus.SlideScene;
+            this.Game.status.set(GameStatus.SlideScene);
 
             return;
         }

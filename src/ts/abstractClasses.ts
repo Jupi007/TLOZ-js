@@ -29,32 +29,6 @@ abstract class MovingBox extends SimpleBox {
     direction:Direction;
 }
 
-class GameAnimation {
-    currentFrame = 0;
-    animationStepDuration: number;
-
-    currentAnimationStep = 1;
-    nbAnimationStep: number;
-
-    constructor(animationStepDuration: number, nbAnimationStep: number) {
-        this.animationStepDuration = animationStepDuration;
-        this.nbAnimationStep = nbAnimationStep;
-    }
-
-    requestNewFrameAnimation(): void {
-        this.currentFrame++;
-
-        if (this.currentFrame >= this.animationStepDuration) {
-            this.currentFrame = 0;
-            this.currentAnimationStep =
-                (this.currentAnimationStep + 1 > this.nbAnimationStep)
-                ? 1
-                : this.currentAnimationStep + 1
-            ;
-        }
-    }
-}
-
 class MovingBoxHitBox {
     Box: MovingBox;
 

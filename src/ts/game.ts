@@ -15,7 +15,7 @@ class Game {
     GameOverScreen: GameOverScreen;
     WinScreen: WinScreen;
 
-    status: GameStatus;
+    status: StateObserver;
 
     constructor(canvas: HTMLCanvasElement) {
         this.Canvas = canvas;
@@ -47,7 +47,7 @@ class Game {
             }
         });
 
-        this.status = GameStatus.Run;
+        this.status = new StateObserver(GameStatus.Run);
     }
 
     run(): void {
@@ -58,7 +58,7 @@ class Game {
     loop(): void {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
-        switch (this.status) {
+        switch (this.status.get()) {
             case GameStatus.Run:
                 this.runLoop();
                 break;
@@ -79,6 +79,8 @@ class Game {
                 this.runLoop();
                 break;
         }
+
+        this.status.update();
     }
 
     runLoop(): void {
@@ -103,8 +105,7 @@ class Game {
         this.Projectiles.draw();
         this.Hud.draw();
 
-        this.Sword.reset();
-        this.Player.reset();
+        this.Player.updateObservers();
 
         this.EventManager.newFrame();
     }

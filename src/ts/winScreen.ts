@@ -10,24 +10,33 @@ class WinScreen {
     }
 
     draw(): void {
-        this.music.play();
+        this.Game.Viewport.draw();
+        this.Game.Enemies.draw();
+        this.Game.Sword.draw();
+        this.Game.Player.draw();
+        this.Game.Projectiles.draw();
+        this.Game.Hud.draw();
 
-        this.Game.fillRect(
-            0,
-            0,
-            this.Game.Canvas.width,
-            this.Game.Canvas.height,
-            "#000"
-        );
+        if (this.Game.status.currentFrame > 50) {
+            this.music.play();
 
-        this.Game.fillText(
-            "YOU WON",
-            this.Game.Canvas.width / 2,
-            this.Game.Canvas.height / 2,
-            '#fff',
-            '24px',
-            'center',
-            'middle'
-        );
+            this.Game.fillRect(
+                0,
+                0,
+                this.Game.Canvas.width,
+                this.Game.Canvas.height,
+                "#000"
+            );
+
+            this.Game.fillText(
+                "YOU WON",
+                this.Game.Canvas.width / 2,
+                this.Game.Canvas.height / 2,
+                '#fff',
+                '24px',
+                'center',
+                'middle'
+            );
+        }
     }
 }

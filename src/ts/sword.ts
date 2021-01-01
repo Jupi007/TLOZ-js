@@ -35,7 +35,7 @@ class Sword extends SimpleBox {
     }
 
     draw(): void {
-        if (this.Game.Player.isAttack) {
+        if (this.Game.Player.isAttackObserver.get()) {
             this.Game.Viewport.drawImage(
                 this.sprites[this.direction],
                 this.x,
@@ -47,7 +47,7 @@ class Sword extends SimpleBox {
     }
 
     collisions(): void {
-        if (this.Game.Player.isAttack) {
+        if (this.Game.Player.isAttackObserver.get()) {
             this.Game.Enemies.loopEnemies((enemy) => {
                 if (simpleMovingBoxCollision(enemy, this)) {
                     this.Game.Enemies.killEnemy(enemy);
@@ -57,7 +57,7 @@ class Sword extends SimpleBox {
     }
 
     listenEvents(): void {
-        if (this.Game.Player.isAttack) {
+        if (this.Game.Player.isAttackObserver.get()) {
             this.direction = this.Game.Player.direction;
 
             if (this.direction === Direction.Up) {
@@ -87,8 +87,8 @@ class Sword extends SimpleBox {
 
         if (
             !this.isFlying
-            && this.Game.Player.isAttackLastFrame
-            && !this.Game.Player.isAttack
+            && this.Game.Player.isAttackObserver.getLastFrame()
+            && !this.Game.Player.isAttackObserver.get()
             && this.Game.Player.isFullLife
         ) {
             this.flyingSound.play();
@@ -108,9 +108,5 @@ class Sword extends SimpleBox {
                 () => this.isFlying = false
             ));
         }
-    }
-
-    reset(): void {
-
     }
 }
