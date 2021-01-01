@@ -1,4 +1,4 @@
-class Sword extends SimpleBox {
+class Sword {
     Game: Game;
 
     swordWidth: number;
@@ -13,10 +13,7 @@ class Sword extends SimpleBox {
 
     isFlying: boolean;
 
-    direction: Direction;
-
     constructor(game: Game) {
-        super();
         this.Game = game;
 
         this.swordWidth = 64;
@@ -32,6 +29,52 @@ class Sword extends SimpleBox {
         this.flyingSound = AudioLoader.load("./sounds/effect/Sword_Shoot.wav");
 
         this.isFlying = false;
+    }
+
+    get direction(): number {
+        return this.Game.Player.direction;
+    }
+
+    get x(): number {
+        if (this.direction === Direction.Up) {
+            return this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
+        } else if (this.direction === Direction.Down) {
+            return this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
+        } else if (this.direction === Direction.Left) {
+            return this.Game.Player.x - this.swordWidth + this.swordHandleWidth;
+        } else if (this.direction === Direction.Right) {
+            return this.Game.Player.x + this.Game.Player.width - this.swordHandleWidth;
+        }
+    }
+
+    get y(): number {
+        if (this.direction === Direction.Up) {
+            return this.Game.Player.y - this.swordWidth + this.swordHandleWidth;
+        } else if (this.direction === Direction.Down) {
+            return this.Game.Player.y + this.Game.Player.width - this.swordHandleWidth;
+        } else if (this.direction === Direction.Left) {
+            return this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
+        } else if (this.direction === Direction.Right) {
+            return this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
+        }
+    }
+
+    get width(): number {
+        if (this.direction === Direction.Up || this.direction === Direction.Down) {
+            return this.swordHeight;
+        }
+        else if (this.direction === Direction.Left || this.direction === Direction.Right) {
+            return this.swordWidth;
+        }
+    }
+
+    get height(): number {
+        if (this.direction === Direction.Up || this.direction === Direction.Down) {
+            return this.swordWidth;
+        }
+        else if (this.direction === Direction.Left || this.direction === Direction.Right) {
+            return this.swordHeight;
+        }
     }
 
     draw(): void {
@@ -57,31 +100,7 @@ class Sword extends SimpleBox {
     }
 
     listenEvents(): void {
-        if (this.Game.Player.isAttackObserver.get()) {
-            this.direction = this.Game.Player.direction;
-
-            if (this.direction === Direction.Up) {
-               this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
-               this.y = this.Game.Player.y - this.swordWidth + this.swordHandleWidth;
-               this.width = this.swordHeight;
-               this.height = this.swordWidth;
-           } else if (this.direction === Direction.Down) {
-               this.x = this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
-               this.y = this.Game.Player.y + this.Game.Player.width - this.swordHandleWidth;
-               this.width = this.swordHeight;
-               this.height = this.swordWidth;
-           } else if (this.direction === Direction.Left) {
-                this.x = this.Game.Player.x - this.swordWidth + this.swordHandleWidth;
-                this.y = this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
-                this.width = this.swordWidth;
-                this.height = this.swordHeight;
-            } else if (this.direction === Direction.Right) {
-                this.x = this.Game.Player.x + this.Game.Player.width - this.swordHandleWidth;
-                this.y = this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
-                this.width = this.swordWidth;
-                this.height = this.swordHeight;
-            }
-
+        if (this.Game.Player.isAttackObserver.get() && this.Game.Player.isAttackObserver.isFirstFrame) {
             this.slashSound.play();
         }
 
