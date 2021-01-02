@@ -19,7 +19,6 @@ class Viewport {
         this.nextScene = null;
 
         this.music = this.currentScene.music;
-        this.music.play();
 
         this.x = 0;
         this.y = 0;
@@ -67,6 +66,8 @@ class Viewport {
     }
 
     draw(): void {
+        if (this.Game.state.is(GameState.Run) && this.Game.state.isFirstFrame) this.music.play();
+
         this.loopCells((cell, col, row) => {
             this.currentScene.drawImage(
                 cell.brick.sprite,

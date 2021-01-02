@@ -40,7 +40,9 @@
 
     <script type="text/javascript">
         Game = new Game(document.getElementById("canvas"));
-        Game.run();
+        document.addEventListener('DOMContentLoaded', () => {
+            Game.run();
+        });
     </script>
 </body>
 </html>

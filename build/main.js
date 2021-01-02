@@ -284,7 +284,7 @@ class Enemies {
     collisions() {
         this.loopEnemies((enemy) => {
             if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
-                this.Game.Player.takeDamage(1);
+                this.Game.Player.takeDamage(10);
             }
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
                 enemy.invertDirection();
@@ -481,11 +481,12 @@ function movingBoxCanvasCollision(movingBox, canvas) {
 
 var GameState;
 (function (GameState) {
-    GameState[GameState["Run"] = 0] = "Run";
-    GameState[GameState["Stopped"] = 1] = "Stopped";
-    GameState[GameState["SlideScene"] = 2] = "SlideScene";
-    GameState[GameState["GameOver"] = 3] = "GameOver";
-    GameState[GameState["Win"] = 4] = "Win";
+    GameState[GameState["Splash"] = 0] = "Splash";
+    GameState[GameState["Run"] = 1] = "Run";
+    GameState[GameState["Stopped"] = 2] = "Stopped";
+    GameState[GameState["SlideScene"] = 3] = "SlideScene";
+    GameState[GameState["GameOver"] = 4] = "GameOver";
+    GameState[GameState["Win"] = 5] = "Win";
 })(GameState || (GameState = {}));
 ;
 class Game {
@@ -500,6 +501,7 @@ class Game {
         this.Enemies = new Enemies(this);
         this.Projectiles = new Projectiles(this);
         this.Hud = new Hud(this);
+        this.SplashScreen = new SplashScreen(this);
         this.GameOverScreen = new GameOverScreen(this);
         this.WinScreen = new WinScreen(this);
         this.Viewport.y = this.Hud.height;
@@ -513,7 +515,7 @@ class Game {
                 this.Player.targetScore++;
             }
         });
-        this.state = new StateObserver(GameState.Run);
+        this.state = new StateObserver(GameState.Splash);
     }
     run() {
         window.requestAnimationFrame(() => this.run());
@@ -522,6 +524,9 @@ class Game {
     loop() {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
         switch (this.state.get()) {
+            case GameState.Splash:
+                this.splashLoop();
+                break;
             case GameState.Run:
                 this.runLoop();
                 break;
@@ -571,6 +576,9 @@ class Game {
         this.Player.draw();
         this.Projectiles.draw();
         this.Hud.draw();
+    }
+    splashLoop() {
+        this.SplashScreen.draw();
     }
     gameOverLoop() {
         this.GameOverScreen.draw();
@@ -1055,7 +1063,7 @@ class Player extends MovingBox {
         this.maxHp = 6;
         this.hp = this.maxHp;
         this.invincibleDuration = 200;
-        this.direction = Direction.Down;
+        this.direction = Direction.Up;
         // | -- | -- |
         // | -- | -- |
         // | ** | ** |
@@ -1372,6 +1380,56 @@ class Projectiles {
     }
 }
 
+var SplashScreenState;
+(function (SplashScreenState) {
+    SplashScreenState[SplashScreenState["BlackScreen"] = 0] = "BlackScreen";
+    SplashScreenState[SplashScreenState["RevealGame"] = 1] = "RevealGame";
+})(SplashScreenState || (SplashScreenState = {}));
+class SplashScreen {
+    constructor(game) {
+        this.Game = game;
+        this.music = AudioLoader.load("./sounds/music/intro.mp3", true);
+        this.state = new StateObserver(SplashScreenState.BlackScreen);
+        this.showStartMessage = true;
+        this.revealGamePaneSpeed = 8;
+        this.revealGamePanePosition = 0;
+    }
+    draw() {
+        switch (this.state.get()) {
+            case SplashScreenState.BlackScreen:
+                if (this.state.isFirstFrame)
+                    this.music.play();
+                this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
+                this.Game.fillText("TLOZ-JS GAME", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
+                if (this.state.currentFrame > 100) {
+                    if (this.Game.EventManager.isEnterPressed) {
+                        this.music.pause();
+                        this.state.set(SplashScreenState.RevealGame);
+                    }
+                    if (this.state.currentFrame % 50 === 0) {
+                        this.showStartMessage = this.showStartMessage ? false : true;
+                    }
+                    if (this.showStartMessage) {
+                        this.Game.fillText("press enter to start", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
+                    }
+                }
+                break;
+            case SplashScreenState.RevealGame:
+                if (this.revealGamePanePosition > this.Game.Canvas.width / 2) {
+                    this.Game.state.set(GameState.Run);
+                }
+                this.Game.Viewport.draw();
+                this.Game.Player.draw();
+                this.Game.Hud.draw();
+                this.Game.fillRect(-this.revealGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+                this.Game.fillRect(this.Game.Canvas.width / 2 + this.revealGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+                this.revealGamePanePosition += this.revealGamePaneSpeed;
+                break;
+        }
+        this.state.update();
+    }
+}
+
 class Sword {
     constructor(game) {
         this.sprites = [];
@@ -1474,7 +1532,6 @@ class Viewport {
         this.currentScene = this.Game.World.getSpawnScene();
         this.nextScene = null;
         this.music = this.currentScene.music;
-        this.music.play();
         this.x = 0;
         this.y = 0;
         this.dr = 0;
@@ -1511,6 +1568,8 @@ class Viewport {
         });
     }
     draw() {
+        if (this.Game.state.is(GameState.Run) && this.Game.state.isFirstFrame)
+            this.music.play();
         this.loopCells((cell, col, row) => {
             this.currentScene.drawImage(cell.brick.sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
         });

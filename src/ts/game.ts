@@ -1,4 +1,4 @@
-enum GameState {Run, Stopped, SlideScene, GameOver, Win};
+enum GameState {Splash, Run, Stopped, SlideScene, GameOver, Win};
 
 class Game {
     Canvas: HTMLCanvasElement;
@@ -12,6 +12,7 @@ class Game {
     Projectiles: Projectiles;
     EventManager: EventManager;
     Hud: Hud;
+    SplashScreen: SplashScreen;
     GameOverScreen: GameOverScreen;
     WinScreen: WinScreen;
 
@@ -29,6 +30,7 @@ class Game {
         this.Enemies = new Enemies(this);
         this.Projectiles = new Projectiles(this);
         this.Hud = new Hud(this);
+        this.SplashScreen = new SplashScreen(this);
         this.GameOverScreen = new GameOverScreen(this);
         this.WinScreen = new WinScreen(this);
 
@@ -47,7 +49,7 @@ class Game {
             }
         });
 
-        this.state = new StateObserver(GameState.Run);
+        this.state = new StateObserver(GameState.Splash);
     }
 
     run(): void {
@@ -59,6 +61,9 @@ class Game {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
         switch (this.state.get()) {
+            case GameState.Splash:
+                this.splashLoop();
+                break;
             case GameState.Run:
                 this.runLoop();
                 break;
@@ -117,6 +122,10 @@ class Game {
         this.Player.draw();
         this.Projectiles.draw();
         this.Hud.draw();
+    }
+
+    splashLoop(): void {
+        this.SplashScreen.draw();
     }
 
     gameOverLoop(): void {

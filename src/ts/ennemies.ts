@@ -119,7 +119,7 @@ class Enemies {
     collisions(): void {
         this.loopEnemies((enemy) => {
             if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
-                this.Game.Player.takeDamage(1);
+                this.Game.Player.takeDamage(10);
             }
 
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {

@@ -56,7 +56,7 @@ class Player extends MovingBox {
         this.hp = this.maxHp;
         this.invincibleDuration = 200;
 
-        this.direction = Direction.Down;
+        this.direction = Direction.Up;
 
         // | -- | -- |
         // | -- | -- |
