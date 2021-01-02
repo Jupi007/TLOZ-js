@@ -14,19 +14,27 @@
         }
         body {
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
             height: 100vh;
             background: #202020;
+            color: white;
         }
         canvas {
             background: #000;
             display: block;
-            margin: auto;
             border-radius: 15px;
+        }
+        a {
+            color: rgb(124, 120, 203) !important;
         }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
+
+    <p><a href="https://github.com/Jupiter007-43/TLOZ-js">https://github.com/Jupiter007-43/TLOZ-js</a></p>
 
     <script src="./build/main.js"></script>
 

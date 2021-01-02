@@ -47,8 +47,6 @@ class Game {
             }
         });
 
-        this.Player.targetScore = 1;
-
         this.state = new StateObserver(GameState.Run);
     }
 
