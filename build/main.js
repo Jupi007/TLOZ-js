@@ -284,7 +284,7 @@ class Enemies {
     collisions() {
         this.loopEnemies((enemy) => {
             if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
-                this.Game.Player.takeDamage(10);
+                this.Game.Player.takeDamage(1);
             }
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
                 enemy.invertDirection();
