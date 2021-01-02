@@ -133,6 +133,7 @@ class Viewport {
 
             this.Game.Enemies = new Enemies(this.Game);
             this.Game.Projectiles.deleteAllProjectiles();
+            this.Game.Items.deleteAllItems();
 
             this.Game.state.set(GameState.Run);
         }

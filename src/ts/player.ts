@@ -30,6 +30,7 @@ class Player extends MovingBox {
     hurtSound: HTMLAudioElement;
     dieSound: HTMLAudioElement;
     lowHealthSound: HTMLAudioElement;
+    getHealthSound: HTMLAudioElement;
     fanfareSound: HTMLAudioElement;
 
     constructor(game: Game) {
@@ -153,6 +154,7 @@ class Player extends MovingBox {
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
+        this.getHealthSound = AudioLoader.load("./sounds/effect/Get_Heart.wav");
         this.fanfareSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
     }
 
@@ -339,6 +341,18 @@ class Player extends MovingBox {
         else if (this.hp <= 2) {
             this.lowHealthSound.play();
         }
+    }
+
+    recoverHealth(hp): void {
+        this.hp += hp;
+
+        if (this.hp > this.maxHp) this.hp = this.maxHp;
+        if (this.hp > 2) {
+            this.lowHealthSound.pause();
+            this.lowHealthSound.currentTime = 0;
+        }
+
+        this.getHealthSound.play()
     }
 
     takeKnockBack(): void {

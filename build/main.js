@@ -273,6 +273,9 @@ class Enemies {
         if (this.Game.Enemies.enemies.length <= 0) {
             this.Game.Player.increaseScore();
         }
+        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 4) === 1) {
+            this.Game.Items.addItem(new Item(enemy.x + (enemy.width / 2) - (24 / 2), enemy.y + (enemy.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2)));
+        }
     }
     draw() {
         this.loopEnemies((enemy) => {
@@ -500,6 +503,7 @@ class Game {
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
         this.Projectiles = new Projectiles(this);
+        this.Items = new Items(this);
         this.Hud = new Hud(this);
         this.SplashScreen = new SplashScreen(this);
         this.GameOverScreen = new GameOverScreen(this);
@@ -554,6 +558,7 @@ class Game {
         this.Enemies.listenEvents();
         this.Player.collisions();
         this.Sword.collisions();
+        this.Items.collisions();
         this.Enemies.collisions();
         this.Viewport.collisions();
         this.Projectiles.collisions();
@@ -561,11 +566,12 @@ class Game {
         this.Enemies.move();
         this.Projectiles.move();
         this.Viewport.draw();
+        this.Projectiles.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
-        this.Projectiles.draw();
         this.Hud.draw();
+        this.Items.draw();
         this.Player.updateObservers();
         this.EventManager.newFrame();
     }
@@ -702,6 +708,51 @@ class Hud {
     }
     drawScore() {
         this.Game.fillText(' SCORE: ' + this.Game.Player.score + '/' + this.Game.Player.targetScore, this.width - (this.height / 2) + this.x, this.y + this.height / 2, '#fff', '16px', 'right', 'middle');
+    }
+}
+
+class Item extends SimpleBox {
+    constructor(x, y, width, height, sprite, collisionCallback) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.sprite = sprite;
+        this.collisionCallback = collisionCallback;
+    }
+}
+class Items {
+    constructor(game) {
+        this.Game = game;
+        this.items = [];
+    }
+    collisions() {
+        this.loopItems((item) => {
+            if (movingBoxsCollision(this.Game.Player, item)) {
+                item.collisionCallback();
+                this.deleteItem(item);
+            }
+        });
+    }
+    draw() {
+        this.loopItems((item) => {
+            this.Game.Viewport.currentScene.drawImage(item.sprite, item.x, item.y, item.width, item.height);
+        });
+    }
+    addItem(item) {
+        this.items.push(item);
+    }
+    deleteItem(item) {
+        this.items.splice(this.items.indexOf(item), 1);
+    }
+    deleteAllItems() {
+        this.items = [];
+    }
+    loopItems(callback) {
+        this.items.forEach((item) => {
+            callback(item);
+        });
     }
 }
 
@@ -1112,6 +1163,7 @@ class Player extends MovingBox {
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
+        this.getHealthSound = AudioLoader.load("./sounds/effect/Get_Heart.wav");
         this.fanfareSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
     }
     get isFullLife() {
@@ -1266,6 +1318,16 @@ class Player extends MovingBox {
         else if (this.hp <= 2) {
             this.lowHealthSound.play();
         }
+    }
+    recoverHealth(hp) {
+        this.hp += hp;
+        if (this.hp > this.maxHp)
+            this.hp = this.maxHp;
+        if (this.hp > 2) {
+            this.lowHealthSound.pause();
+            this.lowHealthSound.currentTime = 0;
+        }
+        this.getHealthSound.play();
     }
     takeKnockBack() {
         switch (this.direction) {
@@ -1614,6 +1676,7 @@ class Viewport {
             this.nextScene = null;
             this.Game.Enemies = new Enemies(this.Game);
             this.Game.Projectiles.deleteAllProjectiles();
+            this.Game.Items.deleteAllItems();
             this.Game.state.set(GameState.Run);
         }
     }
@@ -1701,7 +1764,7 @@ class WinScreen {
                     location.reload();
                 this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
                 this.Game.fillText("YOU WON", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
-                this.Game.fillText("press enter to retry", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
+                this.Game.fillText("press enter to play again", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
                 break;
         }
         this.state.update();

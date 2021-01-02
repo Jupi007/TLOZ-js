@@ -10,6 +10,7 @@ class Game {
     Sword: Sword;
     Enemies: Enemies;
     Projectiles: Projectiles;
+    Items: Items;
     EventManager: EventManager;
     Hud: Hud;
     SplashScreen: SplashScreen;
@@ -29,6 +30,7 @@ class Game {
         this.Sword = new Sword(this);
         this.Enemies = new Enemies(this);
         this.Projectiles = new Projectiles(this);
+        this.Items = new Items(this);
         this.Hud = new Hud(this);
         this.SplashScreen = new SplashScreen(this);
         this.GameOverScreen = new GameOverScreen(this);
@@ -95,6 +97,7 @@ class Game {
 
         this.Player.collisions();
         this.Sword.collisions();
+        this.Items.collisions();
         this.Enemies.collisions();
         this.Viewport.collisions();
         this.Projectiles.collisions();
@@ -104,11 +107,12 @@ class Game {
         this.Projectiles.move();
 
         this.Viewport.draw();
+        this.Projectiles.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
-        this.Projectiles.draw();
         this.Hud.draw();
+        this.Items.draw();
 
         this.Player.updateObservers();
 

@@ -100,6 +100,17 @@ class Enemies {
         if (this.Game.Enemies.enemies.length <= 0) {
             this.Game.Player.increaseScore();
         }
+
+        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 4) === 1) {
+            this.Game.Items.addItem(new Item(
+                enemy.x + (enemy.width / 2) - (24 / 2),
+                enemy.y + (enemy.height / 2) - (24 / 2),
+                24,
+                24,
+                SpriteLoader.load('./sprites/png/full-heart.png'),
+                () => this.Game.Player.recoverHealth(2)
+            ));
+        }
     }
 
     draw(): void {

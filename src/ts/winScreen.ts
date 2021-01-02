@@ -51,7 +51,7 @@ class WinScreen {
                 );
 
                 this.Game.fillText(
-                    "press enter to retry",
+                    "press enter to play again",
                     this.Game.Canvas.width / 2,
                     this.Game.Canvas.height / 3 * 2,
                     '#fff',
