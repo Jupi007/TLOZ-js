@@ -1,4 +1,4 @@
-enum GameStatus {Run, Stopped, SlideScene, GameOver, Win};
+enum GameState {Run, Stopped, SlideScene, GameOver, Win};
 
 class Game {
     Canvas: HTMLCanvasElement;
@@ -15,7 +15,7 @@ class Game {
     GameOverScreen: GameOverScreen;
     WinScreen: WinScreen;
 
-    status: StateObserver;
+    state: StateObserver;
 
     constructor(canvas: HTMLCanvasElement) {
         this.Canvas = canvas;
@@ -47,7 +47,9 @@ class Game {
             }
         });
 
-        this.status = new StateObserver(GameStatus.Run);
+        this.Player.targetScore = 1;
+
+        this.state = new StateObserver(GameState.Run);
     }
 
     run(): void {
@@ -58,20 +60,20 @@ class Game {
     loop(): void {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
-        switch (this.status.get()) {
-            case GameStatus.Run:
+        switch (this.state.get()) {
+            case GameState.Run:
                 this.runLoop();
                 break;
-            case GameStatus.Stopped:
+            case GameState.Stopped:
                 this.stoppedLoop();
                 break;
-            case GameStatus.SlideScene:
+            case GameState.SlideScene:
                 this.slideSceneLoop();
                 break;
-            case GameStatus.GameOver:
+            case GameState.GameOver:
                 this.gameOverLoop();
                 break;
-            case GameStatus.Win:
+            case GameState.Win:
                 this.winLoop();
                 break;
 
@@ -80,7 +82,7 @@ class Game {
                 break;
         }
 
-        this.status.update();
+        this.state.update();
     }
 
     runLoop(): void {

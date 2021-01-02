@@ -18,6 +18,7 @@ class Player extends MovingBox {
 
     sprites: HTMLImageElement[][] = [];
     spritesAttack: HTMLImageElement[] = [];
+    spriteWin: HTMLImageElement;
     spritesAnimation: AnimationObserver;
 
     hitBox: MovingBoxHitBox;
@@ -29,6 +30,7 @@ class Player extends MovingBox {
     hurtSound: HTMLAudioElement;
     dieSound: HTMLAudioElement;
     lowHealthSound: HTMLAudioElement;
+    fanfareSound: HTMLAudioElement;
 
     constructor(game: Game) {
         super();
@@ -143,29 +145,19 @@ class Player extends MovingBox {
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
         this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
 
+        this.spriteWin = SpriteLoader.load("./sprites/png/link-win.png");
+
         this.spritesAnimation = new AnimationObserver(6, 2);
         this.invincibleAnimation = new AnimationObserver(7, 2);
 
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
+        this.fanfareSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
     }
 
     get isFullLife(): boolean {
         return this.hp === this.maxHp;
-    }
-
-    increaseScore(): void {
-        this.score++;
-
-        if (this.targetScore <= this.score) {
-            this.isInvincibleObserver.set(false);
-            this.isAttackObserver.set(false);
-            this.isMovingObserver.set(false);
-            this.Game.Viewport.music.pause();
-            this.lowHealthSound.pause();
-            this.Game.status.set(GameStatus.Win);
-        }
     }
 
     draw(): void {
@@ -186,9 +178,19 @@ class Player extends MovingBox {
             this.height
         );
 
-        if (this.isMovingObserver.get() && !this.Game.status.is(GameStatus.Stopped)) {
+        if (this.isMovingObserver.get() && !this.Game.state.is(GameState.Stopped)) {
             this.spritesAnimation.update();
         }
+    }
+
+    drawWin(): void {
+        this.Game.Viewport.drawImage(
+            this.spriteWin,
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
     }
 
     move(): void {
@@ -266,18 +268,18 @@ class Player extends MovingBox {
     }
 
     listenEvents(): void {
-        this.isAttackObserver.set(this.Game.EventManager.isAttackObserverPressed ? true : false);
+        this.isAttackObserver.set(this.Game.EventManager.isAttackPressed ? true : false);
 
         if (
             (this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) &&
             !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)
         ) {
             if (this.Game.EventManager.isDownPressed) {
-                if (!this.Game.EventManager.isAttackObserverPressed) this.dy = this.speed;
+                if (!this.Game.EventManager.isAttackPressed) this.dy = this.speed;
                 this.direction = Direction.Down;
             }
             else if (this.Game.EventManager.isUpPressed) {
-                if (!this.Game.EventManager.isAttackObserverPressed) this.dy = -this.speed;
+                if (!this.Game.EventManager.isAttackPressed) this.dy = -this.speed;
                 this.direction = Direction.Up;
             }
         }
@@ -286,11 +288,11 @@ class Player extends MovingBox {
             !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)
         ) {
             if (this.Game.EventManager.isRightPressed) {
-                if (!this.Game.EventManager.isAttackObserverPressed) this.dx = this.speed;
+                if (!this.Game.EventManager.isAttackPressed) this.dx = this.speed;
                 this.direction = Direction.Right;
             }
             else if (this.Game.EventManager.isLeftPressed) {
-                if (!this.Game.EventManager.isAttackObserverPressed) this.dx = -this.speed;
+                if (!this.Game.EventManager.isAttackPressed) this.dx = -this.speed;
                 this.direction = Direction.Left;
             }
         }
@@ -298,14 +300,31 @@ class Player extends MovingBox {
         this.isMovingObserver.set((this.dx != 0 || this.dy != 0) ? true : false);
     }
 
+    increaseScore(): void {
+        this.score++;
+
+        if (this.score >= this.targetScore) {
+            this.isInvincibleObserver.set(false);
+            this.isAttackObserver.set(false);
+            this.isMovingObserver.set(false);
+
+            this.Game.Viewport.music.pause();
+            this.lowHealthSound.pause();
+            this.fanfareSound.play();
+
+            this.Game.state.set(GameState.Win);
+        }
+    }
+
     takeDamage(damage: number): void {
         if (this.isInvincibleObserver.get())  return;
 
+        this.hurtSound.play();
+        this.takeKnockBack();
+
         if (this.hp - damage >= 0) {
-            this.hurtSound.play();
             this.hp -= damage;
             this.setInvicibility();
-            this.takeKnockBack();
         } else {
             this.hp = 0;
         }
@@ -315,7 +334,7 @@ class Player extends MovingBox {
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
             this.dieSound.play();
-            this.Game.status.set(GameStatus.GameOver);
+            this.Game.state.set(GameState.GameOver);
         }
         else if (this.hp <= 2) {
             this.lowHealthSound.play();

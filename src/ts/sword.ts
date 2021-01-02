@@ -89,6 +89,16 @@ class Sword {
         }
     }
 
+    drawWin(): void {
+        this.Game.Viewport.drawImage(
+            this.sprites[Direction.Up],
+            this.Game.Player.x,
+            this.Game.Player.y - this.swordWidth,
+            this.swordHeight,
+            this.swordWidth
+        );
+    }
+
     collisions(): void {
         if (this.Game.Player.isAttackObserver.get()) {
             this.Game.Enemies.loopEnemies((enemy) => {

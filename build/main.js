@@ -277,14 +277,14 @@ class Enemies {
     draw() {
         this.loopEnemies((enemy) => {
             this.Game.Viewport.currentScene.drawImage(enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
-            if (this.Game.status.is(GameStatus.Run))
+            if (this.Game.state.is(GameState.Run))
                 enemy.spritesAnimation.update();
         });
     }
     collisions() {
         this.loopEnemies((enemy) => {
             if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
-                this.Game.Player.takeDamage(1);
+                this.Game.Player.takeDamage(10);
             }
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
                 enemy.invertDirection();
@@ -330,7 +330,8 @@ class EventManager {
         this.isLeftPressed = false;
         this.isUpPressed = false;
         this.isDownPressed = false;
-        this.isAttackObserverPressed = false;
+        this.isAttackPressed = false;
+        this.isEnterPressed = false;
         this.currentAttackFrame = 0;
         this.attackDuration = 10;
         this.Game = game;
@@ -356,26 +357,29 @@ class EventManager {
             case "ArrowDown":
                 this.isDownPressed = keydown;
                 break;
+            case "Enter":
+                this.isEnterPressed = keydown;
+                break;
             case "q":
                 if (keydown) {
-                    this.isAttackObserverPressed = true;
+                    this.isAttackPressed = true;
                 }
                 break;
             case "p":
-                if (keydown && this.Game.status.isIn(GameStatus.Run, GameStatus.Stopped)) {
-                    this.Game.status.set(this.Game.status.is(GameStatus.Run)
-                        ? GameStatus.Stopped
-                        : GameStatus.Run);
+                if (keydown && this.Game.state.isIn(GameState.Run, GameState.Stopped)) {
+                    this.Game.state.set(this.Game.state.is(GameState.Run)
+                        ? GameState.Stopped
+                        : GameState.Run);
                 }
                 break;
         }
         e.preventDefault();
     }
     newFrame() {
-        if (this.isAttackObserverPressed) {
+        if (this.isAttackPressed) {
             this.currentAttackFrame++;
             if (this.currentAttackFrame >= this.attackDuration) {
-                this.isAttackObserverPressed = false;
+                this.isAttackPressed = false;
             }
             return;
         }
@@ -475,14 +479,14 @@ function movingBoxCanvasCollision(movingBox, canvas) {
     }
 }
 
-var GameStatus;
-(function (GameStatus) {
-    GameStatus[GameStatus["Run"] = 0] = "Run";
-    GameStatus[GameStatus["Stopped"] = 1] = "Stopped";
-    GameStatus[GameStatus["SlideScene"] = 2] = "SlideScene";
-    GameStatus[GameStatus["GameOver"] = 3] = "GameOver";
-    GameStatus[GameStatus["Win"] = 4] = "Win";
-})(GameStatus || (GameStatus = {}));
+var GameState;
+(function (GameState) {
+    GameState[GameState["Run"] = 0] = "Run";
+    GameState[GameState["Stopped"] = 1] = "Stopped";
+    GameState[GameState["SlideScene"] = 2] = "SlideScene";
+    GameState[GameState["GameOver"] = 3] = "GameOver";
+    GameState[GameState["Win"] = 4] = "Win";
+})(GameState || (GameState = {}));
 ;
 class Game {
     constructor(canvas) {
@@ -509,7 +513,8 @@ class Game {
                 this.Player.targetScore++;
             }
         });
-        this.status = new StateObserver(GameStatus.Run);
+        this.Player.targetScore = 1;
+        this.state = new StateObserver(GameState.Run);
     }
     run() {
         window.requestAnimationFrame(() => this.run());
@@ -517,27 +522,27 @@ class Game {
     }
     loop() {
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
-        switch (this.status.get()) {
-            case GameStatus.Run:
+        switch (this.state.get()) {
+            case GameState.Run:
                 this.runLoop();
                 break;
-            case GameStatus.Stopped:
+            case GameState.Stopped:
                 this.stoppedLoop();
                 break;
-            case GameStatus.SlideScene:
+            case GameState.SlideScene:
                 this.slideSceneLoop();
                 break;
-            case GameStatus.GameOver:
+            case GameState.GameOver:
                 this.gameOverLoop();
                 break;
-            case GameStatus.Win:
+            case GameState.Win:
                 this.winLoop();
                 break;
             default:
                 this.runLoop();
                 break;
         }
-        this.status.update();
+        this.state.update();
     }
     runLoop() {
         this.Player.listenEvents();
@@ -607,47 +612,58 @@ class Game {
     }
 }
 
+var GameOverScreenState;
+(function (GameOverScreenState) {
+    GameOverScreenState[GameOverScreenState["PlayerAnimation"] = 0] = "PlayerAnimation";
+    GameOverScreenState[GameOverScreenState["BlackScreen"] = 1] = "BlackScreen";
+})(GameOverScreenState || (GameOverScreenState = {}));
 class GameOverScreen {
     constructor(game) {
         this.Game = game;
-        this.currentFrame = 0;
-        this.playerRotationAnimationDuration = 100;
-        this.playerRotationAnimationSpeed = 8;
-        this.blackScreen = 180; // die music duration is 156
         this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
+        this.state = new StateObserver(GameOverScreenState.PlayerAnimation);
     }
     draw() {
-        this.Game.Viewport.draw();
-        this.Game.Enemies.draw();
-        this.Game.Sword.draw();
-        this.Game.Hud.draw();
-        this.currentFrame++;
-        if (this.currentFrame < this.playerRotationAnimationDuration) {
-            if (this.currentFrame % this.playerRotationAnimationSpeed === 0) {
-                switch (this.Game.Player.direction) {
-                    case Direction.Up:
-                        this.Game.Player.direction = Direction.Right;
-                        break;
-                    case Direction.Right:
-                        this.Game.Player.direction = Direction.Down;
-                        break;
-                    case Direction.Down:
-                        this.Game.Player.direction = Direction.Left;
-                        break;
-                    case Direction.Left:
-                        this.Game.Player.direction = Direction.Up;
-                        break;
+        switch (this.state.get()) {
+            case GameOverScreenState.PlayerAnimation:
+                if (this.state.isFirstFrame)
+                    this.Game.Player.isMovingObserver.set(false);
+                this.Game.Viewport.draw();
+                this.Game.Enemies.draw();
+                this.Game.Hud.draw();
+                if (this.state.currentFrame < 125) {
+                    if (this.state.currentFrame % 8 === 0) {
+                        switch (this.Game.Player.direction) {
+                            case Direction.Up:
+                                this.Game.Player.direction = Direction.Right;
+                                break;
+                            case Direction.Right:
+                                this.Game.Player.direction = Direction.Down;
+                                break;
+                            case Direction.Down:
+                                this.Game.Player.direction = Direction.Left;
+                                break;
+                            case Direction.Left:
+                                this.Game.Player.direction = Direction.Up;
+                                break;
+                        }
+                    }
+                    this.Game.Player.draw();
                 }
-            }
-            this.Game.Player.draw();
-            return;
+                if (this.state.currentFrame > 200)
+                    this.state.set(GameOverScreenState.BlackScreen);
+                break;
+            case GameOverScreenState.BlackScreen:
+                if (this.state.isFirstFrame)
+                    this.music.play();
+                if (this.Game.EventManager.isEnterPressed)
+                    location.reload();
+                this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
+                this.Game.fillText("GAME OVER", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
+                this.Game.fillText("press enter to retry", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
+                break;
         }
-        if (this.currentFrame < this.blackScreen) {
-            return;
-        }
-        this.music.play();
-        this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
-        this.Game.fillText("GAME OVER", this.Game.Canvas.width / 2, this.Game.Canvas.height / 2, '#fff', '24px', 'center', 'middle');
+        this.state.update();
     }
 }
 
@@ -949,11 +965,12 @@ class World {
 class AbstractObserver {
     constructor() {
         this.currentFrame = 0;
-        this.isFirstFrame = true;
+    }
+    get isFirstFrame() {
+        return this.currentFrame === 0 || this.currentFrame === 1;
     }
     update() {
         this.currentFrame++;
-        this.isFirstFrame = false;
     }
 }
 class StateObserver extends AbstractObserver {
@@ -968,7 +985,6 @@ class StateObserver extends AbstractObserver {
         this.lastFrameState = this.state;
         this.state = state;
         this.currentFrame = 0;
-        this.isFirstFrame = true;
     }
     update() {
         super.update();
@@ -1017,7 +1033,6 @@ class AnimationObserver extends AbstractObserver {
                 (this.currentAnimationStep + 1 > this.nbAnimationStep)
                     ? 1
                     : this.currentAnimationStep + 1;
-            this.isFirstFrame = true;
         }
     }
 }
@@ -1084,25 +1099,16 @@ class Player extends MovingBox {
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/link-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
         this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
+        this.spriteWin = SpriteLoader.load("./sprites/png/link-win.png");
         this.spritesAnimation = new AnimationObserver(6, 2);
         this.invincibleAnimation = new AnimationObserver(7, 2);
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
+        this.fanfareSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
     }
     get isFullLife() {
         return this.hp === this.maxHp;
-    }
-    increaseScore() {
-        this.score++;
-        if (this.targetScore <= this.score) {
-            this.isInvincibleObserver.set(false);
-            this.isAttackObserver.set(false);
-            this.isMovingObserver.set(false);
-            this.Game.Viewport.music.pause();
-            this.lowHealthSound.pause();
-            this.Game.status.set(GameStatus.Win);
-        }
     }
     draw() {
         let sprite = this.isAttackObserver.get()
@@ -1114,9 +1120,12 @@ class Player extends MovingBox {
                 sprite = new Image();
         }
         this.Game.Viewport.drawImage(sprite, this.x, this.y, this.width, this.height);
-        if (this.isMovingObserver.get() && !this.Game.status.is(GameStatus.Stopped)) {
+        if (this.isMovingObserver.get() && !this.Game.state.is(GameState.Stopped)) {
             this.spritesAnimation.update();
         }
+    }
+    drawWin() {
+        this.Game.Viewport.drawImage(this.spriteWin, this.x, this.y, this.width, this.height);
     }
     move() {
         this.x += this.dx;
@@ -1187,16 +1196,16 @@ class Player extends MovingBox {
         });
     }
     listenEvents() {
-        this.isAttackObserver.set(this.Game.EventManager.isAttackObserverPressed ? true : false);
+        this.isAttackObserver.set(this.Game.EventManager.isAttackPressed ? true : false);
         if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) &&
             !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
             if (this.Game.EventManager.isDownPressed) {
-                if (!this.Game.EventManager.isAttackObserverPressed)
+                if (!this.Game.EventManager.isAttackPressed)
                     this.dy = this.speed;
                 this.direction = Direction.Down;
             }
             else if (this.Game.EventManager.isUpPressed) {
-                if (!this.Game.EventManager.isAttackObserverPressed)
+                if (!this.Game.EventManager.isAttackPressed)
                     this.dy = -this.speed;
                 this.direction = Direction.Up;
             }
@@ -1204,26 +1213,38 @@ class Player extends MovingBox {
         else if ((this.Game.EventManager.isRightPressed || this.Game.EventManager.isLeftPressed) &&
             !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)) {
             if (this.Game.EventManager.isRightPressed) {
-                if (!this.Game.EventManager.isAttackObserverPressed)
+                if (!this.Game.EventManager.isAttackPressed)
                     this.dx = this.speed;
                 this.direction = Direction.Right;
             }
             else if (this.Game.EventManager.isLeftPressed) {
-                if (!this.Game.EventManager.isAttackObserverPressed)
+                if (!this.Game.EventManager.isAttackPressed)
                     this.dx = -this.speed;
                 this.direction = Direction.Left;
             }
         }
         this.isMovingObserver.set((this.dx != 0 || this.dy != 0) ? true : false);
     }
+    increaseScore() {
+        this.score++;
+        if (this.score >= this.targetScore) {
+            this.isInvincibleObserver.set(false);
+            this.isAttackObserver.set(false);
+            this.isMovingObserver.set(false);
+            this.Game.Viewport.music.pause();
+            this.lowHealthSound.pause();
+            this.fanfareSound.play();
+            this.Game.state.set(GameState.Win);
+        }
+    }
     takeDamage(damage) {
         if (this.isInvincibleObserver.get())
             return;
+        this.hurtSound.play();
+        this.takeKnockBack();
         if (this.hp - damage >= 0) {
-            this.hurtSound.play();
             this.hp -= damage;
             this.setInvicibility();
-            this.takeKnockBack();
         }
         else {
             this.hp = 0;
@@ -1233,7 +1254,7 @@ class Player extends MovingBox {
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
             this.dieSound.play();
-            this.Game.status.set(GameStatus.GameOver);
+            this.Game.state.set(GameState.GameOver);
         }
         else if (this.hp <= 2) {
             this.lowHealthSound.play();
@@ -1419,6 +1440,9 @@ class Sword {
             this.Game.Viewport.drawImage(this.sprites[this.direction], this.x, this.y, this.width, this.height);
         }
     }
+    drawWin() {
+        this.Game.Viewport.drawImage(this.sprites[Direction.Up], this.Game.Player.x, this.Game.Player.y - this.swordWidth, this.swordHeight, this.swordWidth);
+    }
     collisions() {
         if (this.Game.Player.isAttackObserver.get()) {
             this.Game.Enemies.loopEnemies((enemy) => {
@@ -1532,7 +1556,7 @@ class Viewport {
             this.nextScene = null;
             this.Game.Enemies = new Enemies(this.Game);
             this.Game.Projectiles.deleteAllProjectiles();
-            this.Game.status.set(GameStatus.Run);
+            this.Game.state.set(GameState.Run);
         }
     }
     collisions() {
@@ -1581,7 +1605,7 @@ class Viewport {
             }
             this.Game.Player.dx = 0;
             this.Game.Player.dy = 0;
-            this.Game.status.set(GameStatus.SlideScene);
+            this.Game.state.set(GameState.SlideScene);
             return;
         }
         this.dc = 0;
@@ -1589,22 +1613,39 @@ class Viewport {
     }
 }
 
+var WinScreenState;
+(function (WinScreenState) {
+    WinScreenState[WinScreenState["PlayerAnimation"] = 0] = "PlayerAnimation";
+    WinScreenState[WinScreenState["BlackScreen"] = 1] = "BlackScreen";
+})(WinScreenState || (WinScreenState = {}));
+;
 class WinScreen {
     constructor(game) {
         this.Game = game;
         this.music = AudioLoader.load("./sounds/music/ending.mp3", true);
+        this.state = new StateObserver(WinScreenState.PlayerAnimation);
     }
     draw() {
-        this.Game.Viewport.draw();
-        this.Game.Enemies.draw();
-        this.Game.Sword.draw();
-        this.Game.Player.draw();
-        this.Game.Projectiles.draw();
-        this.Game.Hud.draw();
-        if (this.Game.status.currentFrame > 50) {
-            this.music.play();
-            this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
-            this.Game.fillText("YOU WON", this.Game.Canvas.width / 2, this.Game.Canvas.height / 2, '#fff', '24px', 'center', 'middle');
+        switch (this.state.get()) {
+            case WinScreenState.PlayerAnimation:
+                this.Game.Viewport.draw();
+                this.Game.Enemies.draw();
+                this.Game.Sword.drawWin();
+                this.Game.Player.drawWin();
+                this.Game.Hud.draw();
+                if (this.state.currentFrame > 120)
+                    this.state.set(WinScreenState.BlackScreen);
+                break;
+            case WinScreenState.BlackScreen:
+                if (this.state.isFirstFrame)
+                    this.music.play();
+                if (this.Game.EventManager.isEnterPressed)
+                    location.reload();
+                this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
+                this.Game.fillText("YOU WON", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
+                this.Game.fillText("press enter to retry", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
+                break;
         }
+        this.state.update();
     }
 }

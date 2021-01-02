@@ -112,14 +112,14 @@ class Enemies {
                 enemy.height
             );
 
-            if (this.Game.status.is(GameStatus.Run)) enemy.spritesAnimation.update();
+            if (this.Game.state.is(GameState.Run)) enemy.spritesAnimation.update();
         });
     }
 
     collisions(): void {
         this.loopEnemies((enemy) => {
             if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
-                this.Game.Player.takeDamage(1);
+                this.Game.Player.takeDamage(10);
             }
 
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {

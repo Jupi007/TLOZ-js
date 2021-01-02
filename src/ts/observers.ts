@@ -1,15 +1,16 @@
 abstract class AbstractObserver {
     currentFrame: number;
-    isFirstFrame: boolean;
 
     constructor() {
         this.currentFrame = 0;
-        this.isFirstFrame = true;
+    }
+
+    get isFirstFrame(): boolean {
+        return this.currentFrame === 0 || this.currentFrame === 1;
     }
 
     update(): void {
         this.currentFrame++;
-        this.isFirstFrame = false;
     }
 }
 
@@ -31,7 +32,6 @@ class StateObserver extends AbstractObserver {
         this.lastFrameState = this.state;
         this.state = state;
         this.currentFrame = 0;
-        this.isFirstFrame = true;
     }
 
     update(): void {
@@ -99,7 +99,6 @@ class AnimationObserver extends AbstractObserver {
                 ? 1
                 : this.currentAnimationStep + 1
             ;
-            this.isFirstFrame = true;
         }
     }
 }

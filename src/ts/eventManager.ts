@@ -5,7 +5,8 @@ class EventManager {
     isLeftPressed = false;
     isUpPressed = false;
     isDownPressed = false;
-    isAttackObserverPressed = false;
+    isAttackPressed = false;
+    isEnterPressed = false;
 
     currentAttackFrame = 0;
     attackDuration = 10;
@@ -36,16 +37,19 @@ class EventManager {
             case "ArrowDown":
                 this.isDownPressed = keydown;
                 break;
+            case "Enter":
+                this.isEnterPressed = keydown;
+                break;
             case "q":
                 if (keydown) {
-                    this.isAttackObserverPressed = true;
+                    this.isAttackPressed = true;
                 }
                 break;
             case "p":
-                if (keydown && this.Game.status.isIn(GameStatus.Run, GameStatus.Stopped)) {
-                    this.Game.status.set(this.Game.status.is(GameStatus.Run)
-                                     ? GameStatus.Stopped
-                                     : GameStatus.Run);
+                if (keydown && this.Game.state.isIn(GameState.Run, GameState.Stopped)) {
+                    this.Game.state.set(this.Game.state.is(GameState.Run)
+                                     ? GameState.Stopped
+                                     : GameState.Run);
                 }
                 break;
         }
@@ -54,11 +58,11 @@ class EventManager {
     }
 
     newFrame(): void {
-        if (this.isAttackObserverPressed) {
+        if (this.isAttackPressed) {
             this.currentAttackFrame++;
 
             if (this.currentAttackFrame >= this.attackDuration) {
-                this.isAttackObserverPressed = false;
+                this.isAttackPressed = false;
             }
 
             return;
