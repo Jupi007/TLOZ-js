@@ -250,11 +250,9 @@ class Octorok extends Enemy {
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
     }
 }
-class BlueOctorok extends Enemy {
+class BlueOctorok extends Octorok {
     constructor(game, x, y, speed, direction) {
         super(game, x, y, speed, direction);
-        this.width = 64;
-        this.height = 64;
         this.damage = 2;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/blue-octorok-up1.png");
@@ -268,7 +266,6 @@ class BlueOctorok extends Enemy {
         this.sprites[Direction.Left] = [];
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/blue-octorok-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/blue-octorok-left2.png");
-        this.spritesAnimation = new AnimationObserver(20 / speed, 2);
     }
 }
 class Enemies {
