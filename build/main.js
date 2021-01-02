@@ -211,7 +211,6 @@ class Enemy extends MovingBox {
         this.y = y;
         this.speed = speed;
         this.direction = direction;
-        // this.landscapeHitBox = new MovingBoxHitBox(this);
     }
     invertDirection() {
         switch (this.direction) {
@@ -235,6 +234,7 @@ class Octorok extends Enemy {
         super(game, x, y, speed, direction);
         this.width = 64;
         this.height = 64;
+        this.damage = 1;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/octorok-up2.png");
@@ -248,13 +248,34 @@ class Octorok extends Enemy {
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/octorok-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
-        this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
+    }
+}
+class BlueOctorok extends Enemy {
+    constructor(game, x, y, speed, direction) {
+        super(game, x, y, speed, direction);
+        this.width = 64;
+        this.height = 64;
+        this.damage = 2;
+        this.sprites[Direction.Up] = [];
+        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/blue-octorok-up1.png");
+        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/blue-octorok-up2.png");
+        this.sprites[Direction.Down] = [];
+        this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/blue-octorok-down1.png");
+        this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/blue-octorok-down2.png");
+        this.sprites[Direction.Right] = [];
+        this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/blue-octorok-right1.png");
+        this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/blue-octorok-right2.png");
+        this.sprites[Direction.Left] = [];
+        this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/blue-octorok-left1.png");
+        this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/blue-octorok-left2.png");
+        this.spritesAnimation = new AnimationObserver(20 / speed, 2);
     }
 }
 class Enemies {
     constructor(game) {
         this.enemies = [];
         this.Game = game;
+        this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
         if (this.Game.Viewport.currentScene.hasEnemies) {
             this.enemies = this.Game.Viewport.currentScene.enemies;
         }
@@ -265,7 +286,7 @@ class Enemies {
         });
     }
     killEnemy(enemy) {
-        enemy.dieSound.play();
+        this.dieSound.play();
         const enemyIndex = this.enemies.indexOf(enemy);
         if (enemyIndex > -1) {
             this.enemies.splice(enemyIndex, 1);
@@ -287,7 +308,7 @@ class Enemies {
     collisions() {
         this.loopEnemies((enemy) => {
             if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
-                this.Game.Player.takeDamage(1);
+                this.Game.Player.takeDamage(enemy.damage);
             }
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
                 enemy.invertDirection();
@@ -857,9 +878,9 @@ class World {
         ]);
         this.map[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[0][0].enemies = [
-            new Octorok(this.Game, 2 * 64, 2 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Down),
-            new Octorok(this.Game, 5 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 13 * 64, 3 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new BlueOctorok(this.Game, 2 * 64, 2 * 64, 2, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Down),
+            new BlueOctorok(this.Game, 5 * 64, 5 * 64, 2, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new BlueOctorok(this.Game, 13 * 64, 3 * 64, 2, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
         ];
         this.map[1][0].loadBricks([
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()],
@@ -876,9 +897,9 @@ class World {
         ]);
         this.map[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[1][0].enemies = [
-            new Octorok(this.Game, 5 * 64, 8 * 64, getRandomIntInclusive(1, 2), Direction.Up),
-            new Octorok(this.Game, 8 * 64, 4 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 10 * 64, 2 * 64, getRandomIntInclusive(1, 2), Direction.Down),
+            new BlueOctorok(this.Game, 5 * 64, 8 * 64, 2, Direction.Up),
+            new BlueOctorok(this.Game, 8 * 64, 4 * 64, 2, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new BlueOctorok(this.Game, 10 * 64, 2 * 64, 2, Direction.Down),
         ];
         this.map[2][0].loadBricks([
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()],
@@ -895,9 +916,9 @@ class World {
         ]);
         this.map[2][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[2][0].enemies = [
-            new Octorok(this.Game, 5 * 64, 4 * 64, getRandomIntInclusive(1, 2), Direction.Down),
-            new Octorok(this.Game, 9 * 64, 6 * 64, getRandomIntInclusive(1, 2), Direction.Right),
-            new Octorok(this.Game, 12 * 64, 3 * 64, getRandomIntInclusive(1, 2), Direction.Down),
+            new BlueOctorok(this.Game, 5 * 64, 4 * 64, 2, Direction.Down),
+            new BlueOctorok(this.Game, 9 * 64, 6 * 64, 2, Direction.Right),
+            new BlueOctorok(this.Game, 12 * 64, 3 * 64, 2, Direction.Down),
         ];
         this.map[0][1].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new StairsBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()],

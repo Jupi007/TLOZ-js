@@ -1,13 +1,12 @@
 class Enemy extends MovingBox {
     Game: Game;
     speed: number;
+    damage: number;
 
     landscapeHitBox: MovingBoxHitBox;
 
     sprites: HTMLImageElement[][] = [];
     spritesAnimation: AnimationObserver;
-
-    dieSound: HTMLAudioElement;
 
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
         super();
@@ -18,8 +17,6 @@ class Enemy extends MovingBox {
         this.y = y;
         this.speed = speed;
         this.direction = direction;
-
-        // this.landscapeHitBox = new MovingBoxHitBox(this);
     }
 
     invertDirection(): void {
@@ -47,6 +44,8 @@ class Octorok extends Enemy {
         this.width = 64;
         this.height = 64;
 
+        this.damage = 1;
+
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/octorok-up2.png");
@@ -64,8 +63,35 @@ class Octorok extends Enemy {
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
 
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
+    }
+}
 
-        this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
+class BlueOctorok extends Enemy {
+    constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
+        super(game, x, y, speed, direction);
+
+        this.width = 64;
+        this.height = 64;
+
+        this.damage = 2;
+
+        this.sprites[Direction.Up] = [];
+        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/blue-octorok-up1.png");
+        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/blue-octorok-up2.png");
+
+        this.sprites[Direction.Down] = [];
+        this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/blue-octorok-down1.png");
+        this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/blue-octorok-down2.png");
+
+        this.sprites[Direction.Right] = [];
+        this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/blue-octorok-right1.png");
+        this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/blue-octorok-right2.png");
+
+        this.sprites[Direction.Left] = [];
+        this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/blue-octorok-left1.png");
+        this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/blue-octorok-left2.png");
+
+        this.spritesAnimation = new AnimationObserver(20 / speed, 2);
     }
 }
 
@@ -74,8 +100,12 @@ class Enemies {
 
     enemies: Enemy[] = [];
 
+    dieSound: HTMLAudioElement;
+
     constructor(game: Game) {
         this.Game = game;
+
+        this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
 
         if (this.Game.Viewport.currentScene.hasEnemies) {
             this.enemies = this.Game.Viewport.currentScene.enemies;
@@ -89,7 +119,7 @@ class Enemies {
     }
 
     killEnemy(enemy: Enemy): void {
-        enemy.dieSound.play();
+        this.dieSound.play();
 
         const enemyIndex = this.enemies.indexOf(enemy);
 
@@ -130,7 +160,7 @@ class Enemies {
     collisions(): void {
         this.loopEnemies((enemy) => {
             if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
-                this.Game.Player.takeDamage(1);
+                this.Game.Player.takeDamage(enemy.damage);
             }
 
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {

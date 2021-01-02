@@ -176,25 +176,25 @@ class World {
         ]);
         this.map[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[0][0].enemies = [
-            new Octorok(
+            new BlueOctorok(
                 this.Game,
                 2 * 64,
                 2 * 64,
-                getRandomIntInclusive(1, 2),
+                2,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Down
             ),
-            new Octorok(
+            new BlueOctorok(
                 this.Game,
                 5 * 64,
                 5 * 64,
-                getRandomIntInclusive(1, 2),
+                2,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
-            new Octorok(
+            new BlueOctorok(
                 this.Game,
                 13 * 64,
                 3 * 64,
-                getRandomIntInclusive(1, 2),
+                2,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
         ];
@@ -214,25 +214,25 @@ class World {
         ]);
         this.map[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[1][0].enemies = [
-            new Octorok(
+            new BlueOctorok(
                 this.Game,
                 5 * 64,
                 8 * 64,
-                getRandomIntInclusive(1, 2),
+                2,
                 Direction.Up
             ),
-            new Octorok(
+            new BlueOctorok(
                 this.Game,
                 8 * 64,
                 4 * 64,
-                getRandomIntInclusive(1, 2),
+                2,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
-            new Octorok(
+            new BlueOctorok(
                 this.Game,
                 10 * 64,
                 2 * 64,
-                getRandomIntInclusive(1, 2),
+                2,
                 Direction.Down
             ),
         ];
@@ -252,25 +252,25 @@ class World {
         ]);
         this.map[2][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[2][0].enemies = [
-            new Octorok(
+            new BlueOctorok(
                 this.Game,
                 5 * 64,
                 4 * 64,
-                getRandomIntInclusive(1, 2),
+                2,
                 Direction.Down
             ),
-            new Octorok(
+            new BlueOctorok(
                 this.Game,
                 9 * 64,
                 6 * 64,
-                getRandomIntInclusive(1, 2),
+                2,
                 Direction.Right
             ),
-            new Octorok(
+            new BlueOctorok(
                 this.Game,
                 12 * 64,
                 3 * 64,
-                getRandomIntInclusive(1, 2),
+                2,
                 Direction.Down
             ),
         ];
