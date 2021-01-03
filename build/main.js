@@ -815,10 +815,12 @@ class Hud {
         this.emptyHeartSprite = SpriteLoader.load('./sprites/png/empty-heart.png');
         this.halfHeartSprite = SpriteLoader.load('./sprites/png/half-heart.png');
         this.fullHeartSprite = SpriteLoader.load('./sprites/png/full-heart.png');
+        this.currentSceneAnimation = new AnimationObserver(25, 2);
     }
     draw() {
         this.Game.fillRect(this.x, this.y, this.width, this.height, '#000');
         this.drawHearts();
+        this.drawMap();
         this.drawScore();
     }
     drawHearts() {
@@ -830,6 +832,20 @@ class Hud {
         }
         if (this.Game.Player.hp % 2 === 1) {
             this.Game.drawImage(this.halfHeartSprite, 24 * (this.Game.Player.hp / 2 + 1) + 8 * (this.Game.Player.hp / 2 - 1), this.height / 2 - 12, 24, 24);
+        }
+    }
+    drawMap() {
+        let cellHeight = (this.height - this.Game.World.nbCol - 1) / this.Game.World.nbCol;
+        let cellWidth = (cellHeight * this.Game.Viewport.width) / this.Game.Viewport.height;
+        let x = (this.width / 2) - (cellWidth * this.Game.World.nbRow + this.Game.World.nbRow - 1) / 2;
+        this.Game.World.loopScenes((scene) => {
+            this.Game.fillRect(x + cellWidth * scene.c + 2 * scene.c, cellHeight * scene.r + 2 * scene.r, cellWidth, cellHeight, scene.hasEnemies ? '#d11c0d' : '#00a230');
+        });
+        if (this.currentSceneAnimation.currentAnimationStep === 1) {
+            this.Game.fillRect(x + cellWidth * this.Game.Viewport.currentScene.c + 2 * this.Game.Viewport.currentScene.c, cellHeight * this.Game.Viewport.currentScene.r + 2 * this.Game.Viewport.currentScene.r, cellWidth, cellHeight, "rgba(0, 0, 0, 0.3)");
+        }
+        if (this.Game.state.isIn(GameState.Run, GameState.SlideScene)) {
+            this.currentSceneAnimation.update();
         }
     }
     drawScore() {
