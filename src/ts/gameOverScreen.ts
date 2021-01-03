@@ -20,8 +20,6 @@ class GameOverScreen {
     draw(): void {
         switch (this.state.get()) {
             case GameOverScreenState.PlayerAnimation:
-                if (this.state.isFirstFrame) this.Game.Player.isMovingObserver.set(false);
-
                 this.Game.Viewport.draw();
                 this.Game.Enemies.draw();
                 this.Game.Hud.draw();

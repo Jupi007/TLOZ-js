@@ -767,8 +767,6 @@ class GameOverScreen {
     draw() {
         switch (this.state.get()) {
             case GameOverScreenState.PlayerAnimation:
-                if (this.state.isFirstFrame)
-                    this.Game.Player.isMovingObserver.set(false);
                 this.Game.Viewport.draw();
                 this.Game.Enemies.draw();
                 this.Game.Hud.draw();
@@ -1438,6 +1436,8 @@ class Player extends MovingBox {
         }
         if (this.hp <= 0) {
             this.isInvincibleObserver.set(false);
+            this.Game.Player.isMovingObserver.set(false);
+            this.Game.Player.isAttackObserver.set(false);
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
             this.dieSound.play();

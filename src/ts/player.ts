@@ -333,9 +333,14 @@ class Player extends MovingBox {
 
         if (this.hp <= 0) {
             this.isInvincibleObserver.set(false);
+            this.Game.Player.isMovingObserver.set(false);
+            this.Game.Player.isAttackObserver.set(false);
+
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
+
             this.dieSound.play();
+
             this.Game.state.set(GameState.GameOver);
         }
         else if (this.hp <= 2) {
