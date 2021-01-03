@@ -103,7 +103,7 @@ class Sword {
         if (this.Game.Player.isAttackObserver.get()) {
             this.Game.Enemies.loopEnemies((enemy) => {
                 if (simpleMovingBoxCollision(enemy, this)) {
-                    this.Game.Enemies.killEnemy(enemy);
+                    enemy.takeDamage(1);
                 }
             });
         }
@@ -136,7 +136,7 @@ class Sword {
                 false,
                 null,
                 true, // Enable collisions on Ennemies
-                (enemy) => this.Game.Enemies.killEnemy(enemy),
+                (enemy) => enemy.takeDamage(1),
                 () => this.isFlying = false
             ));
         }

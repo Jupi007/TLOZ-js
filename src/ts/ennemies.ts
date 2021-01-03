@@ -2,15 +2,22 @@ enum OctorokState {Moving, ChangeDirection, Attack};
 
 class Enemy extends MovingBox {
     Game: Game;
+
+    hp: number;
     speed: number;
     damage: number;
-
-    landscapeHitBox: MovingBoxHitBox;
 
     sprites: HTMLImageElement[][] = [];
     spritesAnimation: AnimationObserver;
 
+    isInvincibleObserver: StateObserver;
+    invincibleDuration: number;
+    invincibleAnimation: AnimationObserver;
+
     state: StateObserver;
+
+    dieSound: HTMLAudioElement;
+    hitSound: HTMLAudioElement;
 
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
         super();
@@ -21,6 +28,32 @@ class Enemy extends MovingBox {
         this.y = y;
         this.speed = speed;
         this.direction = direction;
+
+        this.isInvincibleObserver = new StateObserver(false);
+        this.invincibleDuration = 25;
+        this.invincibleAnimation = new AnimationObserver(7, 2);
+
+        this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
+        this.hitSound = AudioLoader.load("./sounds/effect/Enemy_Hit.wav");
+    }
+
+    takeDamage(damage): void {
+        if (this.isInvincibleObserver.is(true)) return;
+
+        this.hp -= damage;
+
+        if (this.hp <= 0) {
+            this.dieSound.play();
+            this.Game.Enemies.killEnemy(this);
+            return;
+        }
+
+        this.setInvicibility();
+        this.hitSound.play();
+    }
+
+    setInvicibility(): void {
+        this.isInvincibleObserver.set(true);
     }
 }
 
@@ -32,6 +65,7 @@ class Octorok extends Enemy {
         this.height = 64;
 
         this.damage = 1;
+        this.hp = 1;
 
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
@@ -57,19 +91,21 @@ class Octorok extends Enemy {
     aiThinking(): void {
         switch (this.state.get()) {
             case OctorokState.Moving:
-                switch (this.direction) {
-                    case Direction.Down:
-                        this.dy = this.speed;
-                        break;
-                    case Direction.Up:
-                        this.dy = -this.speed;
-                        break;
-                    case Direction.Right:
-                        this.dx = this.speed;
-                        break;
-                    case Direction.Left:
-                        this.dx = -this.speed;
-                        break;
+                if (this.isInvincibleObserver.is(false)) {
+                    switch (this.direction) {
+                        case Direction.Down:
+                            this.dy = this.speed;
+                            break;
+                        case Direction.Up:
+                            this.dy = -this.speed;
+                            break;
+                        case Direction.Right:
+                            this.dx = this.speed;
+                            break;
+                        case Direction.Left:
+                            this.dx = -this.speed;
+                            break;
+                    }
                 }
                 if (this.state.currentFrame > 50) {
                     if (getRandomIntInclusive(1, 50) === 1) this.state.set(OctorokState.Attack);
@@ -122,6 +158,7 @@ class BlueOctorok extends Octorok {
         super(game, x, y, speed, direction);
 
         this.damage = 2;
+        this.hp = 2;
 
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/blue-octorok-up1.png");
@@ -146,12 +183,8 @@ class Enemies {
 
     enemies: Enemy[] = [];
 
-    dieSound: HTMLAudioElement;
-
     constructor(game: Game) {
         this.Game = game;
-
-        this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
 
         if (this.Game.Viewport.currentScene.hasEnemies) {
             this.enemies = this.Game.Viewport.currentScene.enemies;
@@ -165,8 +198,6 @@ class Enemies {
     }
 
     killEnemy(enemy: Enemy): void {
-        this.dieSound.play();
-
         const enemyIndex = this.enemies.indexOf(enemy);
 
         if (enemyIndex > -1) {
@@ -226,8 +257,15 @@ class Enemies {
 
     draw(): void {
         this.loopEnemies((enemy) => {
+            let sprite = enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep];
+
+            if (enemy.isInvincibleObserver.is(true)) {
+                enemy.invincibleAnimation.update();
+                if (enemy.invincibleAnimation.currentAnimationStep === 2) sprite = new Image();
+            }
+
             this.Game.Viewport.currentScene.drawImage(
-                enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep],
+                sprite,
                 enemy.x,
                 enemy.y,
                 enemy.width,
@@ -241,6 +279,11 @@ class Enemies {
     updateObservers(): void {
         this.loopEnemies((enemy) => {
             enemy.state.update();
+            enemy.isInvincibleObserver.update();
+
+            if (enemy.isInvincibleObserver.get() && enemy.isInvincibleObserver.currentFrame > enemy.invincibleDuration) {
+                enemy.isInvincibleObserver.set(false);
+            }
         });
     }
 }

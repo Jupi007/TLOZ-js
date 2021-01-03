@@ -180,21 +180,21 @@ class World {
                 this.Game,
                 2 * 64,
                 2 * 64,
-                3,
+                4,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Down
             ),
             new BlueOctorok(
                 this.Game,
                 5 * 64,
                 5 * 64,
-                3,
+                4,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new BlueOctorok(
                 this.Game,
                 13 * 64,
                 3 * 64,
-                3,
+                4,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
         ];
@@ -218,21 +218,21 @@ class World {
                 this.Game,
                 5 * 64,
                 8 * 64,
-                3,
+                4,
                 Direction.Up
             ),
             new BlueOctorok(
                 this.Game,
                 8 * 64,
                 4 * 64,
-                3,
+                4,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
             new BlueOctorok(
                 this.Game,
                 10 * 64,
                 2 * 64,
-                3,
+                4,
                 Direction.Down
             ),
         ];
@@ -256,21 +256,21 @@ class World {
                 this.Game,
                 5 * 64,
                 4 * 64,
-                3,
+                4,
                 Direction.Down
             ),
             new BlueOctorok(
                 this.Game,
                 9 * 64,
                 6 * 64,
-                3,
+                4,
                 Direction.Right
             ),
             new BlueOctorok(
                 this.Game,
                 12 * 64,
                 3 * 64,
-                3,
+                4,
                 Direction.Down
             ),
         ];

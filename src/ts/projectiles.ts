@@ -138,7 +138,7 @@ class Projectiles {
 
     deleteAllProjectiles(): void {
         this.loopProjectiles((projectile) => {
-            projectile.deleteCallback();
+            if (projectile.deleteCallback !== null) projectile.deleteCallback();
         });
 
         this.projectiles = [];
