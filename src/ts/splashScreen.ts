@@ -44,7 +44,7 @@ class SplashScreen {
                     'middle'
                 );
 
-                if (this.state.currentFrame > 100) {
+                if (this.state.currentFrame > 50) {
                     if (this.Game.EventManager.isEnterPressed) {
                         this.music.pause();
                         this.state.set(SplashScreenState.RevealGame);

@@ -2,8 +2,11 @@ class Projectile extends MovingBox {
     speed: number;
     sprite: HTMLImageElement;
     hasPlayerCollision: boolean;
+    canBeShieldBlocked: boolean;
+    playerCollisionCallback: Function;
     hasEnemiesCollision: boolean;
-    collisionCallback: Function;
+    enemiesCollisionCallback: Function;
+    deleteCallback: Function;
 
     constructor(
         x: number,
@@ -14,8 +17,11 @@ class Projectile extends MovingBox {
         direction: Direction,
         sprite: HTMLImageElement,
         hasPlayerCollision: boolean,
+        canBeShieldBlocked: boolean,
+        playerCollisionCallback: Function,
         hasEnemiesCollision: boolean,
-        collisionCallback: Function
+        enemiesCollisionCallback: Function,
+        deleteCallback: Function
     ) {
         super();
 
@@ -26,9 +32,15 @@ class Projectile extends MovingBox {
         this.speed = speed;
         this.direction = direction;
         this.sprite = sprite;
+
         this.hasPlayerCollision = hasPlayerCollision;
+        this.canBeShieldBlocked = canBeShieldBlocked;
+        this.playerCollisionCallback = playerCollisionCallback;
+
         this.hasEnemiesCollision = hasEnemiesCollision;
-        this.collisionCallback = collisionCallback;
+        this.enemiesCollisionCallback = enemiesCollisionCallback;
+
+        this.deleteCallback = deleteCallback;
 
         switch (this.direction) {
             case Direction.Up:
@@ -52,23 +64,44 @@ class Projectiles {
 
     projectiles: Projectile[];
 
+    shieldSound: HTMLAudioElement;
+
     constructor(game: Game) {
         this.Game = game;
 
         this.projectiles = [];
+
+        this.shieldSound = AudioLoader.load("./sounds/effect/Shield.wav");
     }
 
     collisions(): void {
         this.loopProjectiles((projectile) => {
-            this.Game.Enemies.loopEnemies((enemy) => {
-                if (movingBoxsCollision(enemy, projectile)) {
-                    this.Game.Enemies.killEnemy(enemy);
+            if (projectile.hasEnemiesCollision) {
+                this.Game.Enemies.loopEnemies((enemy) => {
+                    if (movingBoxsCollision(enemy, projectile)) {
+                        if (projectile.enemiesCollisionCallback !== null) projectile.enemiesCollisionCallback(enemy);
+                        this.deleteProjectile(projectile);
+                    }
+                });
+            }
+
+            if (projectile.hasPlayerCollision) {
+                if (movingBoxsCollision(this.Game.Player.hitBox, projectile)) {
+                    if (
+                        projectile.canBeShieldBlocked &&
+                        this.Game.Player.isMovingObserver.is(false) &&
+                        areOppositeDirections(this.Game.Player.direction, projectile.direction)
+                    ) {
+                        this.shieldSound.play();
+                        this.deleteProjectile(projectile);
+                        return;
+                    }
+
+                    if (projectile.playerCollisionCallback !== null) projectile.playerCollisionCallback(this.Game.Player);
                     this.deleteProjectile(projectile);
                 }
-            });
-        });
+            }
 
-        this.loopProjectiles((projectile) => {
             if (movingBoxCanvasCollision(projectile, this.Game.Viewport)) {
                 this.deleteProjectile(projectile);
             }
@@ -99,13 +132,13 @@ class Projectiles {
     }
 
     deleteProjectile(projectile: Projectile): void {
-        projectile.collisionCallback();
+        if (projectile.deleteCallback !== null) projectile.deleteCallback();
         this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
     }
 
     deleteAllProjectiles(): void {
         this.loopProjectiles((projectile) => {
-            projectile.collisionCallback();
+            projectile.deleteCallback();
         });
 
         this.projectiles = [];

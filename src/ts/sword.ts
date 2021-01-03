@@ -133,7 +133,10 @@ class Sword {
                 this.direction,
                 this.sprites[this.direction],
                 false, // Disable collision on Player
+                false,
+                null,
                 true, // Enable collisions on Ennemies
+                (enemy) => this.Game.Enemies.killEnemy(enemy),
                 () => this.isFlying = false
             ));
         }

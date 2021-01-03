@@ -93,7 +93,7 @@ class Game {
     runLoop(): void {
         this.Player.listenEvents();
         this.Sword.listenEvents();
-        this.Enemies.listenEvents();
+        this.Enemies.aiThinking();
 
         this.Player.collisions();
         this.Sword.collisions();
@@ -107,14 +107,15 @@ class Game {
         this.Projectiles.move();
 
         this.Viewport.draw();
-        this.Projectiles.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
         this.Hud.draw();
         this.Items.draw();
+        this.Projectiles.draw();
 
         this.Player.updateObservers();
+        this.Enemies.updateObservers();
 
         this.EventManager.newFrame();
     }

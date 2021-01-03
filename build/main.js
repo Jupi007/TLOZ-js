@@ -22,6 +22,47 @@ var Direction;
     Direction[Direction["Left"] = 3] = "Left";
 })(Direction || (Direction = {}));
 ;
+function getRandomDirection() {
+    switch (getRandomIntInclusive(1, 4)) {
+        case 1:
+            return Direction.Up;
+            break;
+        case 2:
+            return Direction.Right;
+            break;
+        case 3:
+            return Direction.Down;
+            break;
+        case 4:
+            return Direction.Left;
+            break;
+    }
+}
+function getOppositeDirection(direction) {
+    switch (direction) {
+        case Direction.Up:
+            return Direction.Down;
+            break;
+        case Direction.Down:
+            return Direction.Up;
+            break;
+        case Direction.Left:
+            return Direction.Right;
+            break;
+        case Direction.Right:
+            return Direction.Left;
+            break;
+    }
+}
+function areOppositeDirections(dir1, dir2) {
+    if (dir1 === Direction.Up && dir2 === Direction.Down ||
+        dir1 === Direction.Down && dir2 === Direction.Up ||
+        dir1 === Direction.Right && dir2 === Direction.Left ||
+        dir1 === Direction.Left && dir2 === Direction.Right) {
+        return true;
+    }
+    return false;
+}
 class MovingBox extends SimpleBox {
     constructor() {
         super(...arguments);
@@ -202,6 +243,13 @@ class MonumentBottomLeftBrick extends Brick {
     }
 }
 
+var OctorokState;
+(function (OctorokState) {
+    OctorokState[OctorokState["Moving"] = 0] = "Moving";
+    OctorokState[OctorokState["ChangeDirection"] = 1] = "ChangeDirection";
+    OctorokState[OctorokState["Attack"] = 2] = "Attack";
+})(OctorokState || (OctorokState = {}));
+;
 class Enemy extends MovingBox {
     constructor(game, x, y, speed, direction) {
         super();
@@ -211,22 +259,6 @@ class Enemy extends MovingBox {
         this.y = y;
         this.speed = speed;
         this.direction = direction;
-    }
-    invertDirection() {
-        switch (this.direction) {
-            case Direction.Up:
-                this.direction = Direction.Down;
-                break;
-            case Direction.Down:
-                this.direction = Direction.Up;
-                break;
-            case Direction.Left:
-                this.direction = Direction.Right;
-                break;
-            case Direction.Right:
-                this.direction = Direction.Left;
-                break;
-        }
     }
 }
 class Octorok extends Enemy {
@@ -248,6 +280,57 @@ class Octorok extends Enemy {
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/octorok-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
+        this.state = new StateObserver(OctorokState.ChangeDirection);
+    }
+    aiThinking() {
+        switch (this.state.get()) {
+            case OctorokState.Moving:
+                switch (this.direction) {
+                    case Direction.Down:
+                        this.dy = this.speed;
+                        break;
+                    case Direction.Up:
+                        this.dy = -this.speed;
+                        break;
+                    case Direction.Right:
+                        this.dx = this.speed;
+                        break;
+                    case Direction.Left:
+                        this.dx = -this.speed;
+                        break;
+                }
+                if (this.state.currentFrame > 50) {
+                    if (getRandomIntInclusive(1, 50) === 1)
+                        this.state.set(OctorokState.Attack);
+                    if (getRandomIntInclusive(1, 200) === 1)
+                        this.state.set(OctorokState.ChangeDirection);
+                }
+                break;
+            case OctorokState.ChangeDirection:
+                if (this.state.currentFrame === 20) {
+                    this.direction = getRandomDirection();
+                }
+                if (this.state.currentFrame > 30) {
+                    this.state.set(OctorokState.Moving);
+                }
+                break;
+            case OctorokState.Attack:
+                if (this.state.currentFrame === 20) {
+                    this.Game.Projectiles.addProjectile(new Projectile(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), 24, 30, 8, this.direction, SpriteLoader.load("./sprites/png/fireball.png"), true, // Enable collision on Player
+                    true, // Enable shield block
+                    (player) => player.takeDamage(this.damage), false, // Disable collisions on Ennemies
+                    null, null));
+                }
+                if (this.state.currentFrame > 30) {
+                    this.state.set(OctorokState.Moving);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    changeDirection() {
+        this.state.set(OctorokState.ChangeDirection);
     }
 }
 class BlueOctorok extends Octorok {
@@ -295,11 +378,9 @@ class Enemies {
             this.Game.Items.addItem(new Item(enemy.x + (enemy.width / 2) - (24 / 2), enemy.y + (enemy.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2)));
         }
     }
-    draw() {
+    aiThinking() {
         this.loopEnemies((enemy) => {
-            this.Game.Viewport.currentScene.drawImage(enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
-            if (this.Game.state.is(GameState.Run))
-                enemy.spritesAnimation.update();
+            enemy.aiThinking();
         });
     }
     collisions() {
@@ -308,39 +389,35 @@ class Enemies {
                 this.Game.Player.takeDamage(enemy.damage);
             }
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
-                enemy.invertDirection();
+                enemy.changeDirection();
             }
         });
         this.Game.Viewport.loopCollision((cell, col, row) => {
             this.Game.Enemies.loopEnemies((enemy) => {
                 if (movingBoxCollision(enemy, cell)) {
-                    enemy.invertDirection();
+                    enemy.changeDirection();
                 }
             });
-        });
-    }
-    listenEvents() {
-        this.loopEnemies((enemy) => {
-            switch (enemy.direction) {
-                case Direction.Down:
-                    enemy.dy = enemy.speed;
-                    break;
-                case Direction.Up:
-                    enemy.dy = -enemy.speed;
-                    break;
-                case Direction.Right:
-                    enemy.dx = enemy.speed;
-                    break;
-                case Direction.Left:
-                    enemy.dx = -enemy.speed;
-                    break;
-            }
         });
     }
     move() {
         this.loopEnemies((enemy) => {
             enemy.y += enemy.dy;
             enemy.x += enemy.dx;
+            enemy.dx = 0;
+            enemy.dy = 0;
+        });
+    }
+    draw() {
+        this.loopEnemies((enemy) => {
+            this.Game.Viewport.currentScene.drawImage(enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep], enemy.x, enemy.y, enemy.width, enemy.height);
+            if (this.Game.state.is(GameState.Run))
+                enemy.spritesAnimation.update();
+        });
+    }
+    updateObservers() {
+        this.loopEnemies((enemy) => {
+            enemy.state.update();
         });
     }
 }
@@ -573,7 +650,7 @@ class Game {
     runLoop() {
         this.Player.listenEvents();
         this.Sword.listenEvents();
-        this.Enemies.listenEvents();
+        this.Enemies.aiThinking();
         this.Player.collisions();
         this.Sword.collisions();
         this.Items.collisions();
@@ -584,13 +661,14 @@ class Game {
         this.Enemies.move();
         this.Projectiles.move();
         this.Viewport.draw();
-        this.Projectiles.draw();
         this.Enemies.draw();
         this.Sword.draw();
         this.Player.draw();
         this.Hud.draw();
         this.Items.draw();
+        this.Projectiles.draw();
         this.Player.updateObservers();
+        this.Enemies.updateObservers();
         this.EventManager.newFrame();
     }
     stoppedLoop() {
@@ -875,9 +953,9 @@ class World {
         ]);
         this.map[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[0][0].enemies = [
-            new BlueOctorok(this.Game, 2 * 64, 2 * 64, 2, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Down),
-            new BlueOctorok(this.Game, 5 * 64, 5 * 64, 2, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new BlueOctorok(this.Game, 13 * 64, 3 * 64, 2, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new BlueOctorok(this.Game, 2 * 64, 2 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Down),
+            new BlueOctorok(this.Game, 5 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new BlueOctorok(this.Game, 13 * 64, 3 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
         ];
         this.map[1][0].loadBricks([
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()],
@@ -894,9 +972,9 @@ class World {
         ]);
         this.map[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[1][0].enemies = [
-            new BlueOctorok(this.Game, 5 * 64, 8 * 64, 2, Direction.Up),
-            new BlueOctorok(this.Game, 8 * 64, 4 * 64, 2, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new BlueOctorok(this.Game, 10 * 64, 2 * 64, 2, Direction.Down),
+            new BlueOctorok(this.Game, 5 * 64, 8 * 64, 3, Direction.Up),
+            new BlueOctorok(this.Game, 8 * 64, 4 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new BlueOctorok(this.Game, 10 * 64, 2 * 64, 3, Direction.Down),
         ];
         this.map[2][0].loadBricks([
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()],
@@ -913,9 +991,9 @@ class World {
         ]);
         this.map[2][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[2][0].enemies = [
-            new BlueOctorok(this.Game, 5 * 64, 4 * 64, 2, Direction.Down),
-            new BlueOctorok(this.Game, 9 * 64, 6 * 64, 2, Direction.Right),
-            new BlueOctorok(this.Game, 12 * 64, 3 * 64, 2, Direction.Down),
+            new BlueOctorok(this.Game, 5 * 64, 4 * 64, 3, Direction.Down),
+            new BlueOctorok(this.Game, 9 * 64, 6 * 64, 3, Direction.Right),
+            new BlueOctorok(this.Game, 12 * 64, 3 * 64, 3, Direction.Down),
         ];
         this.map[0][1].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new StairsBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
@@ -931,10 +1009,10 @@ class World {
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
         this.map[0][1].enemies = [
-            new Octorok(this.Game, 6 * 64, 4 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 4 * 64, 6 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 7 * 64, 2 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 13 * 64, 2 * 64, getRandomIntInclusive(1, 2), Direction.Down),
+            new Octorok(this.Game, 6 * 64, 4 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 4 * 64, 6 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 7 * 64, 2 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 13 * 64, 2 * 64, 3, Direction.Down),
         ];
         this.map[1][1].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
@@ -950,10 +1028,10 @@ class World {
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
         this.map[1][1].enemies = [
-            new Octorok(this.Game, 4 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 10 * 64, 3 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 13 * 64, 7 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 12 * 64, 6 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 4 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 10 * 64, 3 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 13 * 64, 7 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 12 * 64, 6 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
         ];
         this.map[2][1].loadBricks([
             [new WallBrick(), new WallBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick()],
@@ -969,10 +1047,10 @@ class World {
             [new WallBrick(), new WallBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick()],
         ]);
         this.map[2][1].enemies = [
-            new Octorok(this.Game, 3 * 64, 4 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 5 * 64, 6 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 10 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 14 * 64, 2 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Left : Direction.Down),
+            new Octorok(this.Game, 3 * 64, 4 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 5 * 64, 6 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 10 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 14 * 64, 2 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Left : Direction.Down),
         ];
         this.map[0][2].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
@@ -988,9 +1066,9 @@ class World {
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
         this.map[0][2].enemies = [
-            new Octorok(this.Game, 3 * 64, 4 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 5 * 64, 7 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 10 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 3 * 64, 4 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 5 * 64, 7 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 10 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
         ];
         // Spawn scene
         this.map[1][2].loadBricks([
@@ -1020,10 +1098,10 @@ class World {
             [new WallBrick(), new WallBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick()],
         ]);
         this.map[2][2].enemies = [
-            new Octorok(this.Game, 3 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 5 * 64, 7 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 10 * 64, 5 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 12 * 64, 7 * 64, getRandomIntInclusive(1, 2), getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 3 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 5 * 64, 7 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 10 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 12 * 64, 7 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
         ];
     }
     getSpawnScene() {
@@ -1381,7 +1459,7 @@ class Player extends MovingBox {
 }
 
 class Projectile extends MovingBox {
-    constructor(x, y, width, height, speed, direction, sprite, hasPlayerCollision, hasEnemiesCollision, collisionCallback) {
+    constructor(x, y, width, height, speed, direction, sprite, hasPlayerCollision, canBeShieldBlocked, playerCollisionCallback, hasEnemiesCollision, enemiesCollisionCallback, deleteCallback) {
         super();
         this.x = x;
         this.y = y;
@@ -1391,8 +1469,11 @@ class Projectile extends MovingBox {
         this.direction = direction;
         this.sprite = sprite;
         this.hasPlayerCollision = hasPlayerCollision;
+        this.canBeShieldBlocked = canBeShieldBlocked;
+        this.playerCollisionCallback = playerCollisionCallback;
         this.hasEnemiesCollision = hasEnemiesCollision;
-        this.collisionCallback = collisionCallback;
+        this.enemiesCollisionCallback = enemiesCollisionCallback;
+        this.deleteCallback = deleteCallback;
         switch (this.direction) {
             case Direction.Up:
                 this.dy = -this.speed;
@@ -1413,17 +1494,33 @@ class Projectiles {
     constructor(game) {
         this.Game = game;
         this.projectiles = [];
+        this.shieldSound = AudioLoader.load("./sounds/effect/Shield.wav");
     }
     collisions() {
         this.loopProjectiles((projectile) => {
-            this.Game.Enemies.loopEnemies((enemy) => {
-                if (movingBoxsCollision(enemy, projectile)) {
-                    this.Game.Enemies.killEnemy(enemy);
+            if (projectile.hasEnemiesCollision) {
+                this.Game.Enemies.loopEnemies((enemy) => {
+                    if (movingBoxsCollision(enemy, projectile)) {
+                        if (projectile.enemiesCollisionCallback !== null)
+                            projectile.enemiesCollisionCallback(enemy);
+                        this.deleteProjectile(projectile);
+                    }
+                });
+            }
+            if (projectile.hasPlayerCollision) {
+                if (movingBoxsCollision(this.Game.Player.hitBox, projectile)) {
+                    if (projectile.canBeShieldBlocked &&
+                        this.Game.Player.isMovingObserver.is(false) &&
+                        areOppositeDirections(this.Game.Player.direction, projectile.direction)) {
+                        this.shieldSound.play();
+                        this.deleteProjectile(projectile);
+                        return;
+                    }
+                    if (projectile.playerCollisionCallback !== null)
+                        projectile.playerCollisionCallback(this.Game.Player);
                     this.deleteProjectile(projectile);
                 }
-            });
-        });
-        this.loopProjectiles((projectile) => {
+            }
             if (movingBoxCanvasCollision(projectile, this.Game.Viewport)) {
                 this.deleteProjectile(projectile);
             }
@@ -1444,12 +1541,13 @@ class Projectiles {
         this.projectiles.push(projectile);
     }
     deleteProjectile(projectile) {
-        projectile.collisionCallback();
+        if (projectile.deleteCallback !== null)
+            projectile.deleteCallback();
         this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
     }
     deleteAllProjectiles() {
         this.loopProjectiles((projectile) => {
-            projectile.collisionCallback();
+            projectile.deleteCallback();
         });
         this.projectiles = [];
     }
@@ -1481,7 +1579,7 @@ class SplashScreen {
                     this.music.play();
                 this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
                 this.Game.fillText("TLOZ-JS GAME", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
-                if (this.state.currentFrame > 100) {
+                if (this.state.currentFrame > 50) {
                     if (this.Game.EventManager.isEnterPressed) {
                         this.music.pause();
                         this.state.set(SplashScreenState.RevealGame);
@@ -1600,8 +1698,8 @@ class Sword {
             this.flyingSound.play();
             this.isFlying = true;
             this.Game.Projectiles.addProjectile(new Projectile(this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.direction, this.sprites[this.direction], false, // Disable collision on Player
-            true, // Enable collisions on Ennemies
-            () => this.isFlying = false));
+            false, null, true, // Enable collisions on Ennemies
+            (enemy) => this.Game.Enemies.killEnemy(enemy), () => this.isFlying = false));
         }
     }
 }

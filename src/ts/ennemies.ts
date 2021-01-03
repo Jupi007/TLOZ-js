@@ -1,3 +1,5 @@
+enum OctorokState {Moving, ChangeDirection, Attack};
+
 class Enemy extends MovingBox {
     Game: Game;
     speed: number;
@@ -8,6 +10,8 @@ class Enemy extends MovingBox {
     sprites: HTMLImageElement[][] = [];
     spritesAnimation: AnimationObserver;
 
+    state: StateObserver;
+
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
         super();
 
@@ -17,23 +21,6 @@ class Enemy extends MovingBox {
         this.y = y;
         this.speed = speed;
         this.direction = direction;
-    }
-
-    invertDirection(): void {
-        switch (this.direction) {
-            case Direction.Up:
-                this.direction = Direction.Down;
-                break;
-            case Direction.Down:
-                this.direction = Direction.Up;
-                break;
-            case Direction.Left:
-                this.direction = Direction.Right;
-                break;
-            case Direction.Right:
-                this.direction = Direction.Left;
-                break;
-        }
     }
 }
 
@@ -63,6 +50,70 @@ class Octorok extends Enemy {
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
 
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
+
+        this.state = new StateObserver(OctorokState.ChangeDirection);
+    }
+
+    aiThinking(): void {
+        switch (this.state.get()) {
+            case OctorokState.Moving:
+                switch (this.direction) {
+                    case Direction.Down:
+                        this.dy = this.speed;
+                        break;
+                    case Direction.Up:
+                        this.dy = -this.speed;
+                        break;
+                    case Direction.Right:
+                        this.dx = this.speed;
+                        break;
+                    case Direction.Left:
+                        this.dx = -this.speed;
+                        break;
+                }
+                if (this.state.currentFrame > 50) {
+                    if (getRandomIntInclusive(1, 50) === 1) this.state.set(OctorokState.Attack);
+                    if (getRandomIntInclusive(1, 200) === 1) this.state.set(OctorokState.ChangeDirection);
+                }
+                break;
+            case OctorokState.ChangeDirection:
+                if (this.state.currentFrame === 20) {
+                    this.direction = getRandomDirection();
+                }
+                if (this.state.currentFrame > 30) {
+                    this.state.set(OctorokState.Moving);
+                }
+                break;
+            case OctorokState.Attack:
+                if (this.state.currentFrame === 20) {
+                    this.Game.Projectiles.addProjectile(new Projectile(
+                        this.x + (this.width / 2) - (24 / 2),
+                        this.y + (this.height / 2) - (30 / 2),
+                        24,
+                        30,
+                        8,
+                        this.direction,
+                        SpriteLoader.load("./sprites/png/fireball.png"),
+                        true, // Enable collision on Player
+                        true, // Enable shield block
+                        (player) => player.takeDamage(this.damage),
+                        false, // Disable collisions on Ennemies
+                        null,
+                        null,
+                    ));
+                }
+                if (this.state.currentFrame > 30) {
+                    this.state.set(OctorokState.Moving);
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    changeDirection(): void {
+        this.state.set(OctorokState.ChangeDirection);
     }
 }
 
@@ -138,6 +189,41 @@ class Enemies {
         }
     }
 
+    aiThinking(): void {
+        this.loopEnemies((enemy) => {
+            enemy.aiThinking();
+        });
+    }
+
+    collisions(): void {
+        this.loopEnemies((enemy) => {
+            if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
+                this.Game.Player.takeDamage(enemy.damage);
+            }
+
+            if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
+                enemy.changeDirection();
+            }
+        });
+
+        this.Game.Viewport.loopCollision((cell, col, row) => {
+            this.Game.Enemies.loopEnemies((enemy) => {
+                if (movingBoxCollision(enemy, cell)) {
+                    enemy.changeDirection();
+                }
+            });
+        });
+    }
+
+    move(): void {
+        this.loopEnemies((enemy) => {
+            enemy.y += enemy.dy;
+            enemy.x += enemy.dx;
+            enemy.dx = 0;
+            enemy.dy = 0;
+        });
+    }
+
     draw(): void {
         this.loopEnemies((enemy) => {
             this.Game.Viewport.currentScene.drawImage(
@@ -152,49 +238,9 @@ class Enemies {
         });
     }
 
-    collisions(): void {
+    updateObservers(): void {
         this.loopEnemies((enemy) => {
-            if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
-                this.Game.Player.takeDamage(enemy.damage);
-            }
-
-            if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
-                enemy.invertDirection();
-            }
-        });
-
-        this.Game.Viewport.loopCollision((cell, col, row) => {
-            this.Game.Enemies.loopEnemies((enemy) => {
-                if (movingBoxCollision(enemy, cell)) {
-                    enemy.invertDirection();
-                }
-            });
-        });
-    }
-
-    listenEvents(): void {
-        this.loopEnemies((enemy) => {
-            switch (enemy.direction) {
-                case Direction.Down:
-                    enemy.dy = enemy.speed;
-                    break;
-                case Direction.Up:
-                    enemy.dy = -enemy.speed;
-                    break;
-                case Direction.Right:
-                    enemy.dx = enemy.speed;
-                    break;
-                case Direction.Left:
-                    enemy.dx = -enemy.speed;
-                    break;
-            }
-        });
-    }
-
-    move(): void {
-        this.loopEnemies((enemy) => {
-            enemy.y += enemy.dy;
-            enemy.x += enemy.dx;
+            enemy.state.update();
         });
     }
 }

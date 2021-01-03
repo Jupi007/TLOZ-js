@@ -180,21 +180,21 @@ class World {
                 this.Game,
                 2 * 64,
                 2 * 64,
-                2,
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Down
             ),
             new BlueOctorok(
                 this.Game,
                 5 * 64,
                 5 * 64,
-                2,
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new BlueOctorok(
                 this.Game,
                 13 * 64,
                 3 * 64,
-                2,
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
         ];
@@ -218,21 +218,21 @@ class World {
                 this.Game,
                 5 * 64,
                 8 * 64,
-                2,
+                3,
                 Direction.Up
             ),
             new BlueOctorok(
                 this.Game,
                 8 * 64,
                 4 * 64,
-                2,
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
             new BlueOctorok(
                 this.Game,
                 10 * 64,
                 2 * 64,
-                2,
+                3,
                 Direction.Down
             ),
         ];
@@ -256,21 +256,21 @@ class World {
                 this.Game,
                 5 * 64,
                 4 * 64,
-                2,
+                3,
                 Direction.Down
             ),
             new BlueOctorok(
                 this.Game,
                 9 * 64,
                 6 * 64,
-                2,
+                3,
                 Direction.Right
             ),
             new BlueOctorok(
                 this.Game,
                 12 * 64,
                 3 * 64,
-                2,
+                3,
                 Direction.Down
             ),
         ];
@@ -293,28 +293,28 @@ class World {
                 this.Game,
                 6 * 64,
                 4 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
             new Octorok(
                 this.Game,
                 4 * 64,
                 6 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
             new Octorok(
                 this.Game,
                 7 * 64,
                 2 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 13 * 64,
                 2 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 Direction.Down
             ),
         ];
@@ -337,28 +337,28 @@ class World {
                 this.Game,
                 4 * 64,
                 5 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 10 * 64,
                 3 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 13 * 64,
                 7 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 12 * 64,
                 6 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
         ];
@@ -381,28 +381,28 @@ class World {
                 this.Game,
                 3 * 64,
                 4 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
             new Octorok(
                 this.Game,
                 5 * 64,
                 6 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
             new Octorok(
                 this.Game,
                 10 * 64,
                 5 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 14 * 64,
                 2 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Left : Direction.Down
             ),
         ];
@@ -425,21 +425,21 @@ class World {
                 this.Game,
                 3 * 64,
                 4 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
             new Octorok(
                 this.Game,
                 5 * 64,
                 7 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 10 * 64,
                 5 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
         ];
@@ -477,28 +477,28 @@ class World {
                 this.Game,
                 3 * 64,
                 5 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 5 * 64,
                 7 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 10 * 64,
                 5 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 12 * 64,
                 7 * 64,
-                getRandomIntInclusive(1, 2),
+                3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
         ];
