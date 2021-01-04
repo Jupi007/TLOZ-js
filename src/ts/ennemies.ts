@@ -1,4 +1,4 @@
-enum EnnemieState {Moving, ChangeDirection, Attack, Killed};
+enum EnemieState {Moving, ChangeDirection, Attack, Killed};
 
 class Enemy extends MovingBox {
     Game: Game;
@@ -49,7 +49,7 @@ class Enemy extends MovingBox {
 
         if (this.hp <= 0) {
             this.dieSound.play();
-            this.state.set(EnnemieState.Killed)
+            this.state.set(EnemieState.Killed)
             return;
         }
 
@@ -90,12 +90,12 @@ class Octorok extends Enemy {
 
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
 
-        this.state = new StateObserver(EnnemieState.ChangeDirection);
+        this.state = new StateObserver(EnemieState.ChangeDirection);
     }
 
     aiThinking(): void {
         switch (this.state.get()) {
-            case EnnemieState.Moving:
+            case EnemieState.Moving:
                 if (this.isInvincibleObserver.is(false)) {
                     switch (this.direction) {
                         case Direction.Down:
@@ -113,19 +113,19 @@ class Octorok extends Enemy {
                     }
                 }
                 if (this.state.currentFrame > 50) {
-                    if (getRandomIntInclusive(1, 50) === 1) this.state.set(EnnemieState.Attack);
-                    if (getRandomIntInclusive(1, 200) === 1) this.state.set(EnnemieState.ChangeDirection);
+                    if (getRandomIntInclusive(1, 50) === 1) this.state.set(EnemieState.Attack);
+                    if (getRandomIntInclusive(1, 200) === 1) this.state.set(EnemieState.ChangeDirection);
                 }
                 break;
-            case EnnemieState.ChangeDirection:
+            case EnemieState.ChangeDirection:
                 if (this.state.currentFrame === 20) {
                     this.direction = getRandomDirection();
                 }
                 if (this.state.currentFrame > 30) {
-                    this.state.set(EnnemieState.Moving);
+                    this.state.set(EnemieState.Moving);
                 }
                 break;
-            case EnnemieState.Attack:
+            case EnemieState.Attack:
                 if (this.state.currentFrame === 20) {
                     this.Game.Projectiles.addProjectile(new Projectile(
                         this.x + (this.width / 2) - (24 / 2),
@@ -138,13 +138,13 @@ class Octorok extends Enemy {
                         true, // Enable collision on Player
                         true, // Enable shield block
                         (player) => player.takeDamage(this.damage),
-                        false, // Disable collisions on Ennemies
+                        false, // Disable collisions on Enemies
                         null,
                         null,
                     ));
                 }
                 if (this.state.currentFrame > 30) {
-                    this.state.set(EnnemieState.Moving);
+                    this.state.set(EnemieState.Moving);
                 }
                 break;
 
@@ -154,7 +154,7 @@ class Octorok extends Enemy {
     }
 
     changeDirection(): void {
-        this.state.set(EnnemieState.ChangeDirection);
+        this.state.set(EnemieState.ChangeDirection);
     }
 }
 
@@ -233,7 +233,7 @@ class Enemies {
 
     collisions(): void {
         this.loopEnemies((enemy) => {
-            if (movingBoxsCollision(this.Game.Player.hitBox, enemy) && !enemy.state.is(EnnemieState.Killed)) {
+            if (movingBoxsCollision(this.Game.Player.hitBox, enemy) && !enemy.state.is(EnemieState.Killed)) {
                 this.Game.Player.takeDamage(enemy.damage);
             }
 
@@ -264,7 +264,7 @@ class Enemies {
         let selt = this;
 
         this.loopEnemies((enemy) => {
-            if (enemy.state.is(EnnemieState.Killed)) {
+            if (enemy.state.is(EnemieState.Killed)) {
                 if (enemy.state.currentFrame <= 10) {
                     this.Game.Viewport.currentScene.drawImage(
                         enemy.killedSprites[1],

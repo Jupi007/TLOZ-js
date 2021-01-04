@@ -135,7 +135,7 @@ class Sword {
                 false, // Disable collision on Player
                 false,
                 null,
-                true, // Enable collisions on Ennemies
+                true, // Enable collisions on Enemies
                 (enemy) => enemy.takeDamage(1),
                 () => this.isFlying = false
             ));

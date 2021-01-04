@@ -132,7 +132,7 @@ class Viewport {
             this.nextScene = null;
 
             this.Game.Enemies.loopEnemies((enemy) => {
-                if (enemy.state.is(EnnemieState.Killed)) {
+                if (enemy.state.is(EnemieState.Killed)) {
                     this.Game.Enemies.killEnemy(enemy);
                 }
             })

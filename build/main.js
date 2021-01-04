@@ -243,13 +243,13 @@ class MonumentBottomLeftBrick extends Brick {
     }
 }
 
-var EnnemieState;
-(function (EnnemieState) {
-    EnnemieState[EnnemieState["Moving"] = 0] = "Moving";
-    EnnemieState[EnnemieState["ChangeDirection"] = 1] = "ChangeDirection";
-    EnnemieState[EnnemieState["Attack"] = 2] = "Attack";
-    EnnemieState[EnnemieState["Killed"] = 3] = "Killed";
-})(EnnemieState || (EnnemieState = {}));
+var EnemieState;
+(function (EnemieState) {
+    EnemieState[EnemieState["Moving"] = 0] = "Moving";
+    EnemieState[EnemieState["ChangeDirection"] = 1] = "ChangeDirection";
+    EnemieState[EnemieState["Attack"] = 2] = "Attack";
+    EnemieState[EnemieState["Killed"] = 3] = "Killed";
+})(EnemieState || (EnemieState = {}));
 ;
 class Enemy extends MovingBox {
     constructor(game, x, y, speed, direction) {
@@ -275,7 +275,7 @@ class Enemy extends MovingBox {
         this.hp -= damage;
         if (this.hp <= 0) {
             this.dieSound.play();
-            this.state.set(EnnemieState.Killed);
+            this.state.set(EnemieState.Killed);
             return;
         }
         this.setInvicibility();
@@ -305,11 +305,11 @@ class Octorok extends Enemy {
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/octorok-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
-        this.state = new StateObserver(EnnemieState.ChangeDirection);
+        this.state = new StateObserver(EnemieState.ChangeDirection);
     }
     aiThinking() {
         switch (this.state.get()) {
-            case EnnemieState.Moving:
+            case EnemieState.Moving:
                 if (this.isInvincibleObserver.is(false)) {
                     switch (this.direction) {
                         case Direction.Down:
@@ -328,28 +328,28 @@ class Octorok extends Enemy {
                 }
                 if (this.state.currentFrame > 50) {
                     if (getRandomIntInclusive(1, 50) === 1)
-                        this.state.set(EnnemieState.Attack);
+                        this.state.set(EnemieState.Attack);
                     if (getRandomIntInclusive(1, 200) === 1)
-                        this.state.set(EnnemieState.ChangeDirection);
+                        this.state.set(EnemieState.ChangeDirection);
                 }
                 break;
-            case EnnemieState.ChangeDirection:
+            case EnemieState.ChangeDirection:
                 if (this.state.currentFrame === 20) {
                     this.direction = getRandomDirection();
                 }
                 if (this.state.currentFrame > 30) {
-                    this.state.set(EnnemieState.Moving);
+                    this.state.set(EnemieState.Moving);
                 }
                 break;
-            case EnnemieState.Attack:
+            case EnemieState.Attack:
                 if (this.state.currentFrame === 20) {
                     this.Game.Projectiles.addProjectile(new Projectile(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), 24, 30, 8, this.direction, SpriteLoader.load("./sprites/png/fireball.png"), true, // Enable collision on Player
                     true, // Enable shield block
-                    (player) => player.takeDamage(this.damage), false, // Disable collisions on Ennemies
+                    (player) => player.takeDamage(this.damage), false, // Disable collisions on Enemies
                     null, null));
                 }
                 if (this.state.currentFrame > 30) {
-                    this.state.set(EnnemieState.Moving);
+                    this.state.set(EnemieState.Moving);
                 }
                 break;
             default:
@@ -357,7 +357,7 @@ class Octorok extends Enemy {
         }
     }
     changeDirection() {
-        this.state.set(EnnemieState.ChangeDirection);
+        this.state.set(EnemieState.ChangeDirection);
     }
 }
 class BlueOctorok extends Octorok {
@@ -411,7 +411,7 @@ class Enemies {
     }
     collisions() {
         this.loopEnemies((enemy) => {
-            if (movingBoxsCollision(this.Game.Player.hitBox, enemy) && !enemy.state.is(EnnemieState.Killed)) {
+            if (movingBoxsCollision(this.Game.Player.hitBox, enemy) && !enemy.state.is(EnemieState.Killed)) {
                 this.Game.Player.takeDamage(enemy.damage);
             }
             if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
@@ -437,7 +437,7 @@ class Enemies {
     draw() {
         let selt = this;
         this.loopEnemies((enemy) => {
-            if (enemy.state.is(EnnemieState.Killed)) {
+            if (enemy.state.is(EnemieState.Killed)) {
                 if (enemy.state.currentFrame <= 10) {
                     this.Game.Viewport.currentScene.drawImage(enemy.killedSprites[1], enemy.x, enemy.y, enemy.width, enemy.height);
                 }
@@ -1765,7 +1765,7 @@ class Sword {
             this.flyingSound.play();
             this.isFlying = true;
             this.Game.Projectiles.addProjectile(new Projectile(this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.direction, this.sprites[this.direction], false, // Disable collision on Player
-            false, null, true, // Enable collisions on Ennemies
+            false, null, true, // Enable collisions on Enemies
             (enemy) => enemy.takeDamage(1), () => this.isFlying = false));
         }
     }
@@ -1858,7 +1858,7 @@ class Viewport {
             this.currentScene = this.nextScene;
             this.nextScene = null;
             this.Game.Enemies.loopEnemies((enemy) => {
-                if (enemy.state.is(EnnemieState.Killed)) {
+                if (enemy.state.is(EnemieState.Killed)) {
                     this.Game.Enemies.killEnemy(enemy);
                 }
             });
