@@ -91,7 +91,7 @@ class Projectiles {
                         projectile.canBeShieldBlocked &&
                         this.Game.Player.isMovingObserver.is(false) &&
                         this.Game.Player.isAttackObserver.is(false) &&
-                        areOppositeDirections(this.Game.Player.direction, projectile.direction)
+                        Direction.areOpposite(this.Game.Player.direction, projectile.direction)
                     ) {
                         this.shieldSound.play();
                         this.deleteProjectile(projectile);

@@ -119,7 +119,7 @@ class Octorok extends Enemy {
                 break;
             case EnemieState.ChangeDirection:
                 if (this.state.currentFrame === 20) {
-                    this.direction = getRandomDirection();
+                    this.direction = Direction.getRandom();
                 }
                 if (this.state.currentFrame > 30) {
                     this.state.set(EnemieState.Moving);

@@ -22,47 +22,52 @@ var Direction;
     Direction[Direction["Left"] = 3] = "Left";
 })(Direction || (Direction = {}));
 ;
-function getRandomDirection() {
-    switch (getRandomIntInclusive(1, 4)) {
-        case 1:
-            return Direction.Up;
-            break;
-        case 2:
-            return Direction.Right;
-            break;
-        case 3:
-            return Direction.Down;
-            break;
-        case 4:
-            return Direction.Left;
-            break;
+(function (Direction) {
+    function getRandom() {
+        switch (getRandomIntInclusive(1, 4)) {
+            case 1:
+                return Direction.Up;
+                break;
+            case 2:
+                return Direction.Right;
+                break;
+            case 3:
+                return Direction.Down;
+                break;
+            case 4:
+                return Direction.Left;
+                break;
+        }
     }
-}
-function getOppositeDirection(direction) {
-    switch (direction) {
-        case Direction.Up:
-            return Direction.Down;
-            break;
-        case Direction.Down:
-            return Direction.Up;
-            break;
-        case Direction.Left:
-            return Direction.Right;
-            break;
-        case Direction.Right:
-            return Direction.Left;
-            break;
+    Direction.getRandom = getRandom;
+    function getOpposite(direction) {
+        switch (direction) {
+            case Direction.Up:
+                return Direction.Down;
+                break;
+            case Direction.Down:
+                return Direction.Up;
+                break;
+            case Direction.Left:
+                return Direction.Right;
+                break;
+            case Direction.Right:
+                return Direction.Left;
+                break;
+        }
     }
-}
-function areOppositeDirections(dir1, dir2) {
-    if (dir1 === Direction.Up && dir2 === Direction.Down ||
-        dir1 === Direction.Down && dir2 === Direction.Up ||
-        dir1 === Direction.Right && dir2 === Direction.Left ||
-        dir1 === Direction.Left && dir2 === Direction.Right) {
-        return true;
+    Direction.getOpposite = getOpposite;
+    function areOpposite(dir1, dir2) {
+        if (dir1 === Direction.Up && dir2 === Direction.Down ||
+            dir1 === Direction.Down && dir2 === Direction.Up ||
+            dir1 === Direction.Right && dir2 === Direction.Left ||
+            dir1 === Direction.Left && dir2 === Direction.Right) {
+            return true;
+        }
+        return false;
     }
-    return false;
-}
+    Direction.areOpposite = areOpposite;
+})(Direction || (Direction = {}));
 class MovingBox extends SimpleBox {
     constructor() {
         super(...arguments);
@@ -335,7 +340,7 @@ class Octorok extends Enemy {
                 break;
             case EnemieState.ChangeDirection:
                 if (this.state.currentFrame === 20) {
-                    this.direction = getRandomDirection();
+                    this.direction = Direction.getRandom();
                 }
                 if (this.state.currentFrame > 30) {
                     this.state.set(EnemieState.Moving);
@@ -1600,7 +1605,7 @@ class Projectiles {
                     if (projectile.canBeShieldBlocked &&
                         this.Game.Player.isMovingObserver.is(false) &&
                         this.Game.Player.isAttackObserver.is(false) &&
-                        areOppositeDirections(this.Game.Player.direction, projectile.direction)) {
+                        Direction.areOpposite(this.Game.Player.direction, projectile.direction)) {
                         this.shieldSound.play();
                         this.deleteProjectile(projectile);
                         return;
