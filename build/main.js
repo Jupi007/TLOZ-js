@@ -295,7 +295,7 @@ class Octorok extends Enemy {
         super(game, x, y, speed, direction);
         this.width = 64;
         this.height = 64;
-        this.damage = 1;
+        this.damage = 6;
         this.hp = 1;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
@@ -783,12 +783,9 @@ var GameOverScreenState;
 })(GameOverScreenState || (GameOverScreenState = {}));
 class GameOverScreen {
     constructor(game) {
-        this.killedSprites = [];
         this.Game = game;
         this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
         this.state = new StateObserver(GameOverScreenState.PlayerAnimation);
-        this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
-        this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
         this.hideGamePaneSpeed = 8;
         this.hideGamePanePosition = 0;
     }
@@ -798,34 +795,9 @@ class GameOverScreen {
                 this.Game.Viewport.draw();
                 this.Game.Enemies.draw();
                 this.Game.Hud.draw();
-                if (this.state.currentFrame <= 125) {
-                    if (this.state.currentFrame % 8 === 0) {
-                        switch (this.Game.Player.direction) {
-                            case Direction.Up:
-                                this.Game.Player.direction = Direction.Right;
-                                break;
-                            case Direction.Right:
-                                this.Game.Player.direction = Direction.Down;
-                                break;
-                            case Direction.Down:
-                                this.Game.Player.direction = Direction.Left;
-                                break;
-                            case Direction.Left:
-                                this.Game.Player.direction = Direction.Up;
-                                break;
-                        }
-                    }
-                    this.Game.Player.draw();
-                }
-                else if (this.state.currentFrame <= 135) {
-                    this.Game.Viewport.currentScene.drawImage(this.killedSprites[1], this.Game.Player.x, this.Game.Player.y, this.Game.Player.width, this.Game.Player.height);
-                }
-                else if (this.state.currentFrame <= 145) {
-                    this.Game.Viewport.currentScene.drawImage(this.killedSprites[2], this.Game.Player.x, this.Game.Player.y, this.Game.Player.width, this.Game.Player.height);
-                }
-                else {
+                this.Game.Player.drawGameOver();
+                if (this.Game.Player.isDiedObserver.currentFrame > 145)
                     this.state.set(GameOverScreenState.HideGame);
-                }
                 break;
             case GameOverScreenState.HideGame:
                 this.Game.Viewport.draw();
@@ -1286,11 +1258,13 @@ class Player extends MovingBox {
     constructor(game) {
         super();
         this.sprites = [];
-        this.spritesAttack = [];
+        this.attackSprites = [];
+        this.killedSprites = [];
         this.Game = game;
         this.isMovingObserver = new StateObserver(false);
         this.isAttackObserver = new StateObserver(false);
         this.isInvincibleObserver = new StateObserver(false);
+        this.isDiedObserver = new StateObserver(false);
         this.score = 0;
         this.targetScore = 0;
         this.width = 64;
@@ -1331,20 +1305,22 @@ class Player extends MovingBox {
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/link-up2.png");
-        this.spritesAttack[Direction.Up] = SpriteLoader.load("./sprites/png/link-up-attack.png");
+        this.attackSprites[Direction.Up] = SpriteLoader.load("./sprites/png/link-up-attack.png");
         this.sprites[Direction.Right] = [];
         this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/link-right1.png");
         this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/link-right2.png");
-        this.spritesAttack[Direction.Right] = SpriteLoader.load("./sprites/png/link-right-attack.png");
+        this.attackSprites[Direction.Right] = SpriteLoader.load("./sprites/png/link-right-attack.png");
         this.sprites[Direction.Down] = [];
         this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/link-down1.png");
         this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/link-down2.png");
-        this.spritesAttack[Direction.Down] = SpriteLoader.load("./sprites/png/link-down-attack.png");
+        this.attackSprites[Direction.Down] = SpriteLoader.load("./sprites/png/link-down-attack.png");
         this.sprites[Direction.Left] = [];
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/link-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/link-left2.png");
-        this.spritesAttack[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
-        this.spriteWin = SpriteLoader.load("./sprites/png/link-win.png");
+        this.attackSprites[Direction.Left] = SpriteLoader.load("./sprites/png/link-left-attack.png");
+        this.winSprite = SpriteLoader.load("./sprites/png/link-win.png");
+        this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
+        this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
         this.spritesAnimation = new AnimationObserver(6, 2);
         this.invincibleAnimation = new AnimationObserver(7, 2);
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
@@ -1358,7 +1334,7 @@ class Player extends MovingBox {
     }
     draw() {
         let sprite = this.isAttackObserver.get()
-            ? this.spritesAttack[this.direction]
+            ? this.attackSprites[this.direction]
             : this.sprites[this.direction][this.spritesAnimation.currentAnimationStep];
         if (this.isInvincibleObserver.get()) {
             this.invincibleAnimation.update();
@@ -1371,7 +1347,35 @@ class Player extends MovingBox {
         }
     }
     drawWin() {
-        this.Game.Viewport.drawImage(this.spriteWin, this.x, this.y, this.width, this.height);
+        this.Game.Viewport.drawImage(this.winSprite, this.x, this.y, this.width, this.height);
+    }
+    drawGameOver() {
+        if (this.isDiedObserver.currentFrame <= 125) {
+            if (this.isDiedObserver.currentFrame % 8 === 0) {
+                switch (this.Game.Player.direction) {
+                    case Direction.Up:
+                        this.Game.Player.direction = Direction.Right;
+                        break;
+                    case Direction.Right:
+                        this.Game.Player.direction = Direction.Down;
+                        break;
+                    case Direction.Down:
+                        this.Game.Player.direction = Direction.Left;
+                        break;
+                    case Direction.Left:
+                        this.Game.Player.direction = Direction.Up;
+                        break;
+                }
+            }
+            this.Game.Player.draw();
+        }
+        else if (this.isDiedObserver.currentFrame <= 135) {
+            this.Game.Viewport.currentScene.drawImage(this.killedSprites[1], this.Game.Player.x, this.Game.Player.y, this.Game.Player.width, this.Game.Player.height);
+        }
+        else if (this.isDiedObserver.currentFrame <= 145) {
+            this.Game.Viewport.currentScene.drawImage(this.killedSprites[2], this.Game.Player.x, this.Game.Player.y, this.Game.Player.width, this.Game.Player.height);
+        }
+        this.isDiedObserver.update();
     }
     move() {
         this.x += this.dx;
@@ -1496,6 +1500,7 @@ class Player extends MovingBox {
             this.hp = 0;
         }
         if (this.hp <= 0) {
+            this.isDiedObserver.set(false);
             this.isInvincibleObserver.set(false);
             this.Game.Player.isMovingObserver.set(false);
             this.Game.Player.isAttackObserver.set(false);

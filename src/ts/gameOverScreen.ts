@@ -3,8 +3,6 @@ enum GameOverScreenState {PlayerAnimation, HideGame, BlackScreen}
 class GameOverScreen {
     Game: Game;
 
-    killedSprites: HTMLImageElement[] = [];
-
     music: HTMLAudioElement;
 
     state: StateObserver;
@@ -19,9 +17,6 @@ class GameOverScreen {
 
         this.state = new StateObserver(GameOverScreenState.PlayerAnimation);
 
-        this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
-        this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
-
         this.hideGamePaneSpeed = 8;
         this.hideGamePanePosition = 0;
     }
@@ -32,48 +27,9 @@ class GameOverScreen {
                 this.Game.Viewport.draw();
                 this.Game.Enemies.draw();
                 this.Game.Hud.draw();
+                this.Game.Player.drawGameOver();
 
-                if (this.state.currentFrame <= 125) {
-                    if (this.state.currentFrame % 8 === 0) {
-                        switch (this.Game.Player.direction) {
-                            case Direction.Up:
-                                this.Game.Player.direction = Direction.Right;
-                                break;
-                            case Direction.Right:
-                                this.Game.Player.direction = Direction.Down;
-                                break;
-                            case Direction.Down:
-                                this.Game.Player.direction = Direction.Left;
-                                break;
-                            case Direction.Left:
-                                this.Game.Player.direction = Direction.Up;
-                                break;
-                        }
-                    }
-
-                    this.Game.Player.draw();
-                }
-                else if (this.state.currentFrame <= 135) {
-                    this.Game.Viewport.currentScene.drawImage(
-                        this.killedSprites[1],
-                        this.Game.Player.x,
-                        this.Game.Player.y,
-                        this.Game.Player.width,
-                        this.Game.Player.height
-                    );
-                }
-                else if (this.state.currentFrame <= 145) {
-                    this.Game.Viewport.currentScene.drawImage(
-                        this.killedSprites[2],
-                        this.Game.Player.x,
-                        this.Game.Player.y,
-                        this.Game.Player.width,
-                        this.Game.Player.height
-                    );
-                }
-                else {
-                    this.state.set(GameOverScreenState.HideGame);
-                }
+                if (this.Game.Player.isDiedObserver.currentFrame > 145) this.state.set(GameOverScreenState.HideGame);
                 break;
 
             case GameOverScreenState.HideGame:
