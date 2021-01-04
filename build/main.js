@@ -289,13 +289,18 @@ class Enemy extends MovingBox {
     setInvicibility() {
         this.isInvincibleObserver.set(true);
     }
+    dropItem() {
+        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 4) === 1) {
+            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2)));
+        }
+    }
 }
 class Octorok extends Enemy {
     constructor(game, x, y, speed, direction) {
         super(game, x, y, speed, direction);
         this.width = 64;
         this.height = 64;
-        this.damage = 6;
+        this.damage = 1;
         this.hp = 1;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
@@ -405,9 +410,7 @@ class Enemies {
         if (this.Game.Enemies.enemies.length <= 0) {
             this.Game.Player.increaseScore();
         }
-        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 4) === 1) {
-            this.Game.Items.addItem(new Item(enemy.x + (enemy.width / 2) - (24 / 2), enemy.y + (enemy.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2)));
-        }
+        enemy.dropItem();
     }
     aiThinking() {
         this.loopEnemies((enemy) => {
