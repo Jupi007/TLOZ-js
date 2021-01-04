@@ -918,7 +918,8 @@ class Items {
     }
     collisions() {
         this.loopItems((item) => {
-            if (movingBoxsCollision(this.Game.Player, item)) {
+            if (movingBoxsCollision(this.Game.Player, item) ||
+                this.Game.Player.isAttackObserver.is(true) && movingBoxCollision(item, this.Game.Sword)) {
                 item.collisionCallback();
                 this.deleteItem(item);
             }
