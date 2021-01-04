@@ -68,10 +68,6 @@ class SplashScreen {
                 }
                 break;
             case SplashScreenState.RevealGame:
-                if (this.revealGamePanePosition > this.Game.Canvas.width / 2) {
-                    this.Game.state.set(GameState.Run);
-                }
-
                 this.Game.Viewport.draw();
                 this.Game.Player.draw();
                 this.Game.Hud.draw();
@@ -93,6 +89,10 @@ class SplashScreen {
                 );
 
                 this.revealGamePanePosition += this.revealGamePaneSpeed;
+
+                if (this.revealGamePanePosition > this.Game.Canvas.width / 2) {
+                    this.Game.state.set(GameState.Run);
+                }
                 break;
         }
 

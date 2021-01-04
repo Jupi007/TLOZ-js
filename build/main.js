@@ -773,13 +773,19 @@ class Game {
 var GameOverScreenState;
 (function (GameOverScreenState) {
     GameOverScreenState[GameOverScreenState["PlayerAnimation"] = 0] = "PlayerAnimation";
-    GameOverScreenState[GameOverScreenState["BlackScreen"] = 1] = "BlackScreen";
+    GameOverScreenState[GameOverScreenState["HideGame"] = 1] = "HideGame";
+    GameOverScreenState[GameOverScreenState["BlackScreen"] = 2] = "BlackScreen";
 })(GameOverScreenState || (GameOverScreenState = {}));
 class GameOverScreen {
     constructor(game) {
+        this.killedSprites = [];
         this.Game = game;
         this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
         this.state = new StateObserver(GameOverScreenState.PlayerAnimation);
+        this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
+        this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
+        this.hideGamePaneSpeed = 8;
+        this.hideGamePanePosition = 0;
     }
     draw() {
         switch (this.state.get()) {
@@ -787,7 +793,7 @@ class GameOverScreen {
                 this.Game.Viewport.draw();
                 this.Game.Enemies.draw();
                 this.Game.Hud.draw();
-                if (this.state.currentFrame < 125) {
+                if (this.state.currentFrame <= 125) {
                     if (this.state.currentFrame % 8 === 0) {
                         switch (this.Game.Player.direction) {
                             case Direction.Up:
@@ -806,8 +812,25 @@ class GameOverScreen {
                     }
                     this.Game.Player.draw();
                 }
-                if (this.state.currentFrame > 200)
+                else if (this.state.currentFrame <= 135) {
+                    this.Game.Viewport.currentScene.drawImage(this.killedSprites[1], this.Game.Player.x, this.Game.Player.y, this.Game.Player.width, this.Game.Player.height);
+                }
+                else if (this.state.currentFrame <= 145) {
+                    this.Game.Viewport.currentScene.drawImage(this.killedSprites[2], this.Game.Player.x, this.Game.Player.y, this.Game.Player.width, this.Game.Player.height);
+                }
+                else {
+                    this.state.set(GameOverScreenState.HideGame);
+                }
+                break;
+            case GameOverScreenState.HideGame:
+                this.Game.Viewport.draw();
+                this.Game.Hud.draw();
+                this.Game.fillRect(-(this.Game.Canvas.width / 2) + this.hideGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+                this.Game.fillRect(this.Game.Canvas.width - this.hideGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+                this.hideGamePanePosition += this.hideGamePaneSpeed;
+                if (this.hideGamePanePosition > this.Game.Canvas.width / 2) {
                     this.state.set(GameOverScreenState.BlackScreen);
+                }
                 break;
             case GameOverScreenState.BlackScreen:
                 if (this.state.isFirstFrame)
@@ -1660,15 +1683,15 @@ class SplashScreen {
                 }
                 break;
             case SplashScreenState.RevealGame:
-                if (this.revealGamePanePosition > this.Game.Canvas.width / 2) {
-                    this.Game.state.set(GameState.Run);
-                }
                 this.Game.Viewport.draw();
                 this.Game.Player.draw();
                 this.Game.Hud.draw();
                 this.Game.fillRect(-this.revealGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
                 this.Game.fillRect(this.Game.Canvas.width / 2 + this.revealGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
                 this.revealGamePanePosition += this.revealGamePaneSpeed;
+                if (this.revealGamePanePosition > this.Game.Canvas.width / 2) {
+                    this.Game.state.set(GameState.Run);
+                }
                 break;
         }
         this.state.update();
@@ -1925,14 +1948,20 @@ class Viewport {
 var WinScreenState;
 (function (WinScreenState) {
     WinScreenState[WinScreenState["PlayerAnimation"] = 0] = "PlayerAnimation";
-    WinScreenState[WinScreenState["BlackScreen"] = 1] = "BlackScreen";
+    WinScreenState[WinScreenState["HideGame"] = 1] = "HideGame";
+    WinScreenState[WinScreenState["BlackScreen"] = 2] = "BlackScreen";
 })(WinScreenState || (WinScreenState = {}));
 ;
 class WinScreen {
     constructor(game) {
+        this.killedSprites = [];
         this.Game = game;
         this.music = AudioLoader.load("./sounds/music/ending.mp3", true);
         this.state = new StateObserver(WinScreenState.PlayerAnimation);
+        this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
+        this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
+        this.hideGamePaneSpeed = 8;
+        this.hideGamePanePosition = 0;
     }
     draw() {
         switch (this.state.get()) {
@@ -1943,7 +1972,20 @@ class WinScreen {
                 this.Game.Player.drawWin();
                 this.Game.Hud.draw();
                 if (this.state.currentFrame > 120)
+                    this.state.set(WinScreenState.HideGame);
+                break;
+            case GameOverScreenState.HideGame:
+                this.Game.Viewport.draw();
+                this.Game.Enemies.draw();
+                this.Game.Sword.drawWin();
+                this.Game.Player.drawWin();
+                this.Game.Hud.draw();
+                this.Game.fillRect(-(this.Game.Canvas.width / 2) + this.hideGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+                this.Game.fillRect(this.Game.Canvas.width - this.hideGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+                this.hideGamePanePosition += this.hideGamePaneSpeed;
+                if (this.hideGamePanePosition > this.Game.Canvas.width / 2) {
                     this.state.set(WinScreenState.BlackScreen);
+                }
                 break;
             case WinScreenState.BlackScreen:
                 if (this.state.isFirstFrame)
