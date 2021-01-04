@@ -1,4 +1,4 @@
-enum ProjectileState {Moving, Blocked}
+enum ProjectileState {Moving, ShieldBlocked}
 
 class Projectile extends MovingBox {
     speed: number;
@@ -86,7 +86,7 @@ class Projectiles {
 
     collisions(): void {
         this.loopProjectiles((projectile) => {
-            if (projectile.state.is(ProjectileState.Blocked)) return;
+            if (projectile.state.is(ProjectileState.ShieldBlocked)) return;
 
             if (projectile.hasEnemiesCollision) {
                 this.Game.Enemies.loopEnemies((enemy) => {
@@ -106,7 +106,7 @@ class Projectiles {
                         Direction.areOpposite(this.Game.Player.direction, projectile.direction)
                     ) {
                         this.shieldSound.play();
-                        projectile.state.set(ProjectileState.Blocked);
+                        projectile.state.set(ProjectileState.ShieldBlocked);
                         return;
                     }
 
@@ -129,7 +129,7 @@ class Projectiles {
                     projectile.y += projectile.dy;
                     break;
 
-                case ProjectileState.Blocked:
+                case ProjectileState.ShieldBlocked:
                     if (Direction.isVertical(projectile.direction)) {
                         projectile.x += projectile.dy / 2;
                         projectile.y -= projectile.dy / 2;
@@ -159,7 +159,7 @@ class Projectiles {
         this.loopProjectiles((projectile) => {
             projectile.state.update();
 
-            if (projectile.state.is(ProjectileState.Blocked) && projectile.state.currentFrame > 20) {
+            if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
                 this.deleteProjectile(projectile);
             }
         });

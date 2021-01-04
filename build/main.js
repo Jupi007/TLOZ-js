@@ -1589,7 +1589,7 @@ class Player extends MovingBox {
 var ProjectileState;
 (function (ProjectileState) {
     ProjectileState[ProjectileState["Moving"] = 0] = "Moving";
-    ProjectileState[ProjectileState["Blocked"] = 1] = "Blocked";
+    ProjectileState[ProjectileState["ShieldBlocked"] = 1] = "ShieldBlocked";
 })(ProjectileState || (ProjectileState = {}));
 class Projectile extends MovingBox {
     constructor(x, y, width, height, speed, direction, sprite, hasPlayerCollision, canBeShieldBlocked, playerCollisionCallback, hasEnemiesCollision, enemiesCollisionCallback, deleteCallback) {
@@ -1632,7 +1632,7 @@ class Projectiles {
     }
     collisions() {
         this.loopProjectiles((projectile) => {
-            if (projectile.state.is(ProjectileState.Blocked))
+            if (projectile.state.is(ProjectileState.ShieldBlocked))
                 return;
             if (projectile.hasEnemiesCollision) {
                 this.Game.Enemies.loopEnemies((enemy) => {
@@ -1650,7 +1650,7 @@ class Projectiles {
                         this.Game.Player.isAttackObserver.is(false) &&
                         Direction.areOpposite(this.Game.Player.direction, projectile.direction)) {
                         this.shieldSound.play();
-                        projectile.state.set(ProjectileState.Blocked);
+                        projectile.state.set(ProjectileState.ShieldBlocked);
                         return;
                     }
                     if (projectile.playerCollisionCallback !== null)
@@ -1670,7 +1670,7 @@ class Projectiles {
                     projectile.x += projectile.dx;
                     projectile.y += projectile.dy;
                     break;
-                case ProjectileState.Blocked:
+                case ProjectileState.ShieldBlocked:
                     if (Direction.isVertical(projectile.direction)) {
                         projectile.x += projectile.dy / 2;
                         projectile.y -= projectile.dy / 2;
@@ -1691,7 +1691,7 @@ class Projectiles {
     updateObservers() {
         this.loopProjectiles((projectile) => {
             projectile.state.update();
-            if (projectile.state.is(ProjectileState.Blocked) && projectile.state.currentFrame > 20) {
+            if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
                 this.deleteProjectile(projectile);
             }
         });
