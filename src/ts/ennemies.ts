@@ -1,4 +1,4 @@
-enum OctorokState {Moving, ChangeDirection, Attack};
+enum EnnemieState {Moving, ChangeDirection, Attack, Killed};
 
 class Enemy extends MovingBox {
     Game: Game;
@@ -9,6 +9,8 @@ class Enemy extends MovingBox {
 
     sprites: HTMLImageElement[][] = [];
     spritesAnimation: AnimationObserver;
+
+    killedSprites: HTMLImageElement[] = [];
 
     isInvincibleObserver: StateObserver;
     invincibleDuration: number;
@@ -29,6 +31,9 @@ class Enemy extends MovingBox {
         this.speed = speed;
         this.direction = direction;
 
+        this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
+        this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
+
         this.isInvincibleObserver = new StateObserver(false);
         this.invincibleDuration = 25;
         this.invincibleAnimation = new AnimationObserver(7, 2);
@@ -44,7 +49,7 @@ class Enemy extends MovingBox {
 
         if (this.hp <= 0) {
             this.dieSound.play();
-            this.Game.Enemies.killEnemy(this);
+            this.state.set(EnnemieState.Killed)
             return;
         }
 
@@ -85,12 +90,12 @@ class Octorok extends Enemy {
 
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
 
-        this.state = new StateObserver(OctorokState.ChangeDirection);
+        this.state = new StateObserver(EnnemieState.ChangeDirection);
     }
 
     aiThinking(): void {
         switch (this.state.get()) {
-            case OctorokState.Moving:
+            case EnnemieState.Moving:
                 if (this.isInvincibleObserver.is(false)) {
                     switch (this.direction) {
                         case Direction.Down:
@@ -108,19 +113,19 @@ class Octorok extends Enemy {
                     }
                 }
                 if (this.state.currentFrame > 50) {
-                    if (getRandomIntInclusive(1, 50) === 1) this.state.set(OctorokState.Attack);
-                    if (getRandomIntInclusive(1, 200) === 1) this.state.set(OctorokState.ChangeDirection);
+                    if (getRandomIntInclusive(1, 50) === 1) this.state.set(EnnemieState.Attack);
+                    if (getRandomIntInclusive(1, 200) === 1) this.state.set(EnnemieState.ChangeDirection);
                 }
                 break;
-            case OctorokState.ChangeDirection:
+            case EnnemieState.ChangeDirection:
                 if (this.state.currentFrame === 20) {
                     this.direction = getRandomDirection();
                 }
                 if (this.state.currentFrame > 30) {
-                    this.state.set(OctorokState.Moving);
+                    this.state.set(EnnemieState.Moving);
                 }
                 break;
-            case OctorokState.Attack:
+            case EnnemieState.Attack:
                 if (this.state.currentFrame === 20) {
                     this.Game.Projectiles.addProjectile(new Projectile(
                         this.x + (this.width / 2) - (24 / 2),
@@ -139,7 +144,7 @@ class Octorok extends Enemy {
                     ));
                 }
                 if (this.state.currentFrame > 30) {
-                    this.state.set(OctorokState.Moving);
+                    this.state.set(EnnemieState.Moving);
                 }
                 break;
 
@@ -149,7 +154,7 @@ class Octorok extends Enemy {
     }
 
     changeDirection(): void {
-        this.state.set(OctorokState.ChangeDirection);
+        this.state.set(EnnemieState.ChangeDirection);
     }
 }
 
@@ -228,7 +233,7 @@ class Enemies {
 
     collisions(): void {
         this.loopEnemies((enemy) => {
-            if (movingBoxsCollision(this.Game.Player.hitBox, enemy)) {
+            if (movingBoxsCollision(this.Game.Player.hitBox, enemy) && !enemy.state.is(EnnemieState.Killed)) {
                 this.Game.Player.takeDamage(enemy.damage);
             }
 
@@ -256,7 +261,34 @@ class Enemies {
     }
 
     draw(): void {
+        let selt = this;
+
         this.loopEnemies((enemy) => {
+            if (enemy.state.is(EnnemieState.Killed)) {
+                if (enemy.state.currentFrame <= 10) {
+                    this.Game.Viewport.currentScene.drawImage(
+                        enemy.killedSprites[1],
+                        enemy.x,
+                        enemy.y,
+                        enemy.width,
+                        enemy.height
+                    );
+                }
+                else if (enemy.state.currentFrame <= 20) {
+                    this.Game.Viewport.currentScene.drawImage(
+                        enemy.killedSprites[2],
+                        enemy.x,
+                        enemy.y,
+                        enemy.width,
+                        enemy.height
+                    );
+                }
+                else {
+                    this.Game.Enemies.killEnemy(enemy);
+                }
+                return;
+            }
+
             let sprite = enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep];
 
             if (enemy.isInvincibleObserver.is(true)) {

@@ -131,6 +131,11 @@ class Viewport {
             this.currentScene = this.nextScene;
             this.nextScene = null;
 
+            this.Game.Enemies.loopEnemies((enemy) => {
+                if (enemy.state.is(EnnemieState.Killed)) {
+                    this.Game.Enemies.killEnemy(enemy);
+                }
+            })
             this.Game.Enemies = new Enemies(this.Game);
             this.Game.Projectiles.deleteAllProjectiles();
             this.Game.Items.deleteAllItems();
