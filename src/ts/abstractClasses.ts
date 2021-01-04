@@ -70,6 +70,32 @@ namespace Direction {
 
         return false;
     }
+
+    export function isVertical(direction: Direction): boolean {
+        switch (direction) {
+            case Direction.Up:
+            case Direction.Down:
+                return true;
+                break;
+            case Direction.Left:
+            case Direction.Right:
+                return false;
+                break;
+        }
+    }
+
+    export function isHorizontal(direction: Direction): boolean {
+        switch (direction) {
+            case Direction.Up:
+            case Direction.Down:
+                return true;
+                break;
+            case Direction.Left:
+            case Direction.Right:
+                return false;
+                break;
+        }
+    }
 }
 
 abstract class MovingBox extends SimpleBox {

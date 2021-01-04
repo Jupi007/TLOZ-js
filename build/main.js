@@ -67,6 +67,32 @@ var Direction;
         return false;
     }
     Direction.areOpposite = areOpposite;
+    function isVertical(direction) {
+        switch (direction) {
+            case Direction.Up:
+            case Direction.Down:
+                return true;
+                break;
+            case Direction.Left:
+            case Direction.Right:
+                return false;
+                break;
+        }
+    }
+    Direction.isVertical = isVertical;
+    function isHorizontal(direction) {
+        switch (direction) {
+            case Direction.Up:
+            case Direction.Down:
+                return true;
+                break;
+            case Direction.Left:
+            case Direction.Right:
+                return false;
+                break;
+        }
+    }
+    Direction.isHorizontal = isHorizontal;
 })(Direction || (Direction = {}));
 class MovingBox extends SimpleBox {
     constructor() {
@@ -720,12 +746,13 @@ class Game {
         this.Viewport.draw();
         this.Enemies.draw();
         this.Sword.draw();
-        this.Player.draw();
-        this.Hud.draw();
         this.Items.draw();
         this.Projectiles.draw();
+        this.Player.draw();
+        this.Hud.draw();
         this.Player.updateObservers();
         this.Enemies.updateObservers();
+        this.Projectiles.updateObservers();
         this.EventManager.newFrame();
     }
     stoppedLoop() {
@@ -1559,6 +1586,11 @@ class Player extends MovingBox {
     }
 }
 
+var ProjectileState;
+(function (ProjectileState) {
+    ProjectileState[ProjectileState["Moving"] = 0] = "Moving";
+    ProjectileState[ProjectileState["Blocked"] = 1] = "Blocked";
+})(ProjectileState || (ProjectileState = {}));
 class Projectile extends MovingBox {
     constructor(x, y, width, height, speed, direction, sprite, hasPlayerCollision, canBeShieldBlocked, playerCollisionCallback, hasEnemiesCollision, enemiesCollisionCallback, deleteCallback) {
         super();
@@ -1589,6 +1621,7 @@ class Projectile extends MovingBox {
                 this.dx = -this.speed;
                 break;
         }
+        this.state = new StateObserver(ProjectileState.Moving);
     }
 }
 class Projectiles {
@@ -1599,6 +1632,8 @@ class Projectiles {
     }
     collisions() {
         this.loopProjectiles((projectile) => {
+            if (projectile.state.is(ProjectileState.Blocked))
+                return;
             if (projectile.hasEnemiesCollision) {
                 this.Game.Enemies.loopEnemies((enemy) => {
                     if (movingBoxsCollision(enemy, projectile)) {
@@ -1615,7 +1650,7 @@ class Projectiles {
                         this.Game.Player.isAttackObserver.is(false) &&
                         Direction.areOpposite(this.Game.Player.direction, projectile.direction)) {
                         this.shieldSound.play();
-                        this.deleteProjectile(projectile);
+                        projectile.state.set(ProjectileState.Blocked);
                         return;
                     }
                     if (projectile.playerCollisionCallback !== null)
@@ -1630,13 +1665,35 @@ class Projectiles {
     }
     move() {
         this.loopProjectiles((projectile) => {
-            projectile.x += projectile.dx;
-            projectile.y += projectile.dy;
+            switch (projectile.state.get()) {
+                case ProjectileState.Moving:
+                    projectile.x += projectile.dx;
+                    projectile.y += projectile.dy;
+                    break;
+                case ProjectileState.Blocked:
+                    if (Direction.isVertical(projectile.direction)) {
+                        projectile.x += projectile.dy / 2;
+                        projectile.y -= projectile.dy / 2;
+                    }
+                    else {
+                        projectile.x -= projectile.dx / 2;
+                        projectile.y += projectile.dx / 2;
+                    }
+                    break;
+            }
         });
     }
     draw() {
         this.loopProjectiles((projectile) => {
             this.Game.Viewport.currentScene.drawImage(projectile.sprite, projectile.x, projectile.y, projectile.width, projectile.height);
+        });
+    }
+    updateObservers() {
+        this.loopProjectiles((projectile) => {
+            projectile.state.update();
+            if (projectile.state.is(ProjectileState.Blocked) && projectile.state.currentFrame > 20) {
+                this.deleteProjectile(projectile);
+            }
         });
     }
     addProjectile(projectile) {

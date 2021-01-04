@@ -1,12 +1,20 @@
+enum ProjectileState {Moving, Blocked}
+
 class Projectile extends MovingBox {
     speed: number;
+
     sprite: HTMLImageElement;
+
     hasPlayerCollision: boolean;
     canBeShieldBlocked: boolean;
     playerCollisionCallback: Function;
+
     hasEnemiesCollision: boolean;
     enemiesCollisionCallback: Function;
+
     deleteCallback: Function;
+
+    state: StateObserver;
 
     constructor(
         x: number,
@@ -56,6 +64,8 @@ class Projectile extends MovingBox {
                 this.dx = -this.speed;
                 break;
         }
+
+        this.state = new StateObserver(ProjectileState.Moving)
     }
 }
 
@@ -76,6 +86,8 @@ class Projectiles {
 
     collisions(): void {
         this.loopProjectiles((projectile) => {
+            if (projectile.state.is(ProjectileState.Blocked)) return;
+
             if (projectile.hasEnemiesCollision) {
                 this.Game.Enemies.loopEnemies((enemy) => {
                     if (movingBoxsCollision(enemy, projectile)) {
@@ -94,7 +106,7 @@ class Projectiles {
                         Direction.areOpposite(this.Game.Player.direction, projectile.direction)
                     ) {
                         this.shieldSound.play();
-                        this.deleteProjectile(projectile);
+                        projectile.state.set(ProjectileState.Blocked);
                         return;
                     }
 
@@ -111,8 +123,23 @@ class Projectiles {
 
     move(): void {
         this.loopProjectiles((projectile) => {
-            projectile.x += projectile.dx;
-            projectile.y += projectile.dy;
+            switch (projectile.state.get()) {
+                case ProjectileState.Moving:
+                    projectile.x += projectile.dx;
+                    projectile.y += projectile.dy;
+                    break;
+
+                case ProjectileState.Blocked:
+                    if (Direction.isVertical(projectile.direction)) {
+                        projectile.x += projectile.dy / 2;
+                        projectile.y -= projectile.dy / 2;
+                    }
+                    else {
+                        projectile.x -= projectile.dx / 2;
+                        projectile.y += projectile.dx / 2;
+                    }
+                    break;
+            }
         });
     }
 
@@ -125,6 +152,16 @@ class Projectiles {
                 projectile.width,
                 projectile.height
             );
+        });
+    }
+
+    updateObservers(): void {
+        this.loopProjectiles((projectile) => {
+            projectile.state.update();
+
+            if (projectile.state.is(ProjectileState.Blocked) && projectile.state.currentFrame > 20) {
+                this.deleteProjectile(projectile);
+            }
         });
     }
 

@@ -109,13 +109,14 @@ class Game {
         this.Viewport.draw();
         this.Enemies.draw();
         this.Sword.draw();
-        this.Player.draw();
-        this.Hud.draw();
         this.Items.draw();
         this.Projectiles.draw();
+        this.Player.draw();
+        this.Hud.draw();
 
         this.Player.updateObservers();
         this.Enemies.updateObservers();
+        this.Projectiles.updateObservers();
 
         this.EventManager.newFrame();
     }
