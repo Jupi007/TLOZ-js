@@ -326,7 +326,7 @@ class Octorok extends Enemy {
         super(game, x, y, speed, direction);
         this.width = 64;
         this.height = 64;
-        this.damage = 1;
+        this.damage = 6;
         this.hp = 1;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
@@ -469,7 +469,6 @@ class Enemies {
         });
     }
     draw() {
-        let selt = this;
         this.loopEnemies((enemy) => {
             if (enemy.state.is(EnemieState.Killed)) {
                 if (enemy.state.currentFrame <= 10) {
@@ -674,6 +673,9 @@ class Game {
     constructor(canvas) {
         this.Canvas = canvas;
         this.ctx = this.Canvas.getContext("2d");
+        this.init();
+    }
+    init() {
         this.EventManager = new EventManager(this);
         this.World = new World(this);
         this.Viewport = new Viewport(this);
@@ -698,6 +700,10 @@ class Game {
             }
         });
         this.state = new StateObserver(GameState.Splash);
+    }
+    restart() {
+        this.init();
+        this.state.set(GameState.Run);
     }
     run() {
         window.requestAnimationFrame(() => this.run());
@@ -842,8 +848,10 @@ class GameOverScreen {
             case GameOverScreenState.BlackScreen:
                 if (this.state.isFirstFrame)
                     this.music.play();
-                if (this.Game.EventManager.isEnterPressed)
-                    location.reload();
+                if (this.Game.EventManager.isEnterPressed) {
+                    this.music.pause();
+                    this.Game.restart();
+                }
                 this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
                 this.Game.fillText("GAME OVER", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
                 this.Game.fillText("press enter to retry", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
@@ -2061,8 +2069,10 @@ class WinScreen {
             case WinScreenState.BlackScreen:
                 if (this.state.isFirstFrame)
                     this.music.play();
-                if (this.Game.EventManager.isEnterPressed)
-                    location.reload();
+                if (this.Game.EventManager.isEnterPressed) {
+                    this.music.pause();
+                    this.Game.restart();
+                }
                 this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
                 this.Game.fillText("YOU WON", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
                 this.Game.fillText("press enter to play again", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');

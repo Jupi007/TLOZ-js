@@ -71,7 +71,10 @@ class WinScreen {
             case WinScreenState.BlackScreen:
                 if (this.state.isFirstFrame) this.music.play();
 
-                if (this.Game.EventManager.isEnterPressed) location.reload();
+                if (this.Game.EventManager.isEnterPressed) {
+                    this.music.pause();
+                    this.Game.restart();
+                }
 
                 this.Game.fillRect(
                     0,

@@ -23,6 +23,10 @@ class Game {
         this.Canvas = canvas;
         this.ctx = this.Canvas.getContext("2d");
 
+        this.init();
+    }
+
+    init(): void {
         this.EventManager = new EventManager(this);
         this.World = new World(this);
         this.Viewport = new Viewport(this);
@@ -52,6 +56,11 @@ class Game {
         });
 
         this.state = new StateObserver(GameState.Splash);
+    }
+
+    restart(): void {
+        this.init();
+        this.state.set(GameState.Run);
     }
 
     run(): void {

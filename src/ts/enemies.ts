@@ -82,7 +82,7 @@ class Octorok extends Enemy {
         this.width = 64;
         this.height = 64;
 
-        this.damage = 1;
+        this.damage = 6;
         this.hp = 1;
 
         this.sprites[Direction.Up] = [];
@@ -265,8 +265,6 @@ class Enemies {
     }
 
     draw(): void {
-        let selt = this;
-
         this.loopEnemies((enemy) => {
             if (enemy.state.is(EnemieState.Killed)) {
                 if (enemy.state.currentFrame <= 10) {
