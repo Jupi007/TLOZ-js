@@ -1,27 +1,3 @@
-class Panes {
-    constructor(game) {
-        this.Game = game;
-        this.speed = 8;
-        this.position = 0;
-    }
-    get isAnimationFinished() {
-        return this.position > this.Game.Canvas.width / 2;
-    }
-    reset() {
-        this.position = 0;
-    }
-    drawOpen() {
-        this.Game.fillRect(-this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-        this.Game.fillRect(this.Game.Canvas.width / 2 + this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-        this.position += this.speed;
-    }
-    drawClose() {
-        this.Game.fillRect(-(this.Game.Canvas.width / 2) + this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-        this.Game.fillRect(this.Game.Canvas.width - this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-        this.position += this.speed;
-    }
-}
-
 class SpriteLoader {
     static load(src) {
         let sprite = new Image();
@@ -1324,6 +1300,30 @@ class AnimationObserver extends AbstractObserver {
     }
 }
 
+class Panes {
+    constructor(game) {
+        this.Game = game;
+        this.speed = 8;
+        this.position = 0;
+    }
+    get isAnimationFinished() {
+        return this.position > this.Game.Canvas.width / 2;
+    }
+    reset() {
+        this.position = 0;
+    }
+    drawOpen() {
+        this.Game.fillRect(-this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+        this.Game.fillRect(this.Game.Canvas.width / 2 + this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+        this.position += this.speed;
+    }
+    drawClose() {
+        this.Game.fillRect(-(this.Game.Canvas.width / 2) + this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+        this.Game.fillRect(this.Game.Canvas.width - this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+        this.position += this.speed;
+    }
+}
+
 class Player extends MovingBox {
     constructor(game) {
         super();
@@ -1335,6 +1335,7 @@ class Player extends MovingBox {
         this.isAttackObserver = new StateObserver(false);
         this.isInvincibleObserver = new StateObserver(false);
         this.isDiedObserver = new StateObserver(false);
+        this.isKnockbackObserver = new StateObserver(false);
         this.score = 0;
         this.targetScore = 0;
         this.width = 64;
@@ -1520,12 +1521,12 @@ class Player extends MovingBox {
         if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) &&
             !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
             if (this.Game.EventManager.isDownPressed) {
-                if (!this.Game.EventManager.isAttackPressed)
+                if (this.isAttackObserver.is(false))
                     this.dy = this.speed;
                 this.direction = Direction.Down;
             }
             else if (this.Game.EventManager.isUpPressed) {
-                if (!this.Game.EventManager.isAttackPressed)
+                if (this.isAttackObserver.is(false))
                     this.dy = -this.speed;
                 this.direction = Direction.Up;
             }
@@ -1533,12 +1534,12 @@ class Player extends MovingBox {
         else if ((this.Game.EventManager.isRightPressed || this.Game.EventManager.isLeftPressed) &&
             !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)) {
             if (this.Game.EventManager.isRightPressed) {
-                if (!this.Game.EventManager.isAttackPressed)
+                if (this.isAttackObserver.is(false))
                     this.dx = this.speed;
                 this.direction = Direction.Right;
             }
             else if (this.Game.EventManager.isLeftPressed) {
-                if (!this.Game.EventManager.isAttackPressed)
+                if (this.isAttackObserver.is(false))
                     this.dx = -this.speed;
                 this.direction = Direction.Left;
             }
@@ -1596,16 +1597,16 @@ class Player extends MovingBox {
     takeKnockBack() {
         switch (this.direction) {
             case Direction.Up:
-                this.dy = this.Game.Viewport.cellSize;
+                this.dy = this.Game.Viewport.cellSize * 2;
                 break;
             case Direction.Right:
-                this.dx = -this.Game.Viewport.cellSize;
+                this.dx = -this.Game.Viewport.cellSize * 2;
                 break;
             case Direction.Down:
-                this.dy = -this.Game.Viewport.cellSize;
+                this.dy = -this.Game.Viewport.cellSize * 2;
                 break;
             case Direction.Left:
-                this.dx = this.Game.Viewport.cellSize;
+                this.dx = this.Game.Viewport.cellSize * 2;
                 break;
         }
         movingBoxCanvasCollision(this, this.Game.Viewport);

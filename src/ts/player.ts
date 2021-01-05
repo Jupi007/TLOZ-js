@@ -6,6 +6,7 @@ class Player extends MovingBox {
     isMovingObserver: StateObserver;
     isAttackObserver: StateObserver;
     isDiedObserver: StateObserver;
+    isKnockbackObserver: StateObserver;
 
     hp: number;
     maxHp: number;
@@ -45,6 +46,7 @@ class Player extends MovingBox {
         this.isAttackObserver = new StateObserver(false);
         this.isInvincibleObserver = new StateObserver(false);
         this.isDiedObserver = new StateObserver(false);
+        this.isKnockbackObserver = new StateObserver(false);
 
         this.score = 0;
         this.targetScore = 0;
@@ -326,11 +328,11 @@ class Player extends MovingBox {
             !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)
         ) {
             if (this.Game.EventManager.isDownPressed) {
-                if (!this.Game.EventManager.isAttackPressed) this.dy = this.speed;
+                if (this.isAttackObserver.is(false) this.dy = this.speed;
                 this.direction = Direction.Down;
             }
             else if (this.Game.EventManager.isUpPressed) {
-                if (!this.Game.EventManager.isAttackPressed) this.dy = -this.speed;
+                if (this.isAttackObserver.is(false) this.dy = -this.speed;
                 this.direction = Direction.Up;
             }
         }
@@ -339,11 +341,11 @@ class Player extends MovingBox {
             !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)
         ) {
             if (this.Game.EventManager.isRightPressed) {
-                if (!this.Game.EventManager.isAttackPressed) this.dx = this.speed;
+                if (this.isAttackObserver.is(false) this.dx = this.speed;
                 this.direction = Direction.Right;
             }
             else if (this.Game.EventManager.isLeftPressed) {
-                if (!this.Game.EventManager.isAttackPressed) this.dx = -this.speed;
+                if (this.isAttackObserver.is(false) this.dx = -this.speed;
                 this.direction = Direction.Left;
             }
         }
@@ -414,16 +416,16 @@ class Player extends MovingBox {
     takeKnockBack(): void {
         switch (this.direction) {
             case Direction.Up:
-                this.dy = this.Game.Viewport.cellSize;
+                this.dy = this.Game.Viewport.cellSize * 2;
                 break;
             case Direction.Right:
-                this.dx = -this.Game.Viewport.cellSize;
+                this.dx = -this.Game.Viewport.cellSize * 2;
                 break;
             case Direction.Down:
-                this.dy = -this.Game.Viewport.cellSize;
+                this.dy = -this.Game.Viewport.cellSize * 2;
                 break;
             case Direction.Left:
-                this.dx = this.Game.Viewport.cellSize;
+                this.dx = this.Game.Viewport.cellSize * 2;
                 break;
         }
 
