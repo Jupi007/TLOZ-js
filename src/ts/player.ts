@@ -6,7 +6,6 @@ class Player extends MovingBox {
     isMovingObserver: StateObserver;
     isAttackObserver: StateObserver;
     isDiedObserver: StateObserver;
-    isKnockbackObserver: StateObserver;
 
     hp: number;
     maxHp: number;
@@ -14,6 +13,10 @@ class Player extends MovingBox {
     isInvincibleObserver: StateObserver;
     invincibleDuration: number;
     invincibleAnimation: AnimationObserver;
+
+    isKnockBackObserver: StateObserver;
+    knockBackSpeed: number;
+    knockBackDuration: number;
 
     score: number;
     targetScore: number;
@@ -44,9 +47,14 @@ class Player extends MovingBox {
 
         this.isMovingObserver = new StateObserver(false);
         this.isAttackObserver = new StateObserver(false);
-        this.isInvincibleObserver = new StateObserver(false);
         this.isDiedObserver = new StateObserver(false);
-        this.isKnockbackObserver = new StateObserver(false);
+
+        this.isInvincibleObserver = new StateObserver(false);
+        this.invincibleDuration = 200;
+
+        this.isKnockBackObserver = new StateObserver(false);
+        this.knockBackDuration = 10;
+        this.knockBackSpeed = 15;
 
         this.score = 0;
         this.targetScore = 0;
@@ -61,7 +69,6 @@ class Player extends MovingBox {
 
         this.maxHp = 6;
         this.hp = this.maxHp;
-        this.invincibleDuration = 200;
 
         this.direction = Direction.Up;
 
@@ -189,7 +196,7 @@ class Player extends MovingBox {
             this.height
         );
 
-        if (this.isMovingObserver.get() && !this.Game.state.is(GameState.Stopped)) {
+        if (this.isMovingObserver.is(true) && !this.Game.state.is(GameState.Stopped)) {
             this.spritesAnimation.update();
         }
     }
@@ -321,6 +328,29 @@ class Player extends MovingBox {
     }
 
     listenEvents(): void {
+        if (this.isKnockBackObserver.is(true)) {
+            this.isMovingObserver.set(false);
+            this.isAttackObserver.set(false);
+
+            switch (this.direction) {
+                case Direction.Up:
+                    this.dy = this.knockBackSpeed;
+                    break;
+                case Direction.Right:
+                    this.dx = -this.knockBackSpeed;
+                    break;
+                case Direction.Down:
+                    this.dy = -this.knockBackSpeed;
+                    break;
+                case Direction.Left:
+                    this.dx = this.knockBackSpeed;
+                    break;
+            }
+
+            movingBoxCanvasCollision(this, this.Game.Viewport);
+            return;
+        }
+
         this.isAttackObserver.set(this.Game.EventManager.isAttackPressed ? true : false);
 
         if (
@@ -328,11 +358,11 @@ class Player extends MovingBox {
             !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)
         ) {
             if (this.Game.EventManager.isDownPressed) {
-                if (this.isAttackObserver.is(false) this.dy = this.speed;
+                if (this.isAttackObserver.is(false)) this.dy = this.speed;
                 this.direction = Direction.Down;
             }
             else if (this.Game.EventManager.isUpPressed) {
-                if (this.isAttackObserver.is(false) this.dy = -this.speed;
+                if (this.isAttackObserver.is(false)) this.dy = -this.speed;
                 this.direction = Direction.Up;
             }
         }
@@ -341,11 +371,11 @@ class Player extends MovingBox {
             !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)
         ) {
             if (this.Game.EventManager.isRightPressed) {
-                if (this.isAttackObserver.is(false) this.dx = this.speed;
+                if (this.isAttackObserver.is(false)) this.dx = this.speed;
                 this.direction = Direction.Right;
             }
             else if (this.Game.EventManager.isLeftPressed) {
-                if (this.isAttackObserver.is(false) this.dx = -this.speed;
+                if (this.isAttackObserver.is(false)) this.dx = -this.speed;
                 this.direction = Direction.Left;
             }
         }
@@ -413,26 +443,9 @@ class Player extends MovingBox {
         this.getHealthSound.play()
     }
 
-    takeKnockBack(): void {
-        switch (this.direction) {
-            case Direction.Up:
-                this.dy = this.Game.Viewport.cellSize * 2;
-                break;
-            case Direction.Right:
-                this.dx = -this.Game.Viewport.cellSize * 2;
-                break;
-            case Direction.Down:
-                this.dy = -this.Game.Viewport.cellSize * 2;
-                break;
-            case Direction.Left:
-                this.dx = this.Game.Viewport.cellSize * 2;
-                break;
-        }
-
-        movingBoxCanvasCollision(this, this.Game.Viewport);
-        this.Game.Viewport.loopCollision((cell, col, row) => {
-            movingBoxCollision(this, cell);
-        });
+    takeKnockBack(direction: Direction = this.direction): void {
+        this.direction = direction;
+        this.isKnockBackObserver.set(true);
     }
 
     setInvicibility(): void {
@@ -443,6 +456,11 @@ class Player extends MovingBox {
         this.isMovingObserver.update();
         this.isAttackObserver.update();
         this.isInvincibleObserver.update();
+        this.isKnockBackObserver.update();
+
+        if (this.isKnockBackObserver.is(true) && this.isKnockBackObserver.currentFrame > this.knockBackDuration) {
+            this.isKnockBackObserver.set(false);
+        }
 
         if (this.isInvincibleObserver.get() && this.isInvincibleObserver.currentFrame > this.invincibleDuration) {
             this.isInvincibleObserver.set(false);
