@@ -309,16 +309,18 @@ class Enemy extends MovingBox {
             this.state.set(EnemieState.Killed);
             return;
         }
-        this.setInvicibility();
+        this.getInvicibility();
         this.hitSound.play();
     }
-    setInvicibility() {
+    getInvicibility() {
         this.isInvincibleObserver.set(true);
     }
     dropItem() {
-        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 4) === 1) {
+        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 3) === 1) {
             this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2)));
+            return true;
         }
+        return false;
     }
 }
 class Octorok extends Enemy {
@@ -413,6 +415,15 @@ class BlueOctorok extends Octorok {
         this.sprites[Direction.Left] = [];
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/blue-octorok-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/blue-octorok-left2.png");
+    }
+    dropItem() {
+        if (super.dropItem())
+            return true;
+        if (getRandomIntInclusive(1, 3) === 1) {
+            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400)));
+            return true;
+        }
+        return false;
     }
 }
 class Enemies {
@@ -1335,7 +1346,8 @@ class Player extends MovingBox {
         this.isAttackObserver = new StateObserver(false);
         this.isDiedObserver = new StateObserver(false);
         this.isInvincibleObserver = new StateObserver(false);
-        this.invincibleDuration = 200;
+        this.defaultInvincibleDuration = 150;
+        this.invincibleDuration = 0;
         this.isKnockBackObserver = new StateObserver(false);
         this.knockBackDuration = 10;
         this.knockBackSpeed = 15;
@@ -1587,7 +1599,7 @@ class Player extends MovingBox {
         this.takeKnockBack();
         if (this.hp - damage >= 0) {
             this.hp -= damage;
-            this.setInvicibility();
+            this.getInvicibility();
         }
         else {
             this.hp = 0;
@@ -1620,7 +1632,8 @@ class Player extends MovingBox {
         this.direction = direction;
         this.isKnockBackObserver.set(true);
     }
-    setInvicibility() {
+    getInvicibility(duration = this.defaultInvincibleDuration) {
+        this.invincibleDuration = duration;
         this.isInvincibleObserver.set(true);
     }
     updateObservers() {

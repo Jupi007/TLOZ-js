@@ -11,6 +11,7 @@ class Player extends MovingBox {
     maxHp: number;
 
     isInvincibleObserver: StateObserver;
+    defaultInvincibleDuration: number;
     invincibleDuration: number;
     invincibleAnimation: AnimationObserver;
 
@@ -50,7 +51,8 @@ class Player extends MovingBox {
         this.isDiedObserver = new StateObserver(false);
 
         this.isInvincibleObserver = new StateObserver(false);
-        this.invincibleDuration = 200;
+        this.defaultInvincibleDuration = 150;
+        this.invincibleDuration = 0;
 
         this.isKnockBackObserver = new StateObserver(false);
         this.knockBackDuration = 10;
@@ -407,7 +409,7 @@ class Player extends MovingBox {
 
         if (this.hp - damage >= 0) {
             this.hp -= damage;
-            this.setInvicibility();
+            this.getInvicibility();
         } else {
             this.hp = 0;
         }
@@ -448,7 +450,8 @@ class Player extends MovingBox {
         this.isKnockBackObserver.set(true);
     }
 
-    setInvicibility(): void {
+    getInvicibility(duration: number = this.defaultInvincibleDuration): void {
+        this.invincibleDuration = duration;
         this.isInvincibleObserver.set(true);
     }
 

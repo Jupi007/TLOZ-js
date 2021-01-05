@@ -53,16 +53,16 @@ class Enemy extends MovingBox {
             return;
         }
 
-        this.setInvicibility();
+        this.getInvicibility();
         this.hitSound.play();
     }
 
-    setInvicibility(): void {
+    getInvicibility(): void {
         this.isInvincibleObserver.set(true);
     }
 
-    dropItem(): void {
-        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 4) === 1) {
+    dropItem(): boolean {
+        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 3) === 1) {
             this.Game.Items.addItem(new Item(
                 this.x + (this.width / 2) - (24 / 2),
                 this.y + (this.height / 2) - (24 / 2),
@@ -71,7 +71,10 @@ class Enemy extends MovingBox {
                 SpriteLoader.load('./sprites/png/full-heart.png'),
                 () => this.Game.Player.recoverHealth(2)
             ));
+            return true;
         }
+
+        return false;
     }
 }
 
@@ -193,6 +196,24 @@ class BlueOctorok extends Octorok {
         this.sprites[Direction.Left] = [];
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/blue-octorok-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/blue-octorok-left2.png");
+    }
+
+    dropItem(): boolean {
+        if (super.dropItem()) return true;
+
+        if (getRandomIntInclusive(1, 3) === 1) {
+            this.Game.Items.addItem(new Item(
+                this.x + (this.width / 2) - (32 / 2),
+                this.y + (this.height / 2) - (32 / 2),
+                32,
+                32,
+                SpriteLoader.load('./sprites/png/clock.png'),
+                () => this.Game.Player.getInvicibility(400)
+            ));
+            return true;
+        }
+
+        return false;
     }
 }
 
