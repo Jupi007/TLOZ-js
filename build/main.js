@@ -1,3 +1,27 @@
+class Panes {
+    constructor(game) {
+        this.Game = game;
+        this.speed = 8;
+        this.position = 0;
+    }
+    get isAnimationFinished() {
+        return this.position > this.Game.Canvas.width / 2;
+    }
+    reset() {
+        this.position = 0;
+    }
+    drawOpen() {
+        this.Game.fillRect(-this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+        this.Game.fillRect(this.Game.Canvas.width / 2 + this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+        this.position += this.speed;
+    }
+    drawClose() {
+        this.Game.fillRect(-(this.Game.Canvas.width / 2) + this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+        this.Game.fillRect(this.Game.Canvas.width - this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
+        this.position += this.speed;
+    }
+}
+
 class SpriteLoader {
     static load(src) {
         let sprite = new Image();
@@ -326,7 +350,7 @@ class Octorok extends Enemy {
         super(game, x, y, speed, direction);
         this.width = 64;
         this.height = 64;
-        this.damage = 6;
+        this.damage = 1;
         this.hp = 1;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
@@ -685,6 +709,7 @@ class Game {
         this.Projectiles = new Projectiles(this);
         this.Items = new Items(this);
         this.Hud = new Hud(this);
+        this.Panes = new Panes(this);
         this.SplashScreen = new SplashScreen(this);
         this.GameOverScreen = new GameOverScreen(this);
         this.WinScreen = new WinScreen(this);
@@ -737,6 +762,11 @@ class Game {
         this.state.update();
     }
     runLoop() {
+        if (!this.Panes.isAnimationFinished) {
+            this.stoppedLoop();
+            this.Panes.drawOpen();
+            return;
+        }
         this.Player.listenEvents();
         this.Sword.listenEvents();
         this.Enemies.aiThinking();
@@ -765,8 +795,9 @@ class Game {
         this.Viewport.draw();
         this.Enemies.draw();
         this.Sword.draw();
-        this.Player.draw();
+        this.Items.draw();
         this.Projectiles.draw();
+        this.Player.draw();
         this.Hud.draw();
     }
     splashLoop() {
@@ -836,12 +867,12 @@ class GameOverScreen {
                     this.state.set(GameOverScreenState.HideGame);
                 break;
             case GameOverScreenState.HideGame:
+                if (this.state.isFirstFrame)
+                    this.Game.Panes.reset();
                 this.Game.Viewport.draw();
                 this.Game.Hud.draw();
-                this.Game.fillRect(-(this.Game.Canvas.width / 2) + this.hideGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-                this.Game.fillRect(this.Game.Canvas.width - this.hideGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-                this.hideGamePanePosition += this.hideGamePaneSpeed;
-                if (this.hideGamePanePosition > this.Game.Canvas.width / 2) {
+                this.Game.Panes.drawClose();
+                if (this.Game.Panes.isAnimationFinished) {
                     this.state.set(GameOverScreenState.BlackScreen);
                 }
                 break;
@@ -1730,7 +1761,6 @@ class Projectiles {
 var SplashScreenState;
 (function (SplashScreenState) {
     SplashScreenState[SplashScreenState["BlackScreen"] = 0] = "BlackScreen";
-    SplashScreenState[SplashScreenState["RevealGame"] = 1] = "RevealGame";
 })(SplashScreenState || (SplashScreenState = {}));
 class SplashScreen {
     constructor(game) {
@@ -1751,7 +1781,7 @@ class SplashScreen {
                 if (this.state.currentFrame > 50) {
                     if (this.Game.EventManager.isEnterPressed) {
                         this.music.pause();
-                        this.state.set(SplashScreenState.RevealGame);
+                        this.Game.state.set(GameState.Run);
                     }
                     if (this.state.currentFrame % 50 === 0) {
                         this.showStartMessage = this.showStartMessage ? false : true;
@@ -1759,17 +1789,6 @@ class SplashScreen {
                     if (this.showStartMessage) {
                         this.Game.fillText("press enter to start", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
                     }
-                }
-                break;
-            case SplashScreenState.RevealGame:
-                this.Game.Viewport.draw();
-                this.Game.Player.draw();
-                this.Game.Hud.draw();
-                this.Game.fillRect(-this.revealGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-                this.Game.fillRect(this.Game.Canvas.width / 2 + this.revealGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-                this.revealGamePanePosition += this.revealGamePaneSpeed;
-                if (this.revealGamePanePosition > this.Game.Canvas.width / 2) {
-                    this.Game.state.set(GameState.Run);
                 }
                 break;
         }
@@ -2039,8 +2058,6 @@ class WinScreen {
         this.state = new StateObserver(WinScreenState.PlayerAnimation);
         this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
         this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
-        this.hideGamePaneSpeed = 8;
-        this.hideGamePanePosition = 0;
     }
     draw() {
         switch (this.state.get()) {
@@ -2054,16 +2071,16 @@ class WinScreen {
                     this.state.set(WinScreenState.HideGame);
                 break;
             case GameOverScreenState.HideGame:
+                if (this.state.isFirstFrame)
+                    this.Game.Panes.reset();
                 this.Game.Viewport.draw();
                 this.Game.Enemies.draw();
                 this.Game.Sword.drawWin();
                 this.Game.Player.drawWin();
                 this.Game.Hud.draw();
-                this.Game.fillRect(-(this.Game.Canvas.width / 2) + this.hideGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-                this.Game.fillRect(this.Game.Canvas.width - this.hideGamePanePosition, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-                this.hideGamePanePosition += this.hideGamePaneSpeed;
-                if (this.hideGamePanePosition > this.Game.Canvas.width / 2) {
-                    this.state.set(WinScreenState.BlackScreen);
+                this.Game.Panes.drawClose();
+                if (this.Game.Panes.isAnimationFinished) {
+                    this.state.set(GameOverScreenState.BlackScreen);
                 }
                 break;
             case WinScreenState.BlackScreen:

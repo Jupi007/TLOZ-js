@@ -13,6 +13,7 @@ class Game {
     Items: Items;
     EventManager: EventManager;
     Hud: Hud;
+    Panes: Panes;
     SplashScreen: SplashScreen;
     GameOverScreen: GameOverScreen;
     WinScreen: WinScreen;
@@ -36,6 +37,7 @@ class Game {
         this.Projectiles = new Projectiles(this);
         this.Items = new Items(this);
         this.Hud = new Hud(this);
+        this.Panes = new Panes(this);
         this.SplashScreen = new SplashScreen(this);
         this.GameOverScreen = new GameOverScreen(this);
         this.WinScreen = new WinScreen(this);
@@ -100,6 +102,12 @@ class Game {
     }
 
     runLoop(): void {
+        if (!this.Panes.isAnimationFinished) {
+            this.stoppedLoop();
+            this.Panes.drawOpen();
+            return;
+        }
+
         this.Player.listenEvents();
         this.Sword.listenEvents();
         this.Enemies.aiThinking();
@@ -134,8 +142,9 @@ class Game {
         this.Viewport.draw();
         this.Enemies.draw();
         this.Sword.draw();
-        this.Player.draw();
+        this.Items.draw();
         this.Projectiles.draw();
+        this.Player.draw();
         this.Hud.draw();
     }
 

@@ -33,28 +33,13 @@ class GameOverScreen {
                 break;
 
             case GameOverScreenState.HideGame:
+                if (this.state.isFirstFrame) this.Game.Panes.reset();
+
                 this.Game.Viewport.draw();
                 this.Game.Hud.draw();
+                this.Game.Panes.drawClose();
 
-                this.Game.fillRect(
-                    -(this.Game.Canvas.width / 2) + this.hideGamePanePosition,
-                    0,
-                    this.Game.Canvas.width / 2,
-                    this.Game.Canvas.height,
-                    "#000"
-                );
-
-                this.Game.fillRect(
-                    this.Game.Canvas.width - this.hideGamePanePosition,
-                    0,
-                    this.Game.Canvas.width / 2,
-                    this.Game.Canvas.height,
-                    "#000"
-                );
-
-                this.hideGamePanePosition += this.hideGamePaneSpeed;
-
-                if (this.hideGamePanePosition > this.Game.Canvas.width / 2) {
+                if (this.Game.Panes.isAnimationFinished) {
                     this.state.set(GameOverScreenState.BlackScreen);
                 }
                 break;

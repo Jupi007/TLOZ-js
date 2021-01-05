@@ -1,4 +1,4 @@
-enum SplashScreenState {BlackScreen, RevealGame}
+enum SplashScreenState {BlackScreen}
 
 class SplashScreen {
     Game: Game;
@@ -47,7 +47,7 @@ class SplashScreen {
                 if (this.state.currentFrame > 50) {
                     if (this.Game.EventManager.isEnterPressed) {
                         this.music.pause();
-                        this.state.set(SplashScreenState.RevealGame);
+                        this.Game.state.set(GameState.Run);
                     }
 
                     if (this.state.currentFrame % 50 === 0) {
@@ -65,33 +65,6 @@ class SplashScreen {
                             'middle'
                         );
                     }
-                }
-                break;
-            case SplashScreenState.RevealGame:
-                this.Game.Viewport.draw();
-                this.Game.Player.draw();
-                this.Game.Hud.draw();
-
-                this.Game.fillRect(
-                    -this.revealGamePanePosition,
-                    0,
-                    this.Game.Canvas.width / 2,
-                    this.Game.Canvas.height,
-                    "#000"
-                );
-
-                this.Game.fillRect(
-                    this.Game.Canvas.width / 2 + this.revealGamePanePosition,
-                    0,
-                    this.Game.Canvas.width / 2,
-                    this.Game.Canvas.height,
-                    "#000"
-                );
-
-                this.revealGamePanePosition += this.revealGamePaneSpeed;
-
-                if (this.revealGamePanePosition > this.Game.Canvas.width / 2) {
-                    this.Game.state.set(GameState.Run);
                 }
                 break;
         }
