@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>The legend of Zelda</title>
+    <link rel="stylesheet" href="csstart.min.css">
     <style>
         @font-face {
             font-family: "NES-font";
@@ -32,16 +33,23 @@
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+    <button type="button" name="button" class="Button Button-dark" id="startButton">Run game</button>
+
+    <canvas id="canvas">Your browser seems to not support Canvas2D api. Please use a modern and up to date one like Firefox.</canvas>
 
     <p><a href="https://github.com/Jupiter007-43/TLOZ-js">https://github.com/Jupiter007-43/TLOZ-js</a></p>
 
     <script src="./build/main.js"></script>
 
     <script type="text/javascript">
-        Game = new Game(document.getElementById("canvas"));
         document.addEventListener('DOMContentLoaded', () => {
-            Game.run();
+            let button = document.getElementById("startButton");
+
+            button.addEventListener("click", (e) => {
+                Game = new Game(document.getElementById("canvas"));
+                Game.run();
+                button.remove();
+            });
         });
     </script>
 </body>
