@@ -1,6 +1,7 @@
 class Item extends SimpleBox {
     sprite: HTMLImageElement;
     collisionCallback: Function;
+    collisionSound: HTMLAudioElement;
 
     constructor(
         x: number,
@@ -8,7 +9,8 @@ class Item extends SimpleBox {
         width: number,
         height: number,
         sprite: HTMLImageElement,
-        collisionCallback: Function
+        collisionCallback: Function,
+        collisionSound: HTMLAudioElement
     ) {
         super();
 
@@ -18,6 +20,7 @@ class Item extends SimpleBox {
         this.height = height;
         this.sprite = sprite;
         this.collisionCallback = collisionCallback;
+        this.collisionSound = collisionSound;
     }
 }
 
@@ -39,6 +42,7 @@ class Items {
                 this.Game.Player.isAttackObserver.is(true) && movingBoxCollision(item, this.Game.Sword)
             ) {
                 item.collisionCallback();
+                item.collisionSound.play();
                 this.deleteItem(item);
             }
         });

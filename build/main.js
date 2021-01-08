@@ -317,7 +317,7 @@ class Enemy extends MovingBox {
     }
     dropItem() {
         if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 3) === 1) {
-            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2)));
+            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2), AudioLoader.load("./sounds/effect/Get_Heart.wav")));
             return true;
         }
         return false;
@@ -420,7 +420,7 @@ class BlueOctorok extends Octorok {
         if (super.dropItem())
             return true;
         if (getRandomIntInclusive(1, 3) === 1) {
-            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400)));
+            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
             return true;
         }
         return false;
@@ -927,7 +927,7 @@ class Hud {
 }
 
 class Item extends SimpleBox {
-    constructor(x, y, width, height, sprite, collisionCallback) {
+    constructor(x, y, width, height, sprite, collisionCallback, collisionSound) {
         super();
         this.x = x;
         this.y = y;
@@ -935,6 +935,7 @@ class Item extends SimpleBox {
         this.height = height;
         this.sprite = sprite;
         this.collisionCallback = collisionCallback;
+        this.collisionSound = collisionSound;
     }
 }
 class Items {
@@ -947,6 +948,7 @@ class Items {
             if (movingBoxsCollision(this.Game.Player, item) ||
                 this.Game.Player.isAttackObserver.is(true) && movingBoxCollision(item, this.Game.Sword)) {
                 item.collisionCallback();
+                item.collisionSound.play();
                 this.deleteItem(item);
             }
         });
@@ -1411,7 +1413,6 @@ class Player extends MovingBox {
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
-        this.getHealthSound = AudioLoader.load("./sounds/effect/Get_Heart.wav");
         this.fanfareSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
     }
     get isFullLife() {
@@ -1626,7 +1627,6 @@ class Player extends MovingBox {
             this.lowHealthSound.pause();
             this.lowHealthSound.currentTime = 0;
         }
-        this.getHealthSound.play();
     }
     takeKnockBack(direction = this.direction) {
         this.direction = direction;

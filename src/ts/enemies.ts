@@ -69,7 +69,8 @@ class Enemy extends MovingBox {
                 24,
                 24,
                 SpriteLoader.load('./sprites/png/full-heart.png'),
-                () => this.Game.Player.recoverHealth(2)
+                () => this.Game.Player.recoverHealth(2),
+                AudioLoader.load("./sounds/effect/Get_Heart.wav")
             ));
             return true;
         }
@@ -208,7 +209,8 @@ class BlueOctorok extends Octorok {
                 32,
                 32,
                 SpriteLoader.load('./sprites/png/clock.png'),
-                () => this.Game.Player.getInvicibility(400)
+                () => this.Game.Player.getInvicibility(400),
+                AudioLoader.load("./sounds/effect/Get_Item.wav")
             ));
             return true;
         }
