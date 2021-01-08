@@ -1256,8 +1256,7 @@ class StateObserver extends AbstractObserver {
         this.state = state;
     }
     set(state) {
-        if (this.state === state)
-            return;
+        // if (this.state === state) return;
         this.lastState = this.state;
         this.lastFrameState = this.state;
         this.state = state;
