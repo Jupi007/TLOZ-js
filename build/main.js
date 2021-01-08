@@ -670,6 +670,7 @@ function movingBoxCanvasCollision(movingBox, canvas) {
     }
 }
 
+'use strict';
 var GameState;
 (function (GameState) {
     GameState[GameState["Splash"] = 0] = "Splash";

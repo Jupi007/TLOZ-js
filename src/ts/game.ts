@@ -1,3 +1,5 @@
+'use strict';
+
 enum GameState {Splash, Run, Stopped, SlideScene, GameOver, Win};
 
 class Game {
