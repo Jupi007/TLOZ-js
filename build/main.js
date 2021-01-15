@@ -526,8 +526,8 @@ class Tektite extends Enemy {
     }
 }
 class BlueTektite extends Tektite {
-    constructor(game, x, y, speed, direction) {
-        super(game, x, y, speed, direction);
+    constructor(game, x, y) {
+        super(game, x, y);
         this.damage = 2;
         this.sprites = [];
         this.sprites[1] = SpriteLoader.load("./sprites/png/blue-tektite1.png");

@@ -355,8 +355,8 @@ class Tektite extends Enemy {
 }
 
 class BlueTektite extends Tektite {
-    constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super(game, x, y, speed, direction);
+    constructor(game: Game, x: number, y: number) {
+        super(game, x, y);
 
         this.damage = 2;
 
