@@ -318,7 +318,7 @@ class Enemy extends MovingBox {
     bricksCollision() { }
     customCollision() { }
     takeDamage(damage) {
-        if (this.isInvincibleObserver.is(true))
+        if (this.isInvincibleObserver.is(true) || this.state.is(EnemieState.Killed))
             return;
         this.hp -= damage;
         if (this.hp <= 0) {

@@ -67,7 +67,7 @@ class Enemy extends MovingBox {
     customCollision(): void {}
 
     takeDamage(damage): void {
-        if (this.isInvincibleObserver.is(true)) return;
+        if (this.isInvincibleObserver.is(true) || this.state.is(EnemieState.Killed)) return;
 
         this.hp -= damage;
 
