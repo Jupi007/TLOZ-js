@@ -103,3 +103,55 @@ function movingBoxCanvasCollision(movingBox: MovingBox, canvas: SimpleBox): bool
         return true;
     }
 }
+
+function simpleMovingBoxLineCollision(movingBox: MovingBox, lineCoordinate: number, direction: Direction): boolean {
+    switch (direction) {
+        case Direction.Up:
+            if (movingBox.y + movingBox.dy < lineCoordinate) {
+                return true;
+            }
+            break;
+        case Direction.Down:
+            if (movingBox.y + movingBox.dy + movingBox.height > lineCoordinate) {
+                return true;
+            }
+            break;
+        case Direction.Left:
+            if (movingBox.x + movingBox.dx < lineCoordinate) {
+                return true;
+            }
+            break;
+        case Direction.Right:
+            if (movingBox.x + movingBox.dx + movingBox.width > lineCoordinate) {
+                return true;
+            }
+            break;
+    }
+}
+
+function movingBoxLineCollision(movingBox: MovingBox, lineCoordinate: number, direction: Direction): boolean {
+    if (!simpleMovingBoxLineCollision(movingBox, lineCoordinate, direction)) {
+        return false;
+    }
+    else {
+        switch (direction) {
+            case Direction.Up:
+                movingBox.y = lineCoordinate + 1;
+                movingBox.dy = 0;
+                break;
+            case Direction.Down:
+                movingBox.y = lineCoordinate - movingBox.height;
+                movingBox.dy = 0;
+                break;
+            case Direction.Left:
+                movingBox.x = lineCoordinate + 1;
+                movingBox.dx = 0;
+                break;
+            case Direction.Right:
+                movingBox.x = lineCoordinate - movingBox.width;
+                movingBox.dx = 0;
+                break;
+        }
+        return true;
+    }
+}

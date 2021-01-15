@@ -273,6 +273,11 @@ class World {
                 4,
                 Direction.Down
             ),
+            new BlueTektite(
+                this.Game,
+                7 * 64,
+                7 * 64,
+            ),
         ];
 
         this.map[0][1].loadBricks([
@@ -421,26 +426,20 @@ class World {
             [new WallBrick(), new WallBrick(),            new WallBrick(),    new WallBrick(),    new WallBrick(),       new WallBrick(),    new WallBrick(),    new WallBrick(),       new WallBrick(),    new WallBrick(),       new WallBrick(),            new WallBrick(),    new WallBrick(),    new WallBrick(),           new WallBrick(),           new WallBrick()   ]
         ]);
         this.map[0][2].enemies = [
-            new Octorok(
+            new Tektite(
                 this.Game,
                 3 * 64,
-                4 * 64,
-                3,
-                getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
+                4 * 64
             ),
-            new Octorok(
+            new Tektite(
                 this.Game,
                 5 * 64,
-                7 * 64,
-                3,
-                getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
+                7 * 64
             ),
-            new Octorok(
+            new Tektite(
                 this.Game,
                 10 * 64,
-                5 * 64,
-                3,
-                getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
+                5 * 64
             ),
         ];
 

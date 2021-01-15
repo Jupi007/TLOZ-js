@@ -278,20 +278,23 @@ var EnemieState;
 (function (EnemieState) {
     EnemieState[EnemieState["Moving"] = 0] = "Moving";
     EnemieState[EnemieState["ChangeDirection"] = 1] = "ChangeDirection";
-    EnemieState[EnemieState["Attack"] = 2] = "Attack";
-    EnemieState[EnemieState["Killed"] = 3] = "Killed";
+    EnemieState[EnemieState["Wait"] = 2] = "Wait";
+    EnemieState[EnemieState["Attack"] = 3] = "Attack";
+    EnemieState[EnemieState["Killed"] = 4] = "Killed";
 })(EnemieState || (EnemieState = {}));
 ;
 class Enemy extends MovingBox {
     constructor(game, x, y, speed, direction) {
         super();
-        this.sprites = [];
         this.killedSprites = [];
         this.Game = game;
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.direction = direction;
+        this.hasPlayerCollision = true;
+        this.hasViewportCollision = true;
+        this.hasBricksCollisions = true;
         this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
         this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
         this.isInvincibleObserver = new StateObserver(false);
@@ -300,6 +303,20 @@ class Enemy extends MovingBox {
         this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
         this.hitSound = AudioLoader.load("./sounds/effect/Enemy_Hit.wav");
     }
+    aiThinking() { }
+    move() {
+        this.y += this.dy;
+        this.x += this.dx;
+        this.dx = 0;
+        this.dy = 0;
+    }
+    draw() { }
+    playerCollision() {
+        this.Game.Player.takeDamage(this.damage);
+    }
+    viewportCollision() { }
+    bricksCollision() { }
+    customCollision() { }
     takeDamage(damage) {
         if (this.isInvincibleObserver.is(true))
             return;
@@ -326,6 +343,7 @@ class Enemy extends MovingBox {
 class Octorok extends Enemy {
     constructor(game, x, y, speed, direction) {
         super(game, x, y, speed, direction);
+        this.sprites = [];
         this.width = 64;
         this.height = 64;
         this.damage = 1;
@@ -394,8 +412,17 @@ class Octorok extends Enemy {
                 break;
         }
     }
+    viewportCollision() {
+        this.changeDirection();
+    }
+    bricksCollision() {
+        this.changeDirection();
+    }
     changeDirection() {
         this.state.set(EnemieState.ChangeDirection);
+    }
+    draw() {
+        this.Game.Viewport.currentScene.drawImage(this.sprites[this.direction][this.spritesAnimation.currentAnimationStep], this.x, this.y, this.width, this.height);
     }
 }
 class BlueOctorok extends Octorok {
@@ -415,6 +442,96 @@ class BlueOctorok extends Octorok {
         this.sprites[Direction.Left] = [];
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/blue-octorok-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/blue-octorok-left2.png");
+    }
+    dropItem() {
+        if (super.dropItem())
+            return true;
+        if (getRandomIntInclusive(1, 3) === 1) {
+            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
+            return true;
+        }
+        return false;
+    }
+}
+class Tektite extends Enemy {
+    constructor(game, x, y) {
+        super(game, x, y, 3, Direction.Down);
+        this.width = 64;
+        this.height = 64;
+        this.damage = 1;
+        this.hp = 1;
+        // this.hasPlayerCollision = true;
+        this.hasViewportCollision = false;
+        this.hasBricksCollisions = false;
+        this.sprites = [];
+        this.sprites[1] = SpriteLoader.load("./sprites/png/tektite1.png");
+        this.sprites[2] = SpriteLoader.load("./sprites/png/tektite2.png");
+        this.spritesAnimation = new AnimationObserver(20, 2);
+        this.state = new StateObserver(EnemieState.Wait);
+    }
+    aiThinking() {
+        switch (this.state.get()) {
+            case EnemieState.Moving:
+                if (this.state.isFirstFrame) {
+                    this.dy = -getRandomIntInclusive(3, 10);
+                    this.dx = (getRandomIntInclusive(1, 2) === 1) ? -3 : 3;
+                }
+                else {
+                    this.dy += 0.1;
+                }
+                if ((this.state.currentFrame > 60 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 100)
+                    this.state.set(EnemieState.Wait);
+                break;
+            case EnemieState.Wait:
+                this.dx = 0;
+                this.dy = 0;
+                if ((this.state.currentFrame > 60 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 100)
+                    this.state.set(EnemieState.Moving);
+                break;
+        }
+    }
+    customCollision() {
+        if (movingBoxLineCollision(this, 0, Direction.Up)) {
+            this.dy = this.dy / 2;
+        }
+        if (movingBoxLineCollision(this, this.Game.Viewport.height, Direction.Down)) {
+            this.state.set(EnemieState.Wait);
+        }
+        if (simpleMovingBoxLineCollision(this, 0, Direction.Left)) {
+            this.dx = -this.dx;
+        }
+        if (simpleMovingBoxLineCollision(this, this.Game.Viewport.width, Direction.Right)) {
+            this.dx = -this.dx;
+        }
+    }
+    move() {
+        if (this.state.is(EnemieState.Killed))
+            return;
+        this.y += this.dy;
+        this.x += this.dx;
+    }
+    draw() {
+        let sprite;
+        switch (this.state.get()) {
+            case EnemieState.Moving:
+                sprite = this.sprites[1];
+                break;
+            case EnemieState.Wait:
+                sprite = this.sprites[this.spritesAnimation.currentAnimationStep];
+                break;
+            default:
+                break;
+        }
+        this.Game.Viewport.currentScene.drawImage(sprite, this.x, this.y, this.width, this.height);
+    }
+}
+class BlueTektite extends Tektite {
+    constructor(game, x, y, speed, direction) {
+        super(game, x, y, speed, direction);
+        this.damage = 2;
+        this.sprites = [];
+        this.sprites[1] = SpriteLoader.load("./sprites/png/blue-tektite1.png");
+        this.sprites[2] = SpriteLoader.load("./sprites/png/blue-tektite2.png");
     }
     dropItem() {
         if (super.dropItem())
@@ -456,27 +573,25 @@ class Enemies {
     }
     collisions() {
         this.loopEnemies((enemy) => {
-            if (movingBoxsCollision(this.Game.Player.hitBox, enemy) && !enemy.state.is(EnemieState.Killed)) {
-                this.Game.Player.takeDamage(enemy.damage);
+            if (enemy.hasPlayerCollision && movingBoxsCollision(this.Game.Player.hitBox, enemy) && !enemy.state.is(EnemieState.Killed)) {
+                enemy.playerCollision();
             }
-            if (movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
-                enemy.changeDirection();
+            if (enemy.hasViewportCollision && movingBoxCanvasCollision(enemy, this.Game.Viewport)) {
+                enemy.viewportCollision();
             }
-        });
-        this.Game.Viewport.loopCollision((cell, col, row) => {
-            this.Game.Enemies.loopEnemies((enemy) => {
-                if (movingBoxCollision(enemy, cell)) {
-                    enemy.changeDirection();
-                }
-            });
+            if (enemy.hasBricksCollisions) {
+                this.Game.Viewport.loopCollision((cell, col, row) => {
+                    if (movingBoxCollision(enemy, cell)) {
+                        enemy.bricksCollision();
+                    }
+                });
+            }
+            enemy.customCollision();
         });
     }
     move() {
         this.loopEnemies((enemy) => {
-            enemy.y += enemy.dy;
-            enemy.x += enemy.dx;
-            enemy.dx = 0;
-            enemy.dy = 0;
+            enemy.move();
         });
     }
     draw() {
@@ -493,13 +608,12 @@ class Enemies {
                 }
                 return;
             }
-            let sprite = enemy.sprites[enemy.direction][enemy.spritesAnimation.currentAnimationStep];
             if (enemy.isInvincibleObserver.is(true)) {
                 enemy.invincibleAnimation.update();
                 if (enemy.invincibleAnimation.currentAnimationStep === 2)
-                    sprite = new Image();
+                    return;
             }
-            this.Game.Viewport.currentScene.drawImage(sprite, enemy.x, enemy.y, enemy.width, enemy.height);
+            enemy.draw();
             if (this.Game.state.is(GameState.Run))
                 enemy.spritesAnimation.update();
         });
@@ -665,6 +779,56 @@ function movingBoxCanvasCollision(movingBox, canvas) {
         if (movingBox.y + movingBox.dy < 0) {
             movingBox.dy = 0;
             movingBox.y = 0;
+        }
+        return true;
+    }
+}
+function simpleMovingBoxLineCollision(movingBox, lineCoordinate, direction) {
+    switch (direction) {
+        case Direction.Up:
+            if (movingBox.y + movingBox.dy < lineCoordinate) {
+                return true;
+            }
+            break;
+        case Direction.Down:
+            if (movingBox.y + movingBox.dy + movingBox.height > lineCoordinate) {
+                return true;
+            }
+            break;
+        case Direction.Left:
+            if (movingBox.x + movingBox.dx < lineCoordinate) {
+                return true;
+            }
+            break;
+        case Direction.Right:
+            if (movingBox.x + movingBox.dx + movingBox.width > lineCoordinate) {
+                return true;
+            }
+            break;
+    }
+}
+function movingBoxLineCollision(movingBox, lineCoordinate, direction) {
+    if (!simpleMovingBoxLineCollision(movingBox, lineCoordinate, direction)) {
+        return false;
+    }
+    else {
+        switch (direction) {
+            case Direction.Up:
+                movingBox.y = lineCoordinate + 1;
+                movingBox.dy = 0;
+                break;
+            case Direction.Down:
+                movingBox.y = lineCoordinate - movingBox.height;
+                movingBox.dy = 0;
+                break;
+            case Direction.Left:
+                movingBox.x = lineCoordinate + 1;
+                movingBox.dx = 0;
+                break;
+            case Direction.Right:
+                movingBox.x = lineCoordinate - movingBox.width;
+                movingBox.dx = 0;
+                break;
         }
         return true;
     }
@@ -1117,6 +1281,7 @@ class World {
             new BlueOctorok(this.Game, 5 * 64, 4 * 64, 4, Direction.Down),
             new BlueOctorok(this.Game, 9 * 64, 6 * 64, 4, Direction.Right),
             new BlueOctorok(this.Game, 12 * 64, 3 * 64, 4, Direction.Down),
+            new BlueTektite(this.Game, 7 * 64, 7 * 64),
         ];
         this.map[0][1].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new StairsBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
@@ -1189,9 +1354,9 @@ class World {
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
         this.map[0][2].enemies = [
-            new Octorok(this.Game, 3 * 64, 4 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 5 * 64, 7 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 10 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Tektite(this.Game, 3 * 64, 4 * 64),
+            new Tektite(this.Game, 5 * 64, 7 * 64),
+            new Tektite(this.Game, 10 * 64, 5 * 64),
         ];
         // Spawn scene
         this.map[1][2].loadBricks([
