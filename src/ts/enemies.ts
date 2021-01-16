@@ -103,35 +103,11 @@ class Enemy extends MovingBox {
     }
 }
 
-class Octorok extends Enemy {
+class SimpleMovingEnemy extends Enemy {
     sprites: HTMLImageElement[][] = [];
 
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
         super(game, x, y, speed, direction);
-
-        this.width = 64;
-        this.height = 64;
-
-        this.damage = 1;
-        this.hp = 1;
-
-        this.sprites[Direction.Up] = [];
-        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
-        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/octorok-up2.png");
-
-        this.sprites[Direction.Down] = [];
-        this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/octorok-down1.png");
-        this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/octorok-down2.png");
-
-        this.sprites[Direction.Right] = [];
-        this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/octorok-right1.png");
-        this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/octorok-right2.png");
-
-        this.sprites[Direction.Left] = [];
-        this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/octorok-left1.png");
-        this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
-
-        this.spritesAnimation = new AnimationObserver(20 / speed, 2);
 
         this.state = new StateObserver(EnemieState.ChangeDirection);
     }
@@ -170,21 +146,7 @@ class Octorok extends Enemy {
                 break;
             case EnemieState.Attack:
                 if (this.state.currentFrame === 20) {
-                    this.Game.Projectiles.addProjectile(new Projectile(
-                        this.x + (this.width / 2) - (24 / 2),
-                        this.y + (this.height / 2) - (30 / 2),
-                        24,
-                        30,
-                        8,
-                        this.direction,
-                        SpriteLoader.load("./sprites/png/fireball.png"),
-                        true, // Enable collision on Player
-                        true, // Enable shield block
-                        (player) => player.takeDamage(this.damage),
-                        false, // Disable collisions on Enemies
-                        null,
-                        null,
-                    ));
+                    this.attack();
                 }
                 if (this.state.currentFrame > 30) {
                     this.state.set(EnemieState.Moving);
@@ -216,6 +178,56 @@ class Octorok extends Enemy {
             this.height
         );
     }
+
+    attack(): void {}
+}
+
+class Octorok extends SimpleMovingEnemy {
+    constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
+        super(game, x, y, speed, direction);
+
+        this.width = 64;
+        this.height = 64;
+
+        this.damage = 1;
+        this.hp = 1;
+
+        this.sprites[Direction.Up] = [];
+        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
+        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/octorok-up2.png");
+
+        this.sprites[Direction.Down] = [];
+        this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/octorok-down1.png");
+        this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/octorok-down2.png");
+
+        this.sprites[Direction.Right] = [];
+        this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/octorok-right1.png");
+        this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/octorok-right2.png");
+
+        this.sprites[Direction.Left] = [];
+        this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/octorok-left1.png");
+        this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/octorok-left2.png");
+
+        this.spritesAnimation = new AnimationObserver(20 / speed, 2);
+    }
+
+    attack(): void {
+        this.Game.Projectiles.addProjectile(new Projectile(
+            this.x + (this.width / 2) - (24 / 2),
+            this.y + (this.height / 2) - (30 / 2),
+            24,
+            30,
+            8,
+            this.direction,
+            SpriteLoader.load("./sprites/png/fireball.png"),
+            true, // Enable collision on Player
+            true, // Enable shield block
+            (player) => player.takeDamage(this.damage),
+            false, // Disable collisions on Enemies
+            null,
+            null,
+        ));
+    }
 }
 
 class BlueOctorok extends Octorok {
@@ -240,6 +252,109 @@ class BlueOctorok extends Octorok {
         this.sprites[Direction.Left] = [];
         this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/blue-octorok-left1.png");
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/blue-octorok-left2.png");
+    }
+
+    dropItem(): boolean {
+        if (super.dropItem()) return true;
+
+        if (getRandomIntInclusive(1, 3) === 1) {
+            this.Game.Items.addItem(new Item(
+                this.x + (this.width / 2) - (32 / 2),
+                this.y + (this.height / 2) - (32 / 2),
+                32,
+                32,
+                SpriteLoader.load('./sprites/png/clock.png'),
+                () => this.Game.Player.getInvicibility(400),
+                AudioLoader.load("./sounds/effect/Get_Item.wav")
+            ));
+            return true;
+        }
+
+        return false;
+    }
+}
+
+class Moblin extends SimpleMovingEnemy {
+    arrowSprites: HTMLImageElement[];
+
+    constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
+        super(game, x, y, speed, direction);
+
+        this.width = 64;
+        this.height = 64;
+
+        this.damage = 1;
+        this.hp = 1;
+
+        this.sprites[Direction.Up] = [];
+        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/moblin-up1.png");
+        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/moblin-up2.png");
+
+        this.sprites[Direction.Down] = [];
+        this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/moblin-down1.png");
+        this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/moblin-down2.png");
+
+        this.sprites[Direction.Right] = [];
+        this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/moblin-right1.png");
+        this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/moblin-right2.png");
+
+        this.sprites[Direction.Left] = [];
+        this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/moblin-left1.png");
+        this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/moblin-left2.png");
+
+        this.spritesAnimation = new AnimationObserver(25 / speed, 2);
+
+        this.arrowSprites = [];
+        this.arrowSprites[Direction.Up] = SpriteLoader.load("./sprites/png/arrow-up.png");
+        this.arrowSprites[Direction.Down] = SpriteLoader.load("./sprites/png/arrow-down.png");
+        this.arrowSprites[Direction.Right] = SpriteLoader.load("./sprites/png/arrow-right.png");
+        this.arrowSprites[Direction.Left] = SpriteLoader.load("./sprites/png/arrow-left.png");
+    }
+
+    attack(): void {
+        let width = (this.direction === Direction.Up || this.direction === Direction.Down) ? 20 : 64;
+        let height = (this.direction === Direction.Up || this.direction === Direction.Down) ? 64 : 20;
+
+        this.Game.Projectiles.addProjectile(new Projectile(
+            this.x + (this.width / 2) - (24 / 2),
+            this.y + (this.height / 2) - (30 / 2),
+            width,
+            height,
+            8,
+            this.direction,
+            this.arrowSprites[this.direction],
+            true, // Enable collision on Player
+            true, // Enable shield block
+            (player) => player.takeDamage(this.damage),
+            false, // Disable collisions on Enemies
+            null,
+            null,
+        ));
+    }
+}
+
+class BlueMoblin extends Moblin {
+    constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
+        super(game, x, y, speed, direction);
+
+        this.damage = 2;
+        this.hp = 2;
+
+        this.sprites[Direction.Up] = [];
+        this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/blue-moblin-up1.png");
+        this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/blue-moblin-up2.png");
+
+        this.sprites[Direction.Down] = [];
+        this.sprites[Direction.Down][1] = SpriteLoader.load("./sprites/png/blue-moblin-down1.png");
+        this.sprites[Direction.Down][2] = SpriteLoader.load("./sprites/png/blue-moblin-down2.png");
+
+        this.sprites[Direction.Right] = [];
+        this.sprites[Direction.Right][1] = SpriteLoader.load("./sprites/png/blue-moblin-right1.png");
+        this.sprites[Direction.Right][2] = SpriteLoader.load("./sprites/png/blue-moblin-right2.png");
+
+        this.sprites[Direction.Left] = [];
+        this.sprites[Direction.Left][1] = SpriteLoader.load("./sprites/png/blue-moblin-left1.png");
+        this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/blue-moblin-left2.png");
     }
 
     dropItem(): boolean {

@@ -214,21 +214,21 @@ class World {
         ]);
         this.map[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[1][0].enemies = [
-            new BlueOctorok(
+            new BlueMoblin(
                 this.Game,
                 5 * 64,
                 8 * 64,
                 4,
                 Direction.Up
             ),
-            new BlueOctorok(
+            new BlueMoblin(
                 this.Game,
                 8 * 64,
                 4 * 64,
                 4,
                 getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left
             ),
-            new BlueOctorok(
+            new BlueMoblin(
                 this.Game,
                 10 * 64,
                 2 * 64,
@@ -472,28 +472,28 @@ class World {
             [new WallBrick(),            new WallBrick(),            new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick(),    new TreeBrick()],
         ]);
         this.map[2][2].enemies = [
-            new Octorok(
+            new Moblin(
                 this.Game,
                 3 * 64,
                 5 * 64,
                 3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
-            new Octorok(
+            new Moblin(
                 this.Game,
                 5 * 64,
                 7 * 64,
                 3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
-            new Octorok(
+            new Moblin(
                 this.Game,
                 10 * 64,
                 5 * 64,
                 3,
                 getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down
             ),
-            new Octorok(
+            new Moblin(
                 this.Game,
                 12 * 64,
                 7 * 64,
