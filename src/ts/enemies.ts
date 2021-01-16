@@ -291,8 +291,8 @@ class Tektite extends Enemy {
         switch (this.state.get()) {
             case EnemieState.Moving:
                 if (this.state.isFirstFrame) {
-                    this.dy = -getRandomIntInclusive(3, 10);
-                    this.dx = (getRandomIntInclusive(1, 2) === 1) ? -3 : 3;
+                    this.dy = -6;
+                    this.dx = this.dy / 2 * ((getRandomIntInclusive(1, 2) === 1) ? -1 : 1);
                 }
                 else {
                     this.dy += 0.1;
@@ -302,7 +302,7 @@ class Tektite extends Enemy {
             case EnemieState.Wait:
                 this.dx = 0;
                 this.dy = 0;
-                if ((this.state.currentFrame > 60 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 100)  this.state.set(EnemieState.Moving);
+                if ((this.state.currentFrame > 30 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 60)  this.state.set(EnemieState.Moving);
                 break;
         }
     }
