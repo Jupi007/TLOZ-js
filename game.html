@@ -17,7 +17,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly;
+            justify-content: space-around;
             height: 100vh;
             text-align: center;
             background: #202020;
@@ -39,7 +39,7 @@
     <canvas id="canvas">Your browser seems to not support Canvas2D api. Please use a modern and up to date one like Firefox.</canvas>
 
     <div>
-        <p id="help" style="display:none">
+        <p id="help">
             Press <kbd>Q</kbd> to attack. Use <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd> to move.
         </p>
 
@@ -54,13 +54,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             let button = document.getElementById("startButton");
             let canvas = document.getElementById("canvas");
-            let help = document.getElementById("help");
 
             button.addEventListener("click", (e) => {
                 Game = new Game(canvas);
                 Game.run();
                 button.remove();
-                help.style.display = "block";
             });
         });
     </script>
