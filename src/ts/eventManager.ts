@@ -47,7 +47,7 @@ class EventManager {
                 break;
             case "p":
                 if (keydown && this.Game.state.isIn(GameState.Run, GameState.Stopped)) {
-                    this.Game.state.set(this.Game.state.is(GameState.Run)
+                    this.Game.state.setNextState(this.Game.state.is(GameState.Run)
                                      ? GameState.Stopped
                                      : GameState.Run);
                 }

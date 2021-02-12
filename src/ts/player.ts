@@ -329,8 +329,8 @@ class Player extends MovingBox {
 
     listenEvents(): void {
         if (this.isKnockBackObserver.is(true)) {
-            this.isMovingObserver.set(false);
-            this.isAttackObserver.set(false);
+            this.isMovingObserver.setNextState(false);
+            this.isAttackObserver.setNextState(false);
 
             switch (this.direction) {
                 case Direction.Up:
@@ -351,7 +351,7 @@ class Player extends MovingBox {
             return;
         }
 
-        this.isAttackObserver.set(this.Game.EventManager.isAttackPressed ? true : false);
+        this.isAttackObserver.setNextState(this.Game.EventManager.isAttackPressed ? true : false);
 
         if (
             (this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) &&
@@ -380,22 +380,22 @@ class Player extends MovingBox {
             }
         }
 
-        this.isMovingObserver.set((this.dx != 0 || this.dy != 0) ? true : false);
+        this.isMovingObserver.setNextState((this.dx != 0 || this.dy != 0) ? true : false);
     }
 
     increaseScore(): void {
         this.score++;
 
         if (this.score >= this.targetScore) {
-            this.isInvincibleObserver.set(false);
-            this.isAttackObserver.set(false);
-            this.isMovingObserver.set(false);
+            this.isInvincibleObserver.setNextState(false);
+            this.isAttackObserver.setNextState(false);
+            this.isMovingObserver.setNextState(false);
 
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
             this.fanfareSound.play();
 
-            this.Game.state.set(GameState.Win);
+            this.Game.state.setNextState(GameState.Win);
         }
     }
 
@@ -413,18 +413,18 @@ class Player extends MovingBox {
         }
 
         if (this.hp <= 0) {
-            this.isDiedObserver.set(false);
+            this.isDiedObserver.setNextState(false);
 
-            this.isInvincibleObserver.set(false);
-            this.Game.Player.isMovingObserver.set(false);
-            this.Game.Player.isAttackObserver.set(false);
+            this.isInvincibleObserver.setNextState(false);
+            this.Game.Player.isMovingObserver.setNextState(false);
+            this.Game.Player.isAttackObserver.setNextState(false);
 
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
 
             this.dieSound.play();
 
-            this.Game.state.set(GameState.GameOver);
+            this.Game.state.setNextState(GameState.GameOver);
         }
         else if (this.hp <= 2) {
             this.lowHealthSound.play();
@@ -443,12 +443,12 @@ class Player extends MovingBox {
 
     takeKnockBack(direction: Direction = this.direction): void {
         this.direction = direction;
-        this.isKnockBackObserver.set(true);
+        this.isKnockBackObserver.setNextState(true);
     }
 
     getInvicibility(duration: number = this.defaultInvincibleDuration): void {
         this.invincibleDuration = duration;
-        this.isInvincibleObserver.set(true);
+        this.isInvincibleObserver.setNextState(true);
     }
 
     updateObservers(): void {
@@ -458,11 +458,11 @@ class Player extends MovingBox {
         this.isKnockBackObserver.update();
 
         if (this.isKnockBackObserver.is(true) && this.isKnockBackObserver.currentFrame > this.knockBackDuration) {
-            this.isKnockBackObserver.set(false);
+            this.isKnockBackObserver.setNextState(false);
         }
 
         if (this.isInvincibleObserver.get() && this.isInvincibleObserver.currentFrame > this.invincibleDuration) {
-            this.isInvincibleObserver.set(false);
+            this.isInvincibleObserver.setNextState(false);
         }
     }
 }

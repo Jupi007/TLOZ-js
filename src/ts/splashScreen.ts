@@ -47,7 +47,7 @@ class SplashScreen {
                 if (this.state.currentFrame > 50) {
                     if (this.Game.EventManager.isEnterPressed) {
                         this.music.pause();
-                        this.Game.state.set(GameState.Run);
+                        this.Game.state.setNextState(GameState.Run);
                     }
 
                     if (this.state.currentFrame % 50 === 0) {

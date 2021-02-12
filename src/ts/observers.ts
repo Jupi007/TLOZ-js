@@ -1,12 +1,10 @@
 abstract class AbstractObserver {
     currentFrame: number;
+    isFirstFrame: boolean;
 
     constructor() {
         this.currentFrame = 0;
-    }
-
-    get isFirstFrame(): boolean {
-        return this.currentFrame === 0 || this.currentFrame === 1;
+        this.isFirstFrame = true;
     }
 
     update(): void {
@@ -15,28 +13,38 @@ abstract class AbstractObserver {
 }
 
 class StateObserver extends AbstractObserver {
-    state: any;
     lastState: any;
     lastFrameState: any;
+    state: any;
+    nextState: any;
 
     constructor(state: any) {
         super();
 
+        this.lastState = null;
+        this.lastFrameState = null;
         this.state = state;
+        this.nextState = null;
     }
 
-    set(state: any): void {
-        // if (this.state === state) return;
-
-        this.lastState = this.state;
-        this.lastFrameState = this.state;
-        this.state = state;
-        this.currentFrame = 0;
+    setNextState(state: any): void {
+        this.nextState = state;
     }
 
     update(): void {
-        super.update();
         this.lastFrameState = this.state;
+
+        if (this.nextState !== null) {
+            this.lastState = this.state;
+            this.state = this.nextState;
+            this.nextState = null;
+            this.currentFrame = 0;
+        }
+        else {
+            this.isFirstFrame = false;
+        }
+
+        super.update();
     }
 
     get(): any {
@@ -90,15 +98,19 @@ class AnimationObserver extends AbstractObserver {
     }
 
     update(): void {
-        super.update();
-
         if (this.currentFrame >= this.animationStepDuration) {
             this.currentFrame = 0;
             this.currentAnimationStep =
                 (this.currentAnimationStep + 1 > this.nbAnimationStep)
                 ? 1
-                : this.currentAnimationStep + 1
-            ;
+                : this.currentAnimationStep + 1;
+
+            this.isFirstFrame = true;
         }
+        else {
+            this.isFirstFrame = false;
+        }
+
+        super.update();
     }
 }

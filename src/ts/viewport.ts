@@ -140,7 +140,7 @@ class Viewport {
             this.Game.Projectiles.deleteAllProjectiles();
             this.Game.Items.deleteAllItems();
 
-            this.Game.state.set(GameState.Run);
+            this.Game.state.setNextState(GameState.Run);
         }
     }
 
@@ -211,7 +211,7 @@ class Viewport {
             this.Game.Player.dx = 0;
             this.Game.Player.dy = 0;
 
-            this.Game.state.set(GameState.SlideScene);
+            this.Game.state.setNextState(GameState.SlideScene);
 
             return;
         }

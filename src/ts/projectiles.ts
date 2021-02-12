@@ -106,7 +106,7 @@ class Projectiles {
                         Direction.areOpposite(this.Game.Player.direction, projectile.direction)
                     ) {
                         this.shieldSound.play();
-                        projectile.state.set(ProjectileState.ShieldBlocked);
+                        projectile.state.setNextState(ProjectileState.ShieldBlocked);
                         return;
                     }
 

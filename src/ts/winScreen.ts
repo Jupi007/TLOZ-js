@@ -29,7 +29,7 @@ class WinScreen {
                 this.Game.Player.drawWin();
                 this.Game.Hud.draw();
 
-                if (this.state.currentFrame > 120) this.state.set(WinScreenState.HideGame);
+                if (this.state.currentFrame > 120) this.state.setNextState(WinScreenState.HideGame);
                 break;
 
             case GameOverScreenState.HideGame:
@@ -43,7 +43,7 @@ class WinScreen {
                 this.Game.Panes.drawClose();
 
                 if (this.Game.Panes.isAnimationFinished) {
-                    this.state.set(GameOverScreenState.BlackScreen);
+                    this.state.setNextState(GameOverScreenState.BlackScreen);
                 }
                 break;
 

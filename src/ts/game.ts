@@ -64,7 +64,7 @@ class Game {
 
     restart(): void {
         this.init();
-        this.state.set(GameState.Run);
+        this.state.setNextState(GameState.Run);
     }
 
     run(): void {

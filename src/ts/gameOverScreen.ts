@@ -29,7 +29,7 @@ class GameOverScreen {
                 this.Game.Hud.draw();
                 this.Game.Player.drawGameOver();
 
-                if (this.Game.Player.isDiedObserver.currentFrame > 145) this.state.set(GameOverScreenState.HideGame);
+                if (this.Game.Player.isDiedObserver.currentFrame > 145) this.state.setNextState(GameOverScreenState.HideGame);
                 break;
 
             case GameOverScreenState.HideGame:
@@ -40,7 +40,7 @@ class GameOverScreen {
                 this.Game.Panes.drawClose();
 
                 if (this.Game.Panes.isAnimationFinished) {
-                    this.state.set(GameOverScreenState.BlackScreen);
+                    this.state.setNextState(GameOverScreenState.BlackScreen);
                 }
                 break;
 

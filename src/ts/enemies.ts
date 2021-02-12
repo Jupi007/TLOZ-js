@@ -73,7 +73,7 @@ class Enemy extends MovingBox {
 
         if (this.hp <= 0) {
             this.dieSound.play();
-            this.state.set(EnemieState.Killed)
+            this.state.setNextState(EnemieState.Killed)
             return;
         }
 
@@ -82,7 +82,7 @@ class Enemy extends MovingBox {
     }
 
     getInvicibility(): void {
-        this.isInvincibleObserver.set(true);
+        this.isInvincibleObserver.setNextState(true);
     }
 
     dropItem(): boolean {
@@ -132,8 +132,8 @@ class SimpleMovingEnemy extends Enemy {
                     }
                 }
                 if (this.state.currentFrame > 50) {
-                    if (getRandomIntInclusive(1, 50) === 1) this.state.set(EnemieState.Attack);
-                    if (getRandomIntInclusive(1, 200) === 1) this.state.set(EnemieState.ChangeDirection);
+                    if (getRandomIntInclusive(1, 50) === 1) this.state.setNextState(EnemieState.Attack);
+                    if (getRandomIntInclusive(1, 200) === 1) this.state.setNextState(EnemieState.ChangeDirection);
                 }
                 break;
             case EnemieState.ChangeDirection:
@@ -141,7 +141,7 @@ class SimpleMovingEnemy extends Enemy {
                     this.direction = Direction.getRandom();
                 }
                 if (this.state.currentFrame > 30) {
-                    this.state.set(EnemieState.Moving);
+                    this.state.setNextState(EnemieState.Moving);
                 }
                 break;
             case EnemieState.Attack:
@@ -149,7 +149,7 @@ class SimpleMovingEnemy extends Enemy {
                     this.attack();
                 }
                 if (this.state.currentFrame > 30) {
-                    this.state.set(EnemieState.Moving);
+                    this.state.setNextState(EnemieState.Moving);
                 }
                 break;
 
@@ -166,7 +166,7 @@ class SimpleMovingEnemy extends Enemy {
     }
 
     changeDirection(): void {
-        this.state.set(EnemieState.ChangeDirection);
+        this.state.setNextState(EnemieState.ChangeDirection);
     }
 
     draw(): void {
@@ -412,12 +412,12 @@ class Tektite extends Enemy {
                 else {
                     this.dy += 0.1;
                 }
-                if ((this.state.currentFrame > 60 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 100) this.state.set(EnemieState.Wait);
+                if ((this.state.currentFrame > 60 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 100) this.state.setNextState(EnemieState.Wait);
                 break;
             case EnemieState.Wait:
                 this.dx = 0;
                 this.dy = 0;
-                if ((this.state.currentFrame > 30 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 60)  this.state.set(EnemieState.Moving);
+                if ((this.state.currentFrame > 30 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 60)  this.state.setNextState(EnemieState.Moving);
                 break;
         }
     }
@@ -427,7 +427,7 @@ class Tektite extends Enemy {
             this.dy = this.dy / 2;
         }
         if (movingBoxLineCollision(this, this.Game.Viewport.height, Direction.Down)) {
-            this.state.set(EnemieState.Wait);
+            this.state.setNextState(EnemieState.Wait);
         }
         if (simpleMovingBoxLineCollision(this, 0, Direction.Left)) {
             this.dx = -this.dx;
@@ -611,7 +611,7 @@ class Enemies {
             enemy.isInvincibleObserver.update();
 
             if (enemy.isInvincibleObserver.get() && enemy.isInvincibleObserver.currentFrame > enemy.invincibleDuration) {
-                enemy.isInvincibleObserver.set(false);
+                enemy.isInvincibleObserver.setNextState(false);
             }
         });
     }
