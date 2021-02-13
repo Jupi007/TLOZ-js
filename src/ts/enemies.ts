@@ -187,7 +187,7 @@ class Octorok extends SimpleMovingEnemy {
         this.width = 64;
         this.height = 64;
 
-        this.damage = 1;
+        this.damage = 6;
         this.hp = 1;
 
         this.sprites[Direction.Up] = [];

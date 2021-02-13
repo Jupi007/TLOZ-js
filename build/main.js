@@ -437,7 +437,7 @@ class Octorok extends SimpleMovingEnemy {
         super(game, x, y, speed, direction);
         this.width = 64;
         this.height = 64;
-        this.damage = 1;
+        this.damage = 6;
         this.hp = 1;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
@@ -1635,6 +1635,7 @@ class Player extends GameMovingBox {
         this.isMovingObserver = new StateObserver(false);
         this.isAttackObserver = new StateObserver(false);
         this.isDiedObserver = new StateObserver(false);
+        this.diedAnimation = new AnimationObserver(8, 4);
         this.isInvincibleObserver = new StateObserver(false);
         this.defaultInvincibleDuration = 150;
         this.invincibleDuration = 0;
@@ -1725,23 +1726,22 @@ class Player extends GameMovingBox {
     }
     drawGameOver() {
         if (this.isDiedObserver.currentFrame <= 125) {
-            if (this.isDiedObserver.currentFrame % 8 === 0) {
-                switch (this.Game.Player.direction) {
-                    case Direction.Up:
-                        this.Game.Player.direction = Direction.Right;
-                        break;
-                    case Direction.Right:
-                        this.Game.Player.direction = Direction.Down;
-                        break;
-                    case Direction.Down:
-                        this.Game.Player.direction = Direction.Left;
-                        break;
-                    case Direction.Left:
-                        this.Game.Player.direction = Direction.Up;
-                        break;
-                }
+            switch (this.diedAnimation.currentAnimationStep) {
+                case 1:
+                    this.Game.Player.direction = Direction.Down;
+                    break;
+                case 2:
+                    this.Game.Player.direction = Direction.Left;
+                    break;
+                case 3:
+                    this.Game.Player.direction = Direction.Up;
+                    break;
+                case 4:
+                    this.Game.Player.direction = Direction.Right;
+                    break;
             }
             this.Game.Player.draw();
+            this.diedAnimation.update(this.Game.dt);
         }
         else if (this.isDiedObserver.currentFrame <= 135) {
             this.Game.Viewport.currentScene.drawImage(this.killedSprites[1], this.Game.Player.x, this.Game.Player.y, this.Game.Player.width, this.Game.Player.height);
