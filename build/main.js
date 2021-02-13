@@ -2344,6 +2344,7 @@ class Viewport {
             }
             this.Game.Player.dx = 0;
             this.Game.Player.dy = 0;
+            this.Game.Player.isAttackObserver.setNextState(false);
             this.Game.state.setNextState(GameState.SlideScene);
             return;
         }

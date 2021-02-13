@@ -93,7 +93,7 @@ class Viewport {
 
     slideSceneAnimationMove(): void {
         let speed = this.slideSceneAnimationSpeed * this.Game.dt;
-        
+
         if (this.dc === 1) {
             this.currentScene.x -= speed;
             this.nextScene.x -= speed;
@@ -212,6 +212,7 @@ class Viewport {
 
             this.Game.Player.dx = 0;
             this.Game.Player.dy = 0;
+            this.Game.Player.isAttackObserver.setNextState(false);
 
             this.Game.state.setNextState(GameState.SlideScene);
 
