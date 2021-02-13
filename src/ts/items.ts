@@ -39,7 +39,7 @@ class Items {
         this.loopItems((item) => {
             if (
                 movingBoxsCollision(this.Game.Player, item) ||
-                this.Game.Player.isAttackObserver.is(true) && movingBoxCollision(item, this.Game.Sword)
+                (this.Game.Player.isAttackObserver.is(true) && simpleBoxCollision(this.Game.Sword, item))
             ) {
                 item.collisionCallback();
                 item.collisionSound.play();

@@ -437,7 +437,7 @@ class Octorok extends SimpleMovingEnemy {
         super(game, x, y, speed, direction);
         this.width = 64;
         this.height = 64;
-        this.damage = 6;
+        this.damage = 1;
         this.hp = 1;
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/octorok-up1.png");
@@ -801,6 +801,15 @@ function getRandomIntInclusive(min, max) {
 // **************************
 // Collision helper functions
 // **************************
+function simpleBoxCollision(box1, box2) {
+    if ((box1.x >= box2.x + box2.width) ||
+        (box1.x + box1.width <= box2.x) ||
+        (box1.y >= box2.y + box2.height) ||
+        (box1.y + box1.height <= box2.y)) {
+        return false;
+    }
+    return true;
+}
 function simpleMovingBoxCollision(movingBox, box2) {
     if ((movingBox.x + movingBox.dx >= box2.x + box2.width) ||
         (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
@@ -1224,7 +1233,7 @@ class Items {
     collisions() {
         this.loopItems((item) => {
             if (movingBoxsCollision(this.Game.Player, item) ||
-                this.Game.Player.isAttackObserver.is(true) && movingBoxCollision(item, this.Game.Sword)) {
+                (this.Game.Player.isAttackObserver.is(true) && simpleBoxCollision(this.Game.Sword, item))) {
                 item.collisionCallback();
                 item.collisionSound.play();
                 this.deleteItem(item);

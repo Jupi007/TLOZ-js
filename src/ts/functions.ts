@@ -11,6 +11,18 @@ function getRandomIntInclusive(min: number, max: number): number {
 // **************************
 // Collision helper functions
 // **************************
+function simpleBoxCollision(box1: SimpleBox, box2: SimpleBox): boolean {
+    if (
+        (box1.x >= box2.x + box2.width) ||
+        (box1.x + box1.width <= box2.x) ||
+        (box1.y >= box2.y + box2.height) ||
+        (box1.y + box1.height <= box2.y)
+    ) {
+        return false;
+    }
+
+    return true;
+}
 
 function simpleMovingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolean {
     if (
@@ -24,6 +36,7 @@ function simpleMovingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolea
 
     return true;
 }
+
 function movingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolean {
     if (
         (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
