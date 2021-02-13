@@ -94,6 +94,32 @@ var Direction;
     }
     Direction.isHorizontal = isHorizontal;
 })(Direction || (Direction = {}));
+class GameMovingBox extends SimpleBox {
+    constructor(game) {
+        super();
+        this._dx = 0;
+        this._dy = 0;
+        this.Game = game;
+    }
+    get dx() {
+        return this._dx * this.Game.dt;
+    }
+    get dy() {
+        return this._dy * this.Game.dt;
+    }
+    get realDx() {
+        return this._dx;
+    }
+    get realDy() {
+        return this._dy;
+    }
+    set dx(dx) {
+        this._dx = dx;
+    }
+    set dy(dy) {
+        this._dy = dy;
+    }
+}
 class MovingBox extends SimpleBox {
     constructor() {
         super(...arguments);
@@ -283,9 +309,9 @@ var EnemieState;
     EnemieState[EnemieState["Killed"] = 4] = "Killed";
 })(EnemieState || (EnemieState = {}));
 ;
-class Enemy extends MovingBox {
+class Enemy extends GameMovingBox {
     constructor(game, x, y, speed, direction) {
-        super();
+        super(game);
         this.killedSprites = [];
         this.Game = game;
         this.x = x;
@@ -373,7 +399,7 @@ class SimpleMovingEnemy extends Enemy {
                 }
                 break;
             case EnemieState.ChangeDirection:
-                if (this.state.currentFrame === 20) {
+                if (this.state.isFirstFrame) {
                     this.direction = Direction.getRandom();
                 }
                 if (this.state.currentFrame > 30) {
@@ -381,7 +407,7 @@ class SimpleMovingEnemy extends Enemy {
                 }
                 break;
             case EnemieState.Attack:
-                if (this.state.currentFrame === 20) {
+                if (this.state.isFirstFrame) {
                     this.attack();
                 }
                 if (this.state.currentFrame > 30) {
@@ -428,7 +454,7 @@ class Octorok extends SimpleMovingEnemy {
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
     }
     attack() {
-        this.Game.Projectiles.addProjectile(new Projectile(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), 24, 30, 8, this.direction, SpriteLoader.load("./sprites/png/fireball.png"), true, // Enable collision on Player
+        this.Game.Projectiles.addProjectile(new Projectile(this.Game, this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), 24, 30, 8, this.direction, SpriteLoader.load("./sprites/png/fireball.png"), true, // Enable collision on Player
         true, // Enable shield block
         (player) => player.takeDamage(this.damage), false, // Disable collisions on Enemies
         null, null));
@@ -491,7 +517,7 @@ class Moblin extends SimpleMovingEnemy {
     attack() {
         let width = (this.direction === Direction.Up || this.direction === Direction.Down) ? 20 : 64;
         let height = (this.direction === Direction.Up || this.direction === Direction.Down) ? 64 : 20;
-        this.Game.Projectiles.addProjectile(new Projectile(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), width, height, 8, this.direction, this.arrowSprites[this.direction], true, // Enable collision on Player
+        this.Game.Projectiles.addProjectile(new Projectile(this.Game, this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), width, height, 8, this.direction, this.arrowSprites[this.direction], true, // Enable collision on Player
         true, // Enable shield block
         (player) => player.takeDamage(this.damage), false, // Disable collisions on Enemies
         null, null));
@@ -546,10 +572,10 @@ class Tektite extends Enemy {
             case EnemieState.Moving:
                 if (this.state.isFirstFrame) {
                     this.dy = -6;
-                    this.dx = this.dy / 2 * ((getRandomIntInclusive(1, 2) === 1) ? -1 : 1);
+                    this.dx = this.realDy / 2 * ((getRandomIntInclusive(1, 2) === 1) ? -1 : 1);
                 }
                 else {
-                    this.dy += 0.1;
+                    this.dy = this.realDy + (0.1 * this.Game.dt);
                 }
                 if ((this.state.currentFrame > 60 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 100)
                     this.state.setNextState(EnemieState.Wait);
@@ -564,16 +590,16 @@ class Tektite extends Enemy {
     }
     customCollision() {
         if (movingBoxLineCollision(this, 0, Direction.Up)) {
-            this.dy = this.dy / 2;
+            this.dy = this.realDy / 2;
         }
         if (movingBoxLineCollision(this, this.Game.Viewport.height, Direction.Down)) {
             this.state.setNextState(EnemieState.Wait);
         }
         if (simpleMovingBoxLineCollision(this, 0, Direction.Left)) {
-            this.dx = -this.dx;
+            this.dx = -this.realDx;
         }
         if (simpleMovingBoxLineCollision(this, this.Game.Viewport.width, Direction.Right)) {
-            this.dx = -this.dx;
+            this.dx = -this.realDx;
         }
     }
     move() {
@@ -681,19 +707,19 @@ class Enemies {
                 return;
             }
             if (enemy.isInvincibleObserver.is(true)) {
-                enemy.invincibleAnimation.update();
+                enemy.invincibleAnimation.update(this.Game.dt);
                 if (enemy.invincibleAnimation.currentAnimationStep === 2)
                     return;
             }
             enemy.draw();
             if (this.Game.state.is(GameState.Run))
-                enemy.spritesAnimation.update();
+                enemy.spritesAnimation.update(this.Game.dt);
         });
     }
     updateObservers() {
         this.loopEnemies((enemy) => {
-            enemy.state.update();
-            enemy.isInvincibleObserver.update();
+            enemy.state.update(this.Game.dt);
+            enemy.isInvincibleObserver.update(this.Game.dt);
             if (enemy.isInvincibleObserver.get() && enemy.isInvincibleObserver.currentFrame > enemy.invincibleDuration) {
                 enemy.isInvincibleObserver.setNextState(false);
             }
@@ -754,7 +780,7 @@ class EventManager {
     }
     newFrame() {
         if (this.isAttackPressed) {
-            this.currentAttackFrame++;
+            this.currentAttackFrame += this.Game.dt;
             if (this.currentAttackFrame >= this.attackDuration) {
                 this.isAttackPressed = false;
             }
@@ -921,6 +947,8 @@ class Game {
     constructor(canvas) {
         this.Canvas = canvas;
         this.ctx = this.Canvas.getContext("2d");
+        this.lastTime = null;
+        this.dt = null;
         this.init();
     }
     init() {
@@ -955,10 +983,20 @@ class Game {
         this.state.setNextState(GameState.Run);
     }
     run() {
-        window.requestAnimationFrame(() => this.run());
-        this.loop();
+        window.requestAnimationFrame((now) => this.loop(now));
     }
-    loop() {
+    deltaCalculation(now) {
+        if (this.lastTime === null) {
+            this.dt = 1;
+        }
+        else {
+            this.dt = (now - this.lastTime) / (1000 / 60); // (1000 / 60) because we target 60 fps
+        }
+        this.lastTime = now;
+    }
+    loop(now) {
+        window.requestAnimationFrame((now) => this.loop(now));
+        this.deltaCalculation(now);
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
         switch (this.state.get()) {
             case GameState.Splash:
@@ -983,7 +1021,7 @@ class Game {
                 this.runLoop();
                 break;
         }
-        this.state.update();
+        this.state.update(this.dt);
     }
     runLoop() {
         if (!this.Panes.isAnimationFinished) {
@@ -1091,8 +1129,9 @@ class GameOverScreen {
                     this.state.setNextState(GameOverScreenState.HideGame);
                 break;
             case GameOverScreenState.HideGame:
-                if (this.state.isFirstFrame)
+                if (this.state.isFirstFrame) {
                     this.Game.Panes.reset();
+                }
                 this.Game.Viewport.draw();
                 this.Game.Hud.draw();
                 this.Game.Panes.drawClose();
@@ -1112,7 +1151,7 @@ class GameOverScreen {
                 this.Game.fillText("press enter to retry", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
                 break;
         }
-        this.state.update();
+        this.state.update(this.Game.dt);
     }
 }
 
@@ -1155,11 +1194,13 @@ class Hud {
             this.Game.fillRect(x + cellWidth * this.Game.Viewport.currentScene.c + 2 * this.Game.Viewport.currentScene.c, cellHeight * this.Game.Viewport.currentScene.r + 2 * this.Game.Viewport.currentScene.r, cellWidth, cellHeight, "rgba(0, 0, 0, 0.3)");
         }
         if (this.Game.state.isIn(GameState.Run, GameState.SlideScene)) {
-            this.currentSceneAnimation.update();
+            this.currentSceneAnimation.update(this.Game.dt);
         }
     }
     drawScore() {
-        this.Game.fillText(' SCORE: ' + this.Game.Player.score + '/' + this.Game.Player.targetScore, this.width - (this.height / 2) + this.x, this.y + this.height / 2, '#fff', '16px', 'right', 'middle');
+        this.Game.fillText(' SCORE: ' + this.Game.Player.score + '/' + this.Game.Player.targetScore, 
+        //'FPS:' + ((1/this.Game.dt)*60).toFixed(0),
+        this.width - (this.height / 2) + this.x, this.y + this.height / 2, '#fff', '16px', 'right', 'middle');
     }
 }
 
@@ -1481,8 +1522,8 @@ class AbstractObserver {
         this.currentFrame = 0;
         this.isFirstFrame = true;
     }
-    update() {
-        this.currentFrame++;
+    update(dt) {
+        this.currentFrame += dt;
     }
 }
 class StateObserver extends AbstractObserver {
@@ -1496,18 +1537,19 @@ class StateObserver extends AbstractObserver {
     setNextState(state) {
         this.nextState = state;
     }
-    update() {
+    update(dt) {
         this.lastFrameState = this.state;
         if (this.nextState !== null) {
             this.lastState = this.state;
             this.state = this.nextState;
             this.nextState = null;
             this.currentFrame = 0;
+            this.isFirstFrame = true;
         }
         else {
             this.isFirstFrame = false;
         }
-        super.update();
+        super.update(dt);
     }
     get() {
         return this.state;
@@ -1544,7 +1586,7 @@ class AnimationObserver extends AbstractObserver {
         this.animationStepDuration = animationStepDuration;
         this.nbAnimationStep = nbAnimationStep;
     }
-    update() {
+    update(dt) {
         if (this.currentFrame >= this.animationStepDuration) {
             this.currentFrame = 0;
             this.currentAnimationStep =
@@ -1556,7 +1598,7 @@ class AnimationObserver extends AbstractObserver {
         else {
             this.isFirstFrame = false;
         }
-        super.update();
+        super.update(dt);
     }
 }
 
@@ -1575,22 +1617,21 @@ class Panes {
     drawOpen() {
         this.Game.fillRect(-this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
         this.Game.fillRect(this.Game.Canvas.width / 2 + this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-        this.position += this.speed;
+        this.position += this.speed * this.Game.dt;
     }
     drawClose() {
         this.Game.fillRect(-(this.Game.Canvas.width / 2) + this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
         this.Game.fillRect(this.Game.Canvas.width - this.position, 0, this.Game.Canvas.width / 2, this.Game.Canvas.height, "#000");
-        this.position += this.speed;
+        this.position += this.speed * this.Game.dt;
     }
 }
 
-class Player extends MovingBox {
+class Player extends GameMovingBox {
     constructor(game) {
-        super();
+        super(game);
         this.sprites = [];
         this.attackSprites = [];
         this.killedSprites = [];
-        this.Game = game;
         this.isMovingObserver = new StateObserver(false);
         this.isAttackObserver = new StateObserver(false);
         this.isDiedObserver = new StateObserver(false);
@@ -1670,13 +1711,13 @@ class Player extends MovingBox {
             ? this.attackSprites[this.direction]
             : this.sprites[this.direction][this.spritesAnimation.currentAnimationStep];
         if (this.isInvincibleObserver.get()) {
-            this.invincibleAnimation.update();
+            this.invincibleAnimation.update(this.Game.dt);
             if (this.invincibleAnimation.currentAnimationStep === 2)
                 sprite = new Image();
         }
         this.Game.Viewport.drawImage(sprite, this.x, this.y, this.width, this.height);
         if (this.isMovingObserver.is(true) && !this.Game.state.is(GameState.Stopped)) {
-            this.spritesAnimation.update();
+            this.spritesAnimation.update(this.Game.dt);
         }
     }
     drawWin() {
@@ -1708,7 +1749,7 @@ class Player extends MovingBox {
         else if (this.isDiedObserver.currentFrame <= 145) {
             this.Game.Viewport.currentScene.drawImage(this.killedSprites[2], this.Game.Player.x, this.Game.Player.y, this.Game.Player.width, this.Game.Player.height);
         }
-        this.isDiedObserver.update();
+        this.isDiedObserver.update(this.Game.dt);
     }
     move() {
         this.x += this.dx;
@@ -1884,10 +1925,10 @@ class Player extends MovingBox {
         this.isInvincibleObserver.setNextState(true);
     }
     updateObservers() {
-        this.isMovingObserver.update();
-        this.isAttackObserver.update();
-        this.isInvincibleObserver.update();
-        this.isKnockBackObserver.update();
+        this.isMovingObserver.update(this.Game.dt);
+        this.isAttackObserver.update(this.Game.dt);
+        this.isInvincibleObserver.update(this.Game.dt);
+        this.isKnockBackObserver.update(this.Game.dt);
         if (this.isKnockBackObserver.is(true) && this.isKnockBackObserver.currentFrame > this.knockBackDuration) {
             this.isKnockBackObserver.setNextState(false);
         }
@@ -1902,9 +1943,9 @@ var ProjectileState;
     ProjectileState[ProjectileState["Moving"] = 0] = "Moving";
     ProjectileState[ProjectileState["ShieldBlocked"] = 1] = "ShieldBlocked";
 })(ProjectileState || (ProjectileState = {}));
-class Projectile extends MovingBox {
-    constructor(x, y, width, height, speed, direction, sprite, hasPlayerCollision, canBeShieldBlocked, playerCollisionCallback, hasEnemiesCollision, enemiesCollisionCallback, deleteCallback) {
-        super();
+class Projectile extends GameMovingBox {
+    constructor(game, x, y, width, height, speed, direction, sprite, hasPlayerCollision, canBeShieldBlocked, playerCollisionCallback, hasEnemiesCollision, enemiesCollisionCallback, deleteCallback) {
+        super(game);
         this.x = x;
         this.y = y;
         this.width = width;
@@ -2001,7 +2042,7 @@ class Projectiles {
     }
     updateObservers() {
         this.loopProjectiles((projectile) => {
-            projectile.state.update();
+            projectile.state.update(this.Game.dt);
             if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
                 this.deleteProjectile(projectile);
             }
@@ -2038,9 +2079,7 @@ class SplashScreen {
         this.Game = game;
         this.music = AudioLoader.load("./sounds/music/intro.mp3", true);
         this.state = new StateObserver(SplashScreenState.BlackScreen);
-        this.showStartMessage = true;
-        this.revealGamePaneSpeed = 8;
-        this.revealGamePanePosition = 0;
+        this.startMessageAnimation = new AnimationObserver(50, 2);
     }
     draw() {
         switch (this.state.get()) {
@@ -2054,16 +2093,14 @@ class SplashScreen {
                         this.music.pause();
                         this.Game.state.setNextState(GameState.Run);
                     }
-                    if (this.state.currentFrame % 50 === 0) {
-                        this.showStartMessage = this.showStartMessage ? false : true;
-                    }
-                    if (this.showStartMessage) {
+                    if (this.startMessageAnimation.currentAnimationStep === 1) {
                         this.Game.fillText("press enter to start", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
                     }
+                    this.startMessageAnimation.update(this.Game.dt);
                 }
                 break;
         }
-        this.state.update();
+        this.state.update(this.Game.dt);
     }
 }
 
@@ -2156,7 +2193,7 @@ class Sword {
             && this.Game.Player.isFullLife) {
             this.flyingSound.play();
             this.isFlying = true;
-            this.Game.Projectiles.addProjectile(new Projectile(this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.direction, this.sprites[this.direction], false, // Disable collision on Player
+            this.Game.Projectiles.addProjectile(new Projectile(this.Game, this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.direction, this.sprites[this.direction], false, // Disable collision on Player
             false, null, true, // Enable collisions on Enemies
             (enemy) => enemy.takeDamage(1), () => this.isFlying = false));
         }
@@ -2217,21 +2254,22 @@ class Viewport {
         }
     }
     slideSceneAnimationMove() {
+        let speed = this.slideSceneAnimationSpeed * this.Game.dt;
         if (this.dc === 1) {
-            this.currentScene.x -= this.slideSceneAnimationSpeed;
-            this.nextScene.x -= this.slideSceneAnimationSpeed;
+            this.currentScene.x -= speed;
+            this.nextScene.x -= speed;
         }
         else if (this.dc === -1) {
-            this.currentScene.x += this.slideSceneAnimationSpeed;
-            this.nextScene.x += this.slideSceneAnimationSpeed;
+            this.currentScene.x += speed;
+            this.nextScene.x += speed;
         }
         else if (this.dr === 1) {
-            this.currentScene.y -= this.slideSceneAnimationSpeed;
-            this.nextScene.y -= this.slideSceneAnimationSpeed;
+            this.currentScene.y -= speed;
+            this.nextScene.y -= speed;
         }
         else if (this.dr === -1) {
-            this.currentScene.y += this.slideSceneAnimationSpeed;
-            this.nextScene.y += this.slideSceneAnimationSpeed;
+            this.currentScene.y += speed;
+            this.nextScene.y += speed;
         }
         if ((this.nextScene.y <= 0 && this.dr === 1) ||
             (this.nextScene.y >= 0 && this.dr === -1) ||
@@ -2366,6 +2404,6 @@ class WinScreen {
                 this.Game.fillText("press enter to play again", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
                 break;
         }
-        this.state.update();
+        this.state.update(this.Game.dt);
     }
 }

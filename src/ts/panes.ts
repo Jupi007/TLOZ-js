@@ -36,7 +36,7 @@ class Panes {
             "#000"
         );
 
-        this.position += this.speed;
+        this.position += this.speed * this.Game.dt;
     }
 
     drawClose(): void {
@@ -56,6 +56,6 @@ class Panes {
             "#000"
         );
 
-        this.position += this.speed;
+        this.position += this.speed * this.Game.dt;
     }
 }

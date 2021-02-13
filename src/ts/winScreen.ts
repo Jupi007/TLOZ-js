@@ -84,6 +84,6 @@ class WinScreen {
                 );
                 break;
         }
-        this.state.update();
+        this.state.update(this.Game.dt);
     }
 }

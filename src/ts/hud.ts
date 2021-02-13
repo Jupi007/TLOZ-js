@@ -101,13 +101,14 @@ class Hud {
         }
 
         if (this.Game.state.isIn(GameState.Run, GameState.SlideScene)) {
-            this.currentSceneAnimation.update();
+            this.currentSceneAnimation.update(this.Game.dt);
         }
     }
 
     drawScore(): void {
         this.Game.fillText(
             ' SCORE: ' + this.Game.Player.score + '/' + this.Game.Player.targetScore,
+            //'FPS:' + ((1/this.Game.dt)*60).toFixed(0),
             this.width - (this.height / 2) + this.x,
             this.y + this.height / 2,
             '#fff',

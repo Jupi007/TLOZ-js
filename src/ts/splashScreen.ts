@@ -7,18 +7,15 @@ class SplashScreen {
     state: StateObserver;
     showStartMessage: boolean;
 
-    revealGamePaneSpeed: number;
-    revealGamePanePosition: number;
+    startMessageAnimation: AnimationObserver;
 
     constructor(game: Game) {
         this.Game = game;
 
         this.music = AudioLoader.load("./sounds/music/intro.mp3", true);
         this.state = new StateObserver(SplashScreenState.BlackScreen);
-        this.showStartMessage = true;
 
-        this.revealGamePaneSpeed = 8;
-        this.revealGamePanePosition = 0;
+        this.startMessageAnimation = new AnimationObserver(50, 2);
     }
 
     draw(): void {
@@ -50,11 +47,7 @@ class SplashScreen {
                         this.Game.state.setNextState(GameState.Run);
                     }
 
-                    if (this.state.currentFrame % 50 === 0) {
-                        this.showStartMessage = this.showStartMessage ? false : true;
-                    }
-
-                    if (this.showStartMessage) {
+                    if (this.startMessageAnimation.currentAnimationStep === 1) {
                         this.Game.fillText(
                             "press enter to start",
                             this.Game.Canvas.width / 2,
@@ -65,10 +58,11 @@ class SplashScreen {
                             'middle'
                         );
                     }
+                    this.startMessageAnimation.update(this.Game.dt);
                 }
                 break;
         }
 
-        this.state.update();
+        this.state.update(this.Game.dt);
     }
 }

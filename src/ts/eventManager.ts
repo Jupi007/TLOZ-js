@@ -59,7 +59,7 @@ class EventManager {
 
     newFrame(): void {
         if (this.isAttackPressed) {
-            this.currentAttackFrame++;
+            this.currentAttackFrame += this.Game.dt;
 
             if (this.currentAttackFrame >= this.attackDuration) {
                 this.isAttackPressed = false;

@@ -1,8 +1,6 @@
 enum EnemieState {Moving, ChangeDirection, Wait, Attack, Killed};
 
-class Enemy extends MovingBox {
-    Game: Game;
-
+class Enemy extends GameMovingBox {
     hp: number;
     speed: number;
     damage: number;
@@ -25,7 +23,7 @@ class Enemy extends MovingBox {
     hitSound: HTMLAudioElement;
 
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super();
+        super(game);
 
         this.Game = game;
 
@@ -137,7 +135,7 @@ class SimpleMovingEnemy extends Enemy {
                 }
                 break;
             case EnemieState.ChangeDirection:
-                if (this.state.currentFrame === 20) {
+                if (this.state.isFirstFrame) {
                     this.direction = Direction.getRandom();
                 }
                 if (this.state.currentFrame > 30) {
@@ -145,7 +143,7 @@ class SimpleMovingEnemy extends Enemy {
                 }
                 break;
             case EnemieState.Attack:
-                if (this.state.currentFrame === 20) {
+                if (this.state.isFirstFrame) {
                     this.attack();
                 }
                 if (this.state.currentFrame > 30) {
@@ -213,6 +211,7 @@ class Octorok extends SimpleMovingEnemy {
 
     attack(): void {
         this.Game.Projectiles.addProjectile(new Projectile(
+            this.Game,
             this.x + (this.width / 2) - (24 / 2),
             this.y + (this.height / 2) - (30 / 2),
             24,
@@ -316,6 +315,7 @@ class Moblin extends SimpleMovingEnemy {
         let height = (this.direction === Direction.Up || this.direction === Direction.Down) ? 64 : 20;
 
         this.Game.Projectiles.addProjectile(new Projectile(
+            this.Game,
             this.x + (this.width / 2) - (24 / 2),
             this.y + (this.height / 2) - (30 / 2),
             width,
@@ -407,10 +407,10 @@ class Tektite extends Enemy {
             case EnemieState.Moving:
                 if (this.state.isFirstFrame) {
                     this.dy = -6;
-                    this.dx = this.dy / 2 * ((getRandomIntInclusive(1, 2) === 1) ? -1 : 1);
+                    this.dx = this.realDy / 2 * ((getRandomIntInclusive(1, 2) === 1) ? -1 : 1);
                 }
                 else {
-                    this.dy += 0.1;
+                    this.dy = this.realDy + (0.1 * this.Game.dt);
                 }
                 if ((this.state.currentFrame > 60 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 100) this.state.setNextState(EnemieState.Wait);
                 break;
@@ -424,16 +424,16 @@ class Tektite extends Enemy {
 
     customCollision(): void {
         if (movingBoxLineCollision(this, 0, Direction.Up)) {
-            this.dy = this.dy / 2;
+            this.dy = this.realDy / 2;
         }
         if (movingBoxLineCollision(this, this.Game.Viewport.height, Direction.Down)) {
             this.state.setNextState(EnemieState.Wait);
         }
         if (simpleMovingBoxLineCollision(this, 0, Direction.Left)) {
-            this.dx = -this.dx;
+            this.dx = -this.realDx;
         }
         if (simpleMovingBoxLineCollision(this, this.Game.Viewport.width, Direction.Right)) {
-            this.dx = -this.dx;
+            this.dx = -this.realDx;
         }
     }
 
@@ -595,20 +595,20 @@ class Enemies {
             }
 
             if (enemy.isInvincibleObserver.is(true)) {
-                enemy.invincibleAnimation.update();
+                enemy.invincibleAnimation.update(this.Game.dt);
                 if (enemy.invincibleAnimation.currentAnimationStep === 2) return;
             }
 
             enemy.draw();
 
-            if (this.Game.state.is(GameState.Run)) enemy.spritesAnimation.update();
+            if (this.Game.state.is(GameState.Run)) enemy.spritesAnimation.update(this.Game.dt);
         });
     }
 
     updateObservers(): void {
         this.loopEnemies((enemy) => {
-            enemy.state.update();
-            enemy.isInvincibleObserver.update();
+            enemy.state.update(this.Game.dt);
+            enemy.isInvincibleObserver.update(this.Game.dt);
 
             if (enemy.isInvincibleObserver.get() && enemy.isInvincibleObserver.currentFrame > enemy.invincibleDuration) {
                 enemy.isInvincibleObserver.setNextState(false);

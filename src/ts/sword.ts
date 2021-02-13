@@ -125,6 +125,7 @@ class Sword {
             this.isFlying = true;
 
             this.Game.Projectiles.addProjectile(new Projectile(
+                this.Game,
                 this.x,
                 this.y,
                 this.width,

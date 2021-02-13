@@ -1,6 +1,6 @@
 enum ProjectileState {Moving, ShieldBlocked}
 
-class Projectile extends MovingBox {
+class Projectile extends GameMovingBox {
     speed: number;
 
     sprite: HTMLImageElement;
@@ -17,6 +17,7 @@ class Projectile extends MovingBox {
     state: StateObserver;
 
     constructor(
+        game: Game,
         x: number,
         y: number,
         width: number,
@@ -31,7 +32,7 @@ class Projectile extends MovingBox {
         enemiesCollisionCallback: Function,
         deleteCallback: Function
     ) {
-        super();
+        super(game);
 
         this.x = x;
         this.y = y;
@@ -157,7 +158,7 @@ class Projectiles {
 
     updateObservers(): void {
         this.loopProjectiles((projectile) => {
-            projectile.state.update();
+            projectile.state.update(this.Game.dt);
 
             if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
                 this.deleteProjectile(projectile);

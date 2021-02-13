@@ -92,21 +92,23 @@ class Viewport {
     }
 
     slideSceneAnimationMove(): void {
+        let speed = this.slideSceneAnimationSpeed * this.Game.dt;
+        
         if (this.dc === 1) {
-            this.currentScene.x -= this.slideSceneAnimationSpeed;
-            this.nextScene.x -= this.slideSceneAnimationSpeed;
+            this.currentScene.x -= speed;
+            this.nextScene.x -= speed;
         }
         else if (this.dc === -1) {
-            this.currentScene.x += this.slideSceneAnimationSpeed;
-            this.nextScene.x += this.slideSceneAnimationSpeed;
+            this.currentScene.x += speed;
+            this.nextScene.x += speed;
         }
         else if (this.dr === 1) {
-            this.currentScene.y -= this.slideSceneAnimationSpeed;
-            this.nextScene.y -= this.slideSceneAnimationSpeed;
+            this.currentScene.y -= speed;
+            this.nextScene.y -= speed;
         }
         else if (this.dr === -1) {
-            this.currentScene.y += this.slideSceneAnimationSpeed;
-            this.nextScene.y += this.slideSceneAnimationSpeed;
+            this.currentScene.y += speed;
+            this.nextScene.y += speed;
         }
 
         if (

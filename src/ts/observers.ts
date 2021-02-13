@@ -7,8 +7,8 @@ abstract class AbstractObserver {
         this.isFirstFrame = true;
     }
 
-    update(): void {
-        this.currentFrame++;
+    update(dt: number): void {
+        this.currentFrame += dt;
     }
 }
 
@@ -31,7 +31,7 @@ class StateObserver extends AbstractObserver {
         this.nextState = state;
     }
 
-    update(): void {
+    update(dt: number): void {
         this.lastFrameState = this.state;
 
         if (this.nextState !== null) {
@@ -39,12 +39,13 @@ class StateObserver extends AbstractObserver {
             this.state = this.nextState;
             this.nextState = null;
             this.currentFrame = 0;
+            this.isFirstFrame = true;
         }
         else {
             this.isFirstFrame = false;
         }
 
-        super.update();
+        super.update(dt);
     }
 
     get(): any {
@@ -97,7 +98,7 @@ class AnimationObserver extends AbstractObserver {
         this.nbAnimationStep = nbAnimationStep;
     }
 
-    update(): void {
+    update(dt: number): void {
         if (this.currentFrame >= this.animationStepDuration) {
             this.currentFrame = 0;
             this.currentAnimationStep =
@@ -111,6 +112,6 @@ class AnimationObserver extends AbstractObserver {
             this.isFirstFrame = false;
         }
 
-        super.update();
+        super.update(dt);
     }
 }

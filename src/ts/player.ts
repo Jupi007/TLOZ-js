@@ -1,6 +1,4 @@
-class Player extends MovingBox {
-    Game: Game;
-
+class Player extends GameMovingBox {
     speed: number;
 
     isMovingObserver: StateObserver;
@@ -41,9 +39,7 @@ class Player extends MovingBox {
     fanfareSound: HTMLAudioElement;
 
     constructor(game: Game) {
-        super();
-
-        this.Game = game;
+        super(game);
 
         this.isMovingObserver = new StateObserver(false);
         this.isAttackObserver = new StateObserver(false);
@@ -184,7 +180,7 @@ class Player extends MovingBox {
                    : this.sprites[this.direction][this.spritesAnimation.currentAnimationStep];
 
         if (this.isInvincibleObserver.get()) {
-            this.invincibleAnimation.update();
+            this.invincibleAnimation.update(this.Game.dt);
             if (this.invincibleAnimation.currentAnimationStep === 2) sprite = new Image();
         }
 
@@ -197,7 +193,7 @@ class Player extends MovingBox {
         );
 
         if (this.isMovingObserver.is(true) && !this.Game.state.is(GameState.Stopped)) {
-            this.spritesAnimation.update();
+            this.spritesAnimation.update(this.Game.dt);
         }
     }
 
@@ -250,7 +246,7 @@ class Player extends MovingBox {
                 this.Game.Player.height
             );
         }
-        this.isDiedObserver.update();
+        this.isDiedObserver.update(this.Game.dt);
     }
 
     move(): void {
@@ -452,10 +448,10 @@ class Player extends MovingBox {
     }
 
     updateObservers(): void {
-        this.isMovingObserver.update();
-        this.isAttackObserver.update();
-        this.isInvincibleObserver.update();
-        this.isKnockBackObserver.update();
+        this.isMovingObserver.update(this.Game.dt);
+        this.isAttackObserver.update(this.Game.dt);
+        this.isInvincibleObserver.update(this.Game.dt);
+        this.isKnockBackObserver.update(this.Game.dt);
 
         if (this.isKnockBackObserver.is(true) && this.isKnockBackObserver.currentFrame > this.knockBackDuration) {
             this.isKnockBackObserver.setNextState(false);

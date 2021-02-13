@@ -6,6 +6,9 @@ class Game {
     Canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
+    lastTime: number;
+    dt: number;
+
     World: World;
     Viewport: Viewport;
     Player: Player;
@@ -25,6 +28,9 @@ class Game {
     constructor(canvas: HTMLCanvasElement) {
         this.Canvas = canvas;
         this.ctx = this.Canvas.getContext("2d");
+
+        this.lastTime = null;
+        this.dt = null;
 
         this.init();
     }
@@ -68,11 +74,25 @@ class Game {
     }
 
     run(): void {
-        window.requestAnimationFrame(() => this.run());
-        this.loop();
+        window.requestAnimationFrame((now) => this.loop(now));
     }
 
-    loop(): void {
+    deltaCalculation(now: number): void {
+        if (this.lastTime === null) {
+            this.dt = 1;
+        }
+        else {
+            this.dt = (now - this.lastTime) / (1000 / 60); // (1000 / 60) because we target 60 fps
+        }
+
+        this.lastTime = now;
+    }
+
+    loop(now: number): void {
+        window.requestAnimationFrame((now) => this.loop(now));
+
+        this.deltaCalculation(now);
+
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
         switch (this.state.get()) {
@@ -100,7 +120,7 @@ class Game {
                 break;
         }
 
-        this.state.update();
+        this.state.update(this.dt);
     }
 
     runLoop(): void {

@@ -33,7 +33,9 @@ class GameOverScreen {
                 break;
 
             case GameOverScreenState.HideGame:
-                if (this.state.isFirstFrame) this.Game.Panes.reset();
+                if (this.state.isFirstFrame) {
+                     this.Game.Panes.reset();
+                }
 
                 this.Game.Viewport.draw();
                 this.Game.Hud.draw();
@@ -81,6 +83,6 @@ class GameOverScreen {
                 );
                 break;
         }
-        this.state.update();
+        this.state.update(this.Game.dt);
     }
 }
