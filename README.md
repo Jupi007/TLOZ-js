@@ -2,8 +2,6 @@
 
 "The legend of Zelda I" like game in javascript.
 
-⚠ Still very WIP!
-
 ![Preview of TLOZ-js](screenshot.png)
 
 Demo here: [https://jupi007.github.io/TLOZ-js/game.html](https://jupi007.github.io/TLOZ-js/game.html)
