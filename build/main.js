@@ -794,6 +794,7 @@ class EventManager {
         this.Game = game;
         document.addEventListener("keydown", e => this.keyEvent(e, true));
         document.addEventListener("keyup", e => this.keyEvent(e, false));
+        document.addEventListener("visibilitychange", e => this.visibilityEvent(e), false);
     }
     keyEvent(e, keydown) {
         if (e.repeat) {
@@ -831,6 +832,10 @@ class EventManager {
                 break;
         }
         e.preventDefault();
+    }
+    visibilityEvent(e) {
+        if (document["hidden"])
+            this.Game.state.setNextState(GameState.Stopped);
     }
     newFrame() {
         if (this.isAttackPressed) {

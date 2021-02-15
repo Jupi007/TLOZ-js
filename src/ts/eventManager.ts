@@ -16,9 +16,10 @@ class EventManager {
 
         document.addEventListener("keydown", e => this.keyEvent(e, true));
         document.addEventListener("keyup", e => this.keyEvent(e, false));
+        document.addEventListener("visibilitychange", e => this.visibilityEvent(e), false);
     }
 
-    keyEvent(e, keydown) {
+    keyEvent(e, keydown): void {
         if (e.repeat){
             e.preventDefault();
             return;
@@ -55,6 +56,10 @@ class EventManager {
         }
 
         e.preventDefault();
+    }
+
+    visibilityEvent(e): void {
+        if (document["hidden"]) this.Game.state.setNextState(GameState.Stopped);
     }
 
     newFrame(): void {
