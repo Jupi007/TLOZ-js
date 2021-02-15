@@ -22,13 +22,17 @@ class Enemy extends GameMovingBox {
     dieSound: HTMLAudioElement;
     hitSound: HTMLAudioElement;
 
-    constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
+    constructor(game: Game, x: number, y: number, width: number, height: number, speed: number, direction: Direction) {
         super(game);
 
         this.Game = game;
 
         this.x = x;
         this.y = y;
+
+        this.width = width;
+        this.height = height;
+
         this.speed = speed;
         this.direction = direction;
 
@@ -62,6 +66,7 @@ class Enemy extends GameMovingBox {
     }
     viewportCollision(): void {}
     bricksCollision(): void {}
+    passBetweenBoxesHelper(): boolean { return false; }
     customCollision(): void {}
 
     takeDamage(damage): void {
@@ -104,10 +109,61 @@ class Enemy extends GameMovingBox {
 class SimpleMovingEnemy extends Enemy {
     sprites: HTMLImageElement[][] = [];
 
-    constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super(game, x, y, speed, direction);
+    halfLeftHitBox: MovingBoxHitBox;
+    halfRightHitBox: MovingBoxHitBox;
+    halfUpHitBox: MovingBoxHitBox;
+    halfDownHitBox: MovingBoxHitBox;
+
+    constructor(game: Game, x: number, y: number, width: number, height: number, speed: number, direction: Direction) {
+        super(game, x, y, width, height, speed, direction);
 
         this.state = new StateObserver(EnemieState.ChangeDirection);
+
+        // HalfHitBoxs are used by the passBetweenHelper() function
+
+        // | ** | -- |
+        // | ** | -- |
+
+        this.halfLeftHitBox = new MovingBoxHitBox(
+            this,
+            0,
+            0,
+            this.width / 2,
+            this.height
+        );
+
+        // | -- | ** |
+        // | -- | ** |
+
+        this.halfRightHitBox = new MovingBoxHitBox(
+            this,
+            this.width / 2,
+            0,
+            this.width / 2,
+            this.height
+        );
+
+        // | ** | ** |
+        // | -- | -- |
+
+        this.halfUpHitBox = new MovingBoxHitBox(
+            this,
+            0,
+            0,
+            this.width,
+            this.height / 2
+        );
+
+        // | -- | -- |
+        // | ** | ** |
+
+        this.halfDownHitBox = new MovingBoxHitBox(
+            this,
+            0,
+            this.height / 2,
+            this.width,
+            this.height / 2
+        );
     }
 
     aiThinking(): void {
@@ -131,7 +187,7 @@ class SimpleMovingEnemy extends Enemy {
                 }
                 if (this.state.currentFrame > 50) {
                     if (getRandomIntInclusive(1, 50) === 1) this.state.setNextState(EnemieState.Attack);
-                    if (getRandomIntInclusive(1, 200) === 1) this.state.setNextState(EnemieState.ChangeDirection);
+                    if (getRandomIntInclusive(1, 50) === 1) this.state.setNextState(EnemieState.ChangeDirection);
                 }
                 break;
             case EnemieState.ChangeDirection:
@@ -154,6 +210,57 @@ class SimpleMovingEnemy extends Enemy {
             default:
                 break;
         }
+    }
+
+    // Helper to pass between two boxes
+    passBetweenBoxesHelper(): boolean {
+        let halfLeftCollision = false;
+        let halfRightCollision = false;
+        let halfUpCollision = false;
+        let halfDownCollision = false;
+
+        this.Game.Viewport.loopCollision((cell, col, row) => {
+            if (simpleMovingBoxCollision(this.halfLeftHitBox, cell)) {
+                halfLeftCollision = true;
+            }
+            if (simpleMovingBoxCollision(this.halfRightHitBox, cell)) {
+                halfRightCollision = true;
+            }
+            if (simpleMovingBoxCollision(this.halfUpHitBox, cell)) {
+                halfUpCollision = true;
+            }
+            if (simpleMovingBoxCollision(this.halfDownHitBox, cell)) {
+                halfDownCollision = true;
+            }
+        });
+
+
+        if (this.direction === Direction.Up || this.direction === Direction.Down) {
+            if (halfLeftCollision && !halfRightCollision) {
+                this.dx = this.speed;
+
+                return true;
+            }
+            else if (!halfLeftCollision && halfRightCollision) {
+                this.dx = -this.speed;
+
+                return true;
+            }
+        }
+        else if (this.direction === Direction.Left || this.direction === Direction.Right) {
+            if (halfUpCollision && !halfDownCollision) {
+                this.dy = this.speed;
+
+                return true;
+            }
+            else if (!halfUpCollision && halfDownCollision) {
+                this.dy = -this.speed;
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     viewportCollision(): void {
@@ -182,10 +289,7 @@ class SimpleMovingEnemy extends Enemy {
 
 class Octorok extends SimpleMovingEnemy {
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super(game, x, y, speed, direction);
-
-        this.width = 64;
-        this.height = 64;
+        super(game, x, y, 64, 64, speed, direction);
 
         this.damage = 1;
         this.hp = 1;
@@ -277,10 +381,7 @@ class Moblin extends SimpleMovingEnemy {
     arrowSprites: HTMLImageElement[];
 
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super(game, x, y, speed, direction);
-
-        this.width = 64;
-        this.height = 64;
+        super(game, x, y, 64, 64, speed, direction);
 
         this.damage = 1;
         this.hp = 1;
@@ -381,10 +482,7 @@ class Tektite extends Enemy {
     sprites: HTMLImageElement[];
 
     constructor(game: Game, x: number, y: number) {
-        super(game, x, y, 3, Direction.Down);
-
-        this.width = 64;
-        this.height = 64;
+        super(game, x, y, 64, 64, 3, Direction.Down);
 
         this.damage = 1;
         this.hp = 1;
@@ -549,10 +647,12 @@ class Enemies {
                 enemy.viewportCollision();
             }
 
+            let helper = enemy.passBetweenBoxesHelper();
+
             if (enemy.hasBricksCollisions) {
                 this.Game.Viewport.loopCollision((cell, col, row) => {
                     if (movingBoxCollision(enemy, cell)) {
-                        enemy.bricksCollision();
+                        if (!helper) enemy.bricksCollision();
                     }
                 });
             }
