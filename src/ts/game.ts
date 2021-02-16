@@ -22,6 +22,7 @@ class Game {
     SplashScreen: SplashScreen;
     GameOverScreen: GameOverScreen;
     WinScreen: WinScreen;
+    StoppedScreen: StoppedScreen;
 
     state: StateObserver;
 
@@ -49,6 +50,7 @@ class Game {
         this.SplashScreen = new SplashScreen(this);
         this.GameOverScreen = new GameOverScreen(this);
         this.WinScreen = new WinScreen(this);
+        this.StoppedScreen = new StoppedScreen(this);
 
         this.Viewport.y = this.Hud.height;
         this.Hud.width = this.Viewport.width;
@@ -125,7 +127,7 @@ class Game {
 
     runLoop(): void {
         if (!this.Panes.isAnimationFinished) {
-            this.stoppedLoop();
+            this.drawGame();
             this.Panes.drawOpen();
             return;
         }
@@ -135,23 +137,17 @@ class Game {
         this.Enemies.aiThinking();
 
         this.Player.collisions();
-        this.Sword.collisions();
         this.Items.collisions();
         this.Enemies.collisions();
         this.Viewport.collisions();
         this.Projectiles.collisions();
+        this.Sword.collisions();
 
         this.Player.move();
         this.Enemies.move();
         this.Projectiles.move();
 
-        this.Viewport.draw();
-        this.Enemies.draw();
-        this.Sword.draw();
-        this.Items.draw();
-        this.Projectiles.draw();
-        this.Player.draw();
-        this.Hud.draw();
+        this.drawGame();
 
         this.Player.updateObservers();
         this.Enemies.updateObservers();
@@ -161,13 +157,8 @@ class Game {
     }
 
     stoppedLoop(): void {
-        this.Viewport.draw();
-        this.Enemies.draw();
-        this.Sword.draw();
-        this.Items.draw();
-        this.Projectiles.draw();
-        this.Player.draw();
-        this.Hud.draw();
+        this.drawGame();
+        this.StoppedScreen.draw();
     }
 
     splashLoop(): void {
@@ -191,6 +182,16 @@ class Game {
         this.Sword.draw();
         this.Player.draw();
         this.Projectiles.draw();
+        this.Hud.draw();
+    }
+
+    drawGame(): void {
+        this.Viewport.draw();
+        this.Enemies.draw();
+        this.Sword.draw();
+        this.Items.draw();
+        this.Projectiles.draw();
+        this.Player.draw();
         this.Hud.draw();
     }
 

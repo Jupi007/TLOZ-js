@@ -1033,6 +1033,7 @@ class Game {
         this.SplashScreen = new SplashScreen(this);
         this.GameOverScreen = new GameOverScreen(this);
         this.WinScreen = new WinScreen(this);
+        this.StoppedScreen = new StoppedScreen(this);
         this.Viewport.y = this.Hud.height;
         this.Hud.width = this.Viewport.width;
         this.Canvas.width = this.Viewport.width;
@@ -1093,7 +1094,7 @@ class Game {
     }
     runLoop() {
         if (!this.Panes.isAnimationFinished) {
-            this.stoppedLoop();
+            this.drawGame();
             this.Panes.drawOpen();
             return;
         }
@@ -1101,34 +1102,23 @@ class Game {
         this.Sword.listenEvents();
         this.Enemies.aiThinking();
         this.Player.collisions();
-        this.Sword.collisions();
         this.Items.collisions();
         this.Enemies.collisions();
         this.Viewport.collisions();
         this.Projectiles.collisions();
+        this.Sword.collisions();
         this.Player.move();
         this.Enemies.move();
         this.Projectiles.move();
-        this.Viewport.draw();
-        this.Enemies.draw();
-        this.Sword.draw();
-        this.Items.draw();
-        this.Projectiles.draw();
-        this.Player.draw();
-        this.Hud.draw();
+        this.drawGame();
         this.Player.updateObservers();
         this.Enemies.updateObservers();
         this.Projectiles.updateObservers();
         this.EventManager.newFrame();
     }
     stoppedLoop() {
-        this.Viewport.draw();
-        this.Enemies.draw();
-        this.Sword.draw();
-        this.Items.draw();
-        this.Projectiles.draw();
-        this.Player.draw();
-        this.Hud.draw();
+        this.drawGame();
+        this.StoppedScreen.draw();
     }
     splashLoop() {
         this.SplashScreen.draw();
@@ -1147,6 +1137,15 @@ class Game {
         this.Sword.draw();
         this.Player.draw();
         this.Projectiles.draw();
+        this.Hud.draw();
+    }
+    drawGame() {
+        this.Viewport.draw();
+        this.Enemies.draw();
+        this.Sword.draw();
+        this.Items.draw();
+        this.Projectiles.draw();
+        this.Player.draw();
         this.Hud.draw();
     }
     drawImage(sprite, x, y, width, height) {
@@ -2169,6 +2168,17 @@ class SplashScreen {
                 break;
         }
         this.state.update(this.Game.dt);
+    }
+}
+
+class StoppedScreen {
+    constructor(game) {
+        this.Game = game;
+    }
+    draw() {
+        this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "rgba(0, 0, 0, 0.5)");
+        this.Game.fillText("PAUSE", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
+        this.Game.fillText("press p to continue", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
     }
 }
 
