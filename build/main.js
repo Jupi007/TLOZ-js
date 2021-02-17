@@ -1012,7 +1012,7 @@ var GameState;
     GameState[GameState["Splash"] = 0] = "Splash";
     GameState[GameState["Run"] = 1] = "Run";
     GameState[GameState["Stopped"] = 2] = "Stopped";
-    GameState[GameState["SlideScene"] = 3] = "SlideScene";
+    GameState[GameState["CustomLoop"] = 3] = "CustomLoop";
     GameState[GameState["GameOver"] = 4] = "GameOver";
     GameState[GameState["Win"] = 5] = "Win";
 })(GameState || (GameState = {}));
@@ -1083,14 +1083,14 @@ class Game {
             case GameState.Stopped:
                 this.stoppedLoop();
                 break;
-            case GameState.SlideScene:
-                this.slideSceneLoop();
-                break;
             case GameState.GameOver:
                 this.gameOverLoop();
                 break;
             case GameState.Win:
                 this.winLoop();
+                break;
+            case GameState.CustomLoop:
+                this.customLoop();
                 break;
             default:
                 this.runLoop();
@@ -1132,18 +1132,12 @@ class Game {
     gameOverLoop() {
         this.GameOverScreen.draw();
     }
+    useCustomLoop(loop) {
+        this.state.setNextState(GameState.CustomLoop);
+        this.customLoop = loop;
+    }
     winLoop() {
         this.WinScreen.draw();
-    }
-    slideSceneLoop() {
-        this.Viewport.slideSceneAnimationMove();
-        this.Player.slideSceneAnimationMove();
-        this.Viewport.draw();
-        this.EnemyManager.draw();
-        this.Sword.draw();
-        this.Player.draw();
-        this.ProjectileManager.draw();
-        this.Hud.draw();
     }
     drawGame() {
         this.Viewport.draw();
@@ -1212,10 +1206,10 @@ class Hud {
         this.Game.World.loopScenes((scene) => {
             this.Game.fillRect(x + cellWidth * scene.c + 2 * scene.c, cellHeight * scene.r + 2 * scene.r, cellWidth, cellHeight, scene.hasEnemies ? '#d11c0d' : '#00a230');
         });
-        if (this.currentSceneAnimation.currentAnimationStep === 1) {
-            this.Game.fillRect(x + cellWidth * this.Game.Viewport.currentScene.c + 2 * this.Game.Viewport.currentScene.c, cellHeight * this.Game.Viewport.currentScene.r + 2 * this.Game.Viewport.currentScene.r, cellWidth, cellHeight, "rgba(0, 0, 0, 0.3)");
-        }
-        if (this.Game.state.isIn(GameState.Run, GameState.SlideScene)) {
+        if (this.Game.state.isIn(GameState.Run)) {
+            if (this.currentSceneAnimation.currentAnimationStep === 1) {
+                this.Game.fillRect(x + cellWidth * this.Game.Viewport.currentScene.c + 2 * this.Game.Viewport.currentScene.c, cellHeight * this.Game.Viewport.currentScene.r + 2 * this.Game.Viewport.currentScene.r, cellWidth, cellHeight, "rgba(0, 0, 0, 0.3)");
+            }
             this.currentSceneAnimation.update(this.Game.dt);
         }
     }
@@ -2288,6 +2282,11 @@ class Viewport {
             this.Game.state.setNextState(GameState.Run);
         }
     }
+    slideSceneLoop() {
+        this.slideSceneAnimationMove();
+        this.Game.Player.slideSceneAnimationMove();
+        this.Game.drawGame();
+    }
     collisions() {
     }
     drawImage(sprite, x, y, width, height) {
@@ -2335,7 +2334,7 @@ class Viewport {
             this.Game.Player.dx = 0;
             this.Game.Player.dy = 0;
             this.Game.Player.isAttackObserver.setNextState(false);
-            this.Game.state.setNextState(GameState.SlideScene);
+            this.Game.useCustomLoop(() => this.slideSceneLoop());
             return;
         }
         this.dc = 0;

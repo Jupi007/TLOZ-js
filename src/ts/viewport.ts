@@ -146,6 +146,13 @@ class Viewport {
         }
     }
 
+    slideSceneLoop(): void {
+        this.slideSceneAnimationMove();
+        this.Game.Player.slideSceneAnimationMove();
+
+        this.Game.drawGame();
+    }
+
     collisions(): void {
     }
 
@@ -214,7 +221,7 @@ class Viewport {
             this.Game.Player.dy = 0;
             this.Game.Player.isAttackObserver.setNextState(false);
 
-            this.Game.state.setNextState(GameState.SlideScene);
+            this.Game.useCustomLoop(() => this.slideSceneLoop());
 
             return;
         }

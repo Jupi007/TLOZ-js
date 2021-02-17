@@ -90,17 +90,17 @@ class Hud {
             );
         });
 
-        if (this.currentSceneAnimation.currentAnimationStep === 1) {
-            this.Game.fillRect(
-                x + cellWidth * this.Game.Viewport.currentScene.c + 2 * this.Game.Viewport.currentScene.c,
-                cellHeight * this.Game.Viewport.currentScene.r + 2 * this.Game.Viewport.currentScene.r,
-                cellWidth,
-                cellHeight,
-                "rgba(0, 0, 0, 0.3)"
-            );
-        }
+        if (this.Game.state.isIn(GameState.Run)) {
+            if (this.currentSceneAnimation.currentAnimationStep === 1) {
+                this.Game.fillRect(
+                    x + cellWidth * this.Game.Viewport.currentScene.c + 2 * this.Game.Viewport.currentScene.c,
+                    cellHeight * this.Game.Viewport.currentScene.r + 2 * this.Game.Viewport.currentScene.r,
+                    cellWidth,
+                    cellHeight,
+                    "rgba(0, 0, 0, 0.3)"
+                );
+            }
 
-        if (this.Game.state.isIn(GameState.Run, GameState.SlideScene)) {
             this.currentSceneAnimation.update(this.Game.dt);
         }
     }

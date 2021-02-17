@@ -1,6 +1,6 @@
 'use strict';
 
-enum GameState {Splash, Run, Stopped, SlideScene, GameOver, Win};
+enum GameState {Splash, Run, Stopped, CustomLoop, GameOver, Win};
 
 class Game {
     Canvas: HTMLCanvasElement;
@@ -25,6 +25,8 @@ class Game {
     StoppedScreen: StoppedScreen;
 
     state: StateObserver;
+
+    customLoop: Function;
 
     constructor(canvas: HTMLCanvasElement) {
         this.Canvas = canvas;
@@ -107,14 +109,14 @@ class Game {
             case GameState.Stopped:
                 this.stoppedLoop();
                 break;
-            case GameState.SlideScene:
-                this.slideSceneLoop();
-                break;
             case GameState.GameOver:
                 this.gameOverLoop();
                 break;
             case GameState.Win:
                 this.winLoop();
+                break;
+            case GameState.CustomLoop:
+                this.customLoop();
                 break;
 
             default:
@@ -169,20 +171,13 @@ class Game {
         this.GameOverScreen.draw();
     }
 
-    winLoop(): void {
-        this.WinScreen.draw();
+    useCustomLoop(loop: Function): void {
+        this.state.setNextState(GameState.CustomLoop);
+        this.customLoop = loop;
     }
 
-    slideSceneLoop(): void {
-        this.Viewport.slideSceneAnimationMove();
-        this.Player.slideSceneAnimationMove();
-
-        this.Viewport.draw();
-        this.EnemyManager.draw();
-        this.Sword.draw();
-        this.Player.draw();
-        this.ProjectileManager.draw();
-        this.Hud.draw();
+    winLoop(): void {
+        this.WinScreen.draw();
     }
 
     drawGame(): void {
