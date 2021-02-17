@@ -133,14 +133,14 @@ class Viewport {
             this.currentScene = this.nextScene;
             this.nextScene = null;
 
-            this.Game.Enemies.loopEnemies((enemy) => {
+            this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (enemy.state.is(EnemieState.Killed)) {
-                    this.Game.Enemies.killEnemy(enemy);
+                    this.Game.EnemyManager.killEnemy(enemy);
                 }
             })
-            this.Game.Enemies = new Enemies(this.Game);
-            this.Game.Projectiles.deleteAllProjectiles();
-            this.Game.Items.deleteAllItems();
+            this.Game.EnemyManager = new EnemyManager(this.Game);
+            this.Game.ProjectileManager.deleteAllProjectiles();
+            this.Game.ItemManager.deleteAllItems();
 
             this.Game.state.setNextState(GameState.Run);
         }

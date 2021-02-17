@@ -13,9 +13,9 @@ class Game {
     Viewport: Viewport;
     Player: Player;
     Sword: Sword;
-    Enemies: Enemies;
-    Projectiles: Projectiles;
-    Items: Items;
+    EnemyManager: EnemyManager;
+    ProjectileManager: ProjectileManager;
+    ItemManager: ItemManager;
     EventManager: EventManager;
     Hud: Hud;
     Panes: Panes;
@@ -42,9 +42,9 @@ class Game {
         this.Viewport = new Viewport(this);
         this.Player = new Player(this);
         this.Sword = new Sword(this);
-        this.Enemies = new Enemies(this);
-        this.Projectiles = new Projectiles(this);
-        this.Items = new Items(this);
+        this.EnemyManager = new EnemyManager(this);
+        this.ProjectileManager = new ProjectileManager(this);
+        this.ItemManager = new ItemManager(this);
         this.Hud = new Hud(this);
         this.Panes = new Panes(this);
         this.SplashScreen = new SplashScreen(this);
@@ -134,24 +134,24 @@ class Game {
 
         this.Player.listenEvents();
         this.Sword.listenEvents();
-        this.Enemies.aiThinking();
+        this.EnemyManager.aiThinking();
 
         this.Player.collisions();
-        this.Items.collisions();
-        this.Enemies.collisions();
+        this.ItemManager.collisions();
+        this.EnemyManager.collisions();
         this.Viewport.collisions();
-        this.Projectiles.collisions();
+        this.ProjectileManager.collisions();
         this.Sword.collisions();
 
         this.Player.move();
-        this.Enemies.move();
-        this.Projectiles.move();
+        this.EnemyManager.move();
+        this.ProjectileManager.move();
 
         this.drawGame();
 
         this.Player.updateObservers();
-        this.Enemies.updateObservers();
-        this.Projectiles.updateObservers();
+        this.EnemyManager.updateObservers();
+        this.ProjectileManager.updateObservers();
 
         this.EventManager.newFrame();
     }
@@ -178,19 +178,19 @@ class Game {
         this.Player.slideSceneAnimationMove();
 
         this.Viewport.draw();
-        this.Enemies.draw();
+        this.EnemyManager.draw();
         this.Sword.draw();
         this.Player.draw();
-        this.Projectiles.draw();
+        this.ProjectileManager.draw();
         this.Hud.draw();
     }
 
     drawGame(): void {
         this.Viewport.draw();
-        this.Enemies.draw();
+        this.EnemyManager.draw();
         this.Sword.draw();
-        this.Items.draw();
-        this.Projectiles.draw();
+        this.ItemManager.draw();
+        this.ProjectileManager.draw();
         this.Player.draw();
         this.Hud.draw();
     }

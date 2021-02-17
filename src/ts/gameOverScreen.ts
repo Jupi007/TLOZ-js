@@ -25,7 +25,7 @@ class GameOverScreen {
         switch (this.state.get()) {
             case GameOverScreenState.PlayerAnimation:
                 this.Game.Viewport.draw();
-                this.Game.Enemies.draw();
+                this.Game.EnemyManager.draw();
                 this.Game.Hud.draw();
                 this.Game.Player.drawGameOver();
 

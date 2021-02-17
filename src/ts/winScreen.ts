@@ -24,7 +24,7 @@ class WinScreen {
         switch (this.state.get()) {
             case WinScreenState.PlayerAnimation:
                 this.Game.Viewport.draw();
-                this.Game.Enemies.draw();
+                this.Game.EnemyManager.draw();
                 this.Game.Sword.drawWin();
                 this.Game.Player.drawWin();
                 this.Game.Hud.draw();
@@ -36,7 +36,7 @@ class WinScreen {
                 if (this.state.isFirstFrame) this.Game.Panes.reset();
 
                 this.Game.Viewport.draw();
-                this.Game.Enemies.draw();
+                this.Game.EnemyManager.draw();
                 this.Game.Sword.drawWin();
                 this.Game.Player.drawWin();
                 this.Game.Hud.draw();

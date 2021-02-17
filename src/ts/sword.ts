@@ -101,7 +101,7 @@ class Sword {
 
     collisions(): void {
         if (this.Game.Player.isAttackObserver.get()) {
-            this.Game.Enemies.loopEnemies((enemy) => {
+            this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (simpleMovingBoxCollision(enemy, this)) {
                     enemy.takeDamage(1);
                 }
@@ -124,7 +124,7 @@ class Sword {
 
             this.isFlying = true;
 
-            this.Game.Projectiles.addProjectile(new Projectile(
+            this.Game.ProjectileManager.addProjectile(new Projectile(
                 this.Game,
                 this.x,
                 this.y,

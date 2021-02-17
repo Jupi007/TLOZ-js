@@ -1,3 +1,97 @@
+class ProjectileManager {
+    constructor(game) {
+        this.Game = game;
+        this.projectiles = [];
+        this.shieldSound = AudioLoader.load("./sounds/effect/Shield.wav");
+    }
+    collisions() {
+        this.loopProjectiles((projectile) => {
+            if (projectile.state.is(ProjectileState.ShieldBlocked))
+                return;
+            if (projectile.hasEnemiesCollision) {
+                this.Game.EnemyManager.loopEnemies((enemy) => {
+                    if (movingBoxsCollision(enemy, projectile)) {
+                        if (projectile.enemiesCollisionCallback !== null)
+                            projectile.enemiesCollisionCallback(enemy);
+                        this.deleteProjectile(projectile);
+                    }
+                });
+            }
+            if (projectile.hasPlayerCollision) {
+                if (movingBoxsCollision(this.Game.Player.hitBox, projectile)) {
+                    if (projectile.canBeShieldBlocked &&
+                        this.Game.Player.isMovingObserver.is(false) &&
+                        this.Game.Player.isAttackObserver.is(false) &&
+                        Direction.areOpposite(this.Game.Player.direction, projectile.direction)) {
+                        this.shieldSound.play();
+                        projectile.state.setNextState(ProjectileState.ShieldBlocked);
+                        return;
+                    }
+                    if (projectile.playerCollisionCallback !== null)
+                        projectile.playerCollisionCallback(this.Game.Player);
+                    this.deleteProjectile(projectile);
+                }
+            }
+            if (movingBoxCanvasCollision(projectile, this.Game.Viewport)) {
+                this.deleteProjectile(projectile);
+            }
+        });
+    }
+    move() {
+        this.loopProjectiles((projectile) => {
+            switch (projectile.state.get()) {
+                case ProjectileState.Moving:
+                    projectile.x += projectile.dx;
+                    projectile.y += projectile.dy;
+                    break;
+                case ProjectileState.ShieldBlocked:
+                    if (Direction.isVertical(projectile.direction)) {
+                        projectile.x += projectile.dy / 2;
+                        projectile.y -= projectile.dy / 2;
+                    }
+                    else {
+                        projectile.x -= projectile.dx / 2;
+                        projectile.y += projectile.dx / 2;
+                    }
+                    break;
+            }
+        });
+    }
+    draw() {
+        this.loopProjectiles((projectile) => {
+            this.Game.Viewport.currentScene.drawImage(projectile.sprite, projectile.x, projectile.y, projectile.width, projectile.height);
+        });
+    }
+    updateObservers() {
+        this.loopProjectiles((projectile) => {
+            projectile.state.update(this.Game.dt);
+            if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
+                this.deleteProjectile(projectile);
+            }
+        });
+    }
+    addProjectile(projectile) {
+        this.projectiles.push(projectile);
+    }
+    deleteProjectile(projectile) {
+        if (projectile.deleteCallback !== null)
+            projectile.deleteCallback();
+        this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
+    }
+    deleteAllProjectiles() {
+        this.loopProjectiles((projectile) => {
+            if (projectile.deleteCallback !== null)
+                projectile.deleteCallback();
+        });
+        this.projectiles = [];
+    }
+    loopProjectiles(callback) {
+        this.projectiles.forEach((projectile) => {
+            callback(projectile);
+        });
+    }
+}
+
 class SpriteLoader {
     static load(src) {
         let sprite = new Image();
@@ -363,7 +457,7 @@ class Enemy extends GameMovingBox {
     }
     dropItem() {
         if (this.Game.Player.hp < this.Game.Player.maxHp && getOneRandom(3)) {
-            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2), AudioLoader.load("./sounds/effect/Get_Heart.wav")));
+            this.Game.ItemManager.addItem(new Item(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2), AudioLoader.load("./sounds/effect/Get_Heart.wav")));
             return true;
         }
         return false;
@@ -510,7 +604,7 @@ class Octorok extends SimpleMovingEnemy {
         this.spritesAnimation = new AnimationObserver(20 / speed, 2);
     }
     attack() {
-        this.Game.Projectiles.addProjectile(new Projectile(this.Game, this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), 24, 30, 8, this.direction, SpriteLoader.load("./sprites/png/fireball.png"), true, // Enable collision on Player
+        this.Game.ProjectileManager.addProjectile(new Projectile(this.Game, this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), 24, 30, 8, this.direction, SpriteLoader.load("./sprites/png/fireball.png"), true, // Enable collision on Player
         true, // Enable shield block
         (player) => player.takeDamage(this.damage), false, // Disable collisions on Enemies
         null, null));
@@ -538,7 +632,7 @@ class BlueOctorok extends Octorok {
         if (super.dropItem())
             return true;
         if (getOneRandom(3)) {
-            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
+            this.Game.ItemManager.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
             return true;
         }
         return false;
@@ -571,7 +665,7 @@ class Moblin extends SimpleMovingEnemy {
     attack() {
         let width = (this.direction === Direction.Up || this.direction === Direction.Down) ? 20 : 64;
         let height = (this.direction === Direction.Up || this.direction === Direction.Down) ? 64 : 20;
-        this.Game.Projectiles.addProjectile(new Projectile(this.Game, this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), width, height, 8, this.direction, this.arrowSprites[this.direction], true, // Enable collision on Player
+        this.Game.ProjectileManager.addProjectile(new Projectile(this.Game, this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (30 / 2), width, height, 8, this.direction, this.arrowSprites[this.direction], true, // Enable collision on Player
         true, // Enable shield block
         (player) => player.takeDamage(this.damage), false, // Disable collisions on Enemies
         null, null));
@@ -599,7 +693,7 @@ class BlueMoblin extends Moblin {
         if (super.dropItem())
             return true;
         if (getOneRandom(3)) {
-            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
+            this.Game.ItemManager.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
             return true;
         }
         return false;
@@ -687,13 +781,14 @@ class BlueTektite extends Tektite {
         if (super.dropItem())
             return true;
         if (getOneRandom(3)) {
-            this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
+            this.Game.ItemManager.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
             return true;
         }
         return false;
     }
 }
-class Enemies {
+
+class EnemyManager {
     constructor(game) {
         this.enemies = [];
         this.Game = game;
@@ -711,7 +806,7 @@ class Enemies {
         if (enemyIndex > -1) {
             this.enemies.splice(enemyIndex, 1);
         }
-        if (this.Game.Enemies.enemies.length <= 0) {
+        if (this.Game.EnemyManager.enemies.length <= 0) {
             this.Game.Player.increaseScore();
         }
         enemy.dropItem();
@@ -756,7 +851,7 @@ class Enemies {
                     this.Game.Viewport.currentScene.drawImage(enemy.killedSprites[2], enemy.x, enemy.y, enemy.width, enemy.height);
                 }
                 else {
-                    this.Game.Enemies.killEnemy(enemy);
+                    this.Game.EnemyManager.killEnemy(enemy);
                 }
                 return;
             }
@@ -1028,9 +1123,9 @@ class Game {
         this.Viewport = new Viewport(this);
         this.Player = new Player(this);
         this.Sword = new Sword(this);
-        this.Enemies = new Enemies(this);
-        this.Projectiles = new Projectiles(this);
-        this.Items = new Items(this);
+        this.EnemyManager = new EnemyManager(this);
+        this.ProjectileManager = new ProjectileManager(this);
+        this.ItemManager = new ItemManager(this);
         this.Hud = new Hud(this);
         this.Panes = new Panes(this);
         this.SplashScreen = new SplashScreen(this);
@@ -1103,20 +1198,20 @@ class Game {
         }
         this.Player.listenEvents();
         this.Sword.listenEvents();
-        this.Enemies.aiThinking();
+        this.EnemyManager.aiThinking();
         this.Player.collisions();
-        this.Items.collisions();
-        this.Enemies.collisions();
+        this.ItemManager.collisions();
+        this.EnemyManager.collisions();
         this.Viewport.collisions();
-        this.Projectiles.collisions();
+        this.ProjectileManager.collisions();
         this.Sword.collisions();
         this.Player.move();
-        this.Enemies.move();
-        this.Projectiles.move();
+        this.EnemyManager.move();
+        this.ProjectileManager.move();
         this.drawGame();
         this.Player.updateObservers();
-        this.Enemies.updateObservers();
-        this.Projectiles.updateObservers();
+        this.EnemyManager.updateObservers();
+        this.ProjectileManager.updateObservers();
         this.EventManager.newFrame();
     }
     stoppedLoop() {
@@ -1136,18 +1231,18 @@ class Game {
         this.Viewport.slideSceneAnimationMove();
         this.Player.slideSceneAnimationMove();
         this.Viewport.draw();
-        this.Enemies.draw();
+        this.EnemyManager.draw();
         this.Sword.draw();
         this.Player.draw();
-        this.Projectiles.draw();
+        this.ProjectileManager.draw();
         this.Hud.draw();
     }
     drawGame() {
         this.Viewport.draw();
-        this.Enemies.draw();
+        this.EnemyManager.draw();
         this.Sword.draw();
-        this.Items.draw();
-        this.Projectiles.draw();
+        this.ItemManager.draw();
+        this.ProjectileManager.draw();
         this.Player.draw();
         this.Hud.draw();
     }
@@ -1192,7 +1287,7 @@ class GameOverScreen {
         switch (this.state.get()) {
             case GameOverScreenState.PlayerAnimation:
                 this.Game.Viewport.draw();
-                this.Game.Enemies.draw();
+                this.Game.EnemyManager.draw();
                 this.Game.Hud.draw();
                 this.Game.Player.drawGameOver();
                 if (this.Game.Player.isDiedObserver.currentFrame > 145)
@@ -1274,19 +1369,7 @@ class Hud {
     }
 }
 
-class Item extends SimpleBox {
-    constructor(x, y, width, height, sprite, collisionCallback, collisionSound) {
-        super();
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.sprite = sprite;
-        this.collisionCallback = collisionCallback;
-        this.collisionSound = collisionSound;
-    }
-}
-class Items {
+class ItemManager {
     constructor(game) {
         this.Game = game;
         this.items = [];
@@ -1319,6 +1402,19 @@ class Items {
         this.items.forEach((item) => {
             callback(item);
         });
+    }
+}
+
+class Item extends SimpleBox {
+    constructor(x, y, width, height, sprite, collisionCallback, collisionSound) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.sprite = sprite;
+        this.collisionCallback = collisionCallback;
+        this.collisionSound = collisionSound;
     }
 }
 
@@ -2046,99 +2142,6 @@ class Projectile extends GameMovingBox {
         this.state = new StateObserver(ProjectileState.Moving);
     }
 }
-class Projectiles {
-    constructor(game) {
-        this.Game = game;
-        this.projectiles = [];
-        this.shieldSound = AudioLoader.load("./sounds/effect/Shield.wav");
-    }
-    collisions() {
-        this.loopProjectiles((projectile) => {
-            if (projectile.state.is(ProjectileState.ShieldBlocked))
-                return;
-            if (projectile.hasEnemiesCollision) {
-                this.Game.Enemies.loopEnemies((enemy) => {
-                    if (movingBoxsCollision(enemy, projectile)) {
-                        if (projectile.enemiesCollisionCallback !== null)
-                            projectile.enemiesCollisionCallback(enemy);
-                        this.deleteProjectile(projectile);
-                    }
-                });
-            }
-            if (projectile.hasPlayerCollision) {
-                if (movingBoxsCollision(this.Game.Player.hitBox, projectile)) {
-                    if (projectile.canBeShieldBlocked &&
-                        this.Game.Player.isMovingObserver.is(false) &&
-                        this.Game.Player.isAttackObserver.is(false) &&
-                        Direction.areOpposite(this.Game.Player.direction, projectile.direction)) {
-                        this.shieldSound.play();
-                        projectile.state.setNextState(ProjectileState.ShieldBlocked);
-                        return;
-                    }
-                    if (projectile.playerCollisionCallback !== null)
-                        projectile.playerCollisionCallback(this.Game.Player);
-                    this.deleteProjectile(projectile);
-                }
-            }
-            if (movingBoxCanvasCollision(projectile, this.Game.Viewport)) {
-                this.deleteProjectile(projectile);
-            }
-        });
-    }
-    move() {
-        this.loopProjectiles((projectile) => {
-            switch (projectile.state.get()) {
-                case ProjectileState.Moving:
-                    projectile.x += projectile.dx;
-                    projectile.y += projectile.dy;
-                    break;
-                case ProjectileState.ShieldBlocked:
-                    if (Direction.isVertical(projectile.direction)) {
-                        projectile.x += projectile.dy / 2;
-                        projectile.y -= projectile.dy / 2;
-                    }
-                    else {
-                        projectile.x -= projectile.dx / 2;
-                        projectile.y += projectile.dx / 2;
-                    }
-                    break;
-            }
-        });
-    }
-    draw() {
-        this.loopProjectiles((projectile) => {
-            this.Game.Viewport.currentScene.drawImage(projectile.sprite, projectile.x, projectile.y, projectile.width, projectile.height);
-        });
-    }
-    updateObservers() {
-        this.loopProjectiles((projectile) => {
-            projectile.state.update(this.Game.dt);
-            if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
-                this.deleteProjectile(projectile);
-            }
-        });
-    }
-    addProjectile(projectile) {
-        this.projectiles.push(projectile);
-    }
-    deleteProjectile(projectile) {
-        if (projectile.deleteCallback !== null)
-            projectile.deleteCallback();
-        this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
-    }
-    deleteAllProjectiles() {
-        this.loopProjectiles((projectile) => {
-            if (projectile.deleteCallback !== null)
-                projectile.deleteCallback();
-        });
-        this.projectiles = [];
-    }
-    loopProjectiles(callback) {
-        this.projectiles.forEach((projectile) => {
-            callback(projectile);
-        });
-    }
-}
 
 var SplashScreenState;
 (function (SplashScreenState) {
@@ -2257,7 +2260,7 @@ class Sword {
     }
     collisions() {
         if (this.Game.Player.isAttackObserver.get()) {
-            this.Game.Enemies.loopEnemies((enemy) => {
+            this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (simpleMovingBoxCollision(enemy, this)) {
                     enemy.takeDamage(1);
                 }
@@ -2274,7 +2277,7 @@ class Sword {
             && this.Game.Player.isFullLife) {
             this.flyingSound.play();
             this.isFlying = true;
-            this.Game.Projectiles.addProjectile(new Projectile(this.Game, this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.direction, this.sprites[this.direction], false, // Disable collision on Player
+            this.Game.ProjectileManager.addProjectile(new Projectile(this.Game, this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.direction, this.sprites[this.direction], false, // Disable collision on Player
             false, null, true, // Enable collisions on Enemies
             (enemy) => enemy.takeDamage(1), () => this.isFlying = false));
         }
@@ -2368,14 +2371,14 @@ class Viewport {
             }
             this.currentScene = this.nextScene;
             this.nextScene = null;
-            this.Game.Enemies.loopEnemies((enemy) => {
+            this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (enemy.state.is(EnemieState.Killed)) {
-                    this.Game.Enemies.killEnemy(enemy);
+                    this.Game.EnemyManager.killEnemy(enemy);
                 }
             });
-            this.Game.Enemies = new Enemies(this.Game);
-            this.Game.Projectiles.deleteAllProjectiles();
-            this.Game.Items.deleteAllItems();
+            this.Game.EnemyManager = new EnemyManager(this.Game);
+            this.Game.ProjectileManager.deleteAllProjectiles();
+            this.Game.ItemManager.deleteAllItems();
             this.Game.state.setNextState(GameState.Run);
         }
     }
@@ -2454,7 +2457,7 @@ class WinScreen {
         switch (this.state.get()) {
             case WinScreenState.PlayerAnimation:
                 this.Game.Viewport.draw();
-                this.Game.Enemies.draw();
+                this.Game.EnemyManager.draw();
                 this.Game.Sword.drawWin();
                 this.Game.Player.drawWin();
                 this.Game.Hud.draw();
@@ -2465,7 +2468,7 @@ class WinScreen {
                 if (this.state.isFirstFrame)
                     this.Game.Panes.reset();
                 this.Game.Viewport.draw();
-                this.Game.Enemies.draw();
+                this.Game.EnemyManager.draw();
                 this.Game.Sword.drawWin();
                 this.Game.Player.drawWin();
                 this.Game.Hud.draw();
