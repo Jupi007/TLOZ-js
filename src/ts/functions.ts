@@ -8,6 +8,10 @@ function getRandomIntInclusive(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function getOneRandom(number: number): boolean {
+    return getRandomIntInclusive(1, number) === 1;
+}
+
 // **************************
 // Collision helper functions
 // **************************

@@ -362,7 +362,7 @@ class Enemy extends GameMovingBox {
         this.isInvincibleObserver.setNextState(true);
     }
     dropItem() {
-        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 3) === 1) {
+        if (this.Game.Player.hp < this.Game.Player.maxHp && getOneRandom(3)) {
             this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (24 / 2), this.y + (this.height / 2) - (24 / 2), 24, 24, SpriteLoader.load('./sprites/png/full-heart.png'), () => this.Game.Player.recoverHealth(2), AudioLoader.load("./sounds/effect/Get_Heart.wav")));
             return true;
         }
@@ -408,9 +408,9 @@ class SimpleMovingEnemy extends Enemy {
                     }
                 }
                 if (this.state.currentFrame > 50) {
-                    if (getRandomIntInclusive(1, 50) === 1)
+                    if (getOneRandom(50))
                         this.state.setNextState(EnemieState.Attack);
-                    if (getRandomIntInclusive(1, 50) === 1)
+                    if (getOneRandom(50))
                         this.state.setNextState(EnemieState.ChangeDirection);
                 }
                 break;
@@ -537,7 +537,7 @@ class BlueOctorok extends Octorok {
     dropItem() {
         if (super.dropItem())
             return true;
-        if (getRandomIntInclusive(1, 3) === 1) {
+        if (getOneRandom(3)) {
             this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
             return true;
         }
@@ -598,7 +598,7 @@ class BlueMoblin extends Moblin {
     dropItem() {
         if (super.dropItem())
             return true;
-        if (getRandomIntInclusive(1, 3) === 1) {
+        if (getOneRandom(3)) {
             this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
             return true;
         }
@@ -624,18 +624,18 @@ class Tektite extends Enemy {
             case EnemieState.Moving:
                 if (this.state.isFirstFrame) {
                     this.dy = -6;
-                    this.dx = this.realDy / 2 * ((getRandomIntInclusive(1, 2) === 1) ? -1 : 1);
+                    this.dx = this.realDy / 2 * ((getOneRandom(2)) ? -1 : 1);
                 }
                 else {
                     this.dy = this.realDy + (0.1 * this.Game.dt);
                 }
-                if ((this.state.currentFrame > 60 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 100)
+                if ((this.state.currentFrame > 60 && getOneRandom(50)) || this.state.currentFrame > 100)
                     this.state.setNextState(EnemieState.Wait);
                 break;
             case EnemieState.Wait:
                 this.dx = 0;
                 this.dy = 0;
-                if ((this.state.currentFrame > 30 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 60)
+                if ((this.state.currentFrame > 30 && getOneRandom(50)) || this.state.currentFrame > 60)
                     this.state.setNextState(EnemieState.Moving);
                 break;
         }
@@ -686,7 +686,7 @@ class BlueTektite extends Tektite {
     dropItem() {
         if (super.dropItem())
             return true;
-        if (getRandomIntInclusive(1, 3) === 1) {
+        if (getOneRandom(3)) {
             this.Game.Items.addItem(new Item(this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2), 32, 32, SpriteLoader.load('./sprites/png/clock.png'), () => this.Game.Player.getInvicibility(400), AudioLoader.load("./sounds/effect/Get_Item.wav")));
             return true;
         }
@@ -856,6 +856,9 @@ function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function getOneRandom(number) {
+    return getRandomIntInclusive(1, number) === 1;
 }
 // **************************
 // Collision helper functions
@@ -1420,9 +1423,9 @@ class World {
         ]);
         this.map[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[0][0].enemies = [
-            new BlueOctorok(this.Game, 2 * 64, 2 * 64, 4, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Down),
-            new BlueOctorok(this.Game, 5 * 64, 5 * 64, 4, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new BlueOctorok(this.Game, 13 * 64, 3 * 64, 4, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new BlueOctorok(this.Game, 2 * 64, 2 * 64, 4, getOneRandom(2) ? Direction.Right : Direction.Down),
+            new BlueOctorok(this.Game, 5 * 64, 5 * 64, 4, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new BlueOctorok(this.Game, 13 * 64, 3 * 64, 4, getOneRandom(2) ? Direction.Up : Direction.Down),
         ];
         this.map[1][0].loadBricks([
             [new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick(), new WhiteWallBrick()],
@@ -1440,7 +1443,7 @@ class World {
         this.map[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[1][0].enemies = [
             new BlueMoblin(this.Game, 5 * 64, 8 * 64, 4, Direction.Up),
-            new BlueMoblin(this.Game, 8 * 64, 4 * 64, 4, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new BlueMoblin(this.Game, 8 * 64, 4 * 64, 4, getOneRandom(2) ? Direction.Right : Direction.Left),
             new BlueMoblin(this.Game, 10 * 64, 2 * 64, 4, Direction.Down),
         ];
         this.map[2][0].loadBricks([
@@ -1477,9 +1480,9 @@ class World {
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
         this.map[0][1].enemies = [
-            new Octorok(this.Game, 6 * 64, 4 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 4 * 64, 6 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 7 * 64, 2 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 6 * 64, 4 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 4 * 64, 6 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 7 * 64, 2 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
             new Octorok(this.Game, 13 * 64, 2 * 64, 3, Direction.Down),
         ];
         this.map[1][1].loadBricks([
@@ -1496,10 +1499,10 @@ class World {
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick()]
         ]);
         this.map[1][1].enemies = [
-            new Octorok(this.Game, 4 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 10 * 64, 3 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 13 * 64, 7 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 12 * 64, 6 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 4 * 64, 5 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 10 * 64, 3 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 13 * 64, 7 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 12 * 64, 6 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
         ];
         this.map[2][1].loadBricks([
             [new WallBrick(), new WallBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick()],
@@ -1515,10 +1518,10 @@ class World {
             [new WallBrick(), new WallBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick(), new DefaultBrick(), new TreeBrick()],
         ]);
         this.map[2][1].enemies = [
-            new Octorok(this.Game, 3 * 64, 4 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 5 * 64, 6 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 10 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 14 * 64, 2 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Left : Direction.Down),
+            new Octorok(this.Game, 3 * 64, 4 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 5 * 64, 6 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 10 * 64, 5 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 14 * 64, 2 * 64, 3, getOneRandom(2) ? Direction.Left : Direction.Down),
         ];
         this.map[0][2].loadBricks([
             [new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new WallBrick(), new DefaultBrick(), new DefaultBrick(), new WallBrick(), new WallBrick(), new WallBrick()],
@@ -1566,10 +1569,10 @@ class World {
             [new WallBrick(), new WallBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick(), new TreeBrick()],
         ]);
         this.map[2][2].enemies = [
-            new Moblin(this.Game, 3 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Moblin(this.Game, 5 * 64, 7 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Moblin(this.Game, 10 * 64, 5 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
-            new Moblin(this.Game, 12 * 64, 7 * 64, 3, getRandomIntInclusive(0, 1) ? Direction.Up : Direction.Down),
+            new Moblin(this.Game, 3 * 64, 5 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new Moblin(this.Game, 5 * 64, 7 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new Moblin(this.Game, 10 * 64, 5 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new Moblin(this.Game, 12 * 64, 7 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
         ];
     }
     getSpawnScene() {

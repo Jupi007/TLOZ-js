@@ -89,7 +89,7 @@ class Enemy extends GameMovingBox {
     }
 
     dropItem(): boolean {
-        if (this.Game.Player.hp < this.Game.Player.maxHp && getRandomIntInclusive(1, 3) === 1) {
+        if (this.Game.Player.hp < this.Game.Player.maxHp && getOneRandom(3)) {
             this.Game.Items.addItem(new Item(
                 this.x + (this.width / 2) - (24 / 2),
                 this.y + (this.height / 2) - (24 / 2),
@@ -186,8 +186,8 @@ class SimpleMovingEnemy extends Enemy {
                     }
                 }
                 if (this.state.currentFrame > 50) {
-                    if (getRandomIntInclusive(1, 50) === 1) this.state.setNextState(EnemieState.Attack);
-                    if (getRandomIntInclusive(1, 50) === 1) this.state.setNextState(EnemieState.ChangeDirection);
+                    if (getOneRandom(50)) this.state.setNextState(EnemieState.Attack);
+                    if (getOneRandom(50)) this.state.setNextState(EnemieState.ChangeDirection);
                 }
                 break;
             case EnemieState.ChangeDirection:
@@ -360,7 +360,7 @@ class BlueOctorok extends Octorok {
     dropItem(): boolean {
         if (super.dropItem()) return true;
 
-        if (getRandomIntInclusive(1, 3) === 1) {
+        if (getOneRandom(3)) {
             this.Game.Items.addItem(new Item(
                 this.x + (this.width / 2) - (32 / 2),
                 this.y + (this.height / 2) - (32 / 2),
@@ -461,7 +461,7 @@ class BlueMoblin extends Moblin {
     dropItem(): boolean {
         if (super.dropItem()) return true;
 
-        if (getRandomIntInclusive(1, 3) === 1) {
+        if (getOneRandom(3)) {
             this.Game.Items.addItem(new Item(
                 this.x + (this.width / 2) - (32 / 2),
                 this.y + (this.height / 2) - (32 / 2),
@@ -505,17 +505,17 @@ class Tektite extends Enemy {
             case EnemieState.Moving:
                 if (this.state.isFirstFrame) {
                     this.dy = -6;
-                    this.dx = this.realDy / 2 * ((getRandomIntInclusive(1, 2) === 1) ? -1 : 1);
+                    this.dx = this.realDy / 2 * ((getOneRandom(2)) ? -1 : 1);
                 }
                 else {
                     this.dy = this.realDy + (0.1 * this.Game.dt);
                 }
-                if ((this.state.currentFrame > 60 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 100) this.state.setNextState(EnemieState.Wait);
+                if ((this.state.currentFrame > 60 && getOneRandom(50)) || this.state.currentFrame > 100) this.state.setNextState(EnemieState.Wait);
                 break;
             case EnemieState.Wait:
                 this.dx = 0;
                 this.dy = 0;
-                if ((this.state.currentFrame > 30 && getRandomIntInclusive(1, 50) === 1) || this.state.currentFrame > 60)  this.state.setNextState(EnemieState.Moving);
+                if ((this.state.currentFrame > 30 && getOneRandom(50)) || this.state.currentFrame > 60)  this.state.setNextState(EnemieState.Moving);
                 break;
         }
     }
@@ -581,7 +581,7 @@ class BlueTektite extends Tektite {
     dropItem(): boolean {
         if (super.dropItem()) return true;
 
-        if (getRandomIntInclusive(1, 3) === 1) {
+        if (getOneRandom(3)) {
             this.Game.Items.addItem(new Item(
                 this.x + (this.width / 2) - (32 / 2),
                 this.y + (this.height / 2) - (32 / 2),
