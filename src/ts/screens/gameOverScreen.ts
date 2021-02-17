@@ -1,24 +1,19 @@
 enum GameOverScreenState {PlayerAnimation, HideGame, BlackScreen}
 
-class GameOverScreen {
-    Game: Game;
-
+class GameOverScreen extends AbstractScreen {
     music: HTMLAudioElement;
 
-    state: StateObserver;
-
-    hideGamePaneSpeed: number;
-    hideGamePanePosition: number;
-
     constructor(game: Game) {
-        this.Game = game;
+        super(
+            game,
+            new StateObserver(GameOverScreenState.PlayerAnimation),
+            "#000",
+            "GAME OVER",
+            "press enter to retry",
+            150
+        );
 
         this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
-
-        this.state = new StateObserver(GameOverScreenState.PlayerAnimation);
-
-        this.hideGamePaneSpeed = 8;
-        this.hideGamePanePosition = 0;
     }
 
     draw(): void {
@@ -34,7 +29,7 @@ class GameOverScreen {
 
             case GameOverScreenState.HideGame:
                 if (this.state.isFirstFrame) {
-                     this.Game.Panes.reset();
+                    this.Game.Panes.reset();
                 }
 
                 this.Game.Viewport.draw();
@@ -54,35 +49,10 @@ class GameOverScreen {
                     this.Game.restart();
                 }
 
-                this.Game.fillRect(
-                    0,
-                    0,
-                    this.Game.Canvas.width,
-                    this.Game.Canvas.height,
-                    "#000"
-                );
-
-                this.Game.fillText(
-                    "GAME OVER",
-                    this.Game.Canvas.width / 2,
-                    this.Game.Canvas.height / 3,
-                    '#fff',
-                    '24px',
-                    'center',
-                    'middle'
-                );
-
-                this.Game.fillText(
-                    "press enter to retry",
-                    this.Game.Canvas.width / 2,
-                    this.Game.Canvas.height / 3 * 2,
-                    '#fff',
-                    '16px',
-                    'center',
-                    'middle'
-                );
+                super.draw();
                 break;
         }
-        this.state.update(this.Game.dt);
+
+        super.updateObservers();
     }
 }

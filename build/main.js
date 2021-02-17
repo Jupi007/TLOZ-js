@@ -1,97 +1,3 @@
-class ProjectileManager {
-    constructor(game) {
-        this.Game = game;
-        this.projectiles = [];
-        this.shieldSound = AudioLoader.load("./sounds/effect/Shield.wav");
-    }
-    collisions() {
-        this.loopProjectiles((projectile) => {
-            if (projectile.state.is(ProjectileState.ShieldBlocked))
-                return;
-            if (projectile.hasEnemiesCollision) {
-                this.Game.EnemyManager.loopEnemies((enemy) => {
-                    if (movingBoxsCollision(enemy, projectile)) {
-                        if (projectile.enemiesCollisionCallback !== null)
-                            projectile.enemiesCollisionCallback(enemy);
-                        this.deleteProjectile(projectile);
-                    }
-                });
-            }
-            if (projectile.hasPlayerCollision) {
-                if (movingBoxsCollision(this.Game.Player.hitBox, projectile)) {
-                    if (projectile.canBeShieldBlocked &&
-                        this.Game.Player.isMovingObserver.is(false) &&
-                        this.Game.Player.isAttackObserver.is(false) &&
-                        Direction.areOpposite(this.Game.Player.direction, projectile.direction)) {
-                        this.shieldSound.play();
-                        projectile.state.setNextState(ProjectileState.ShieldBlocked);
-                        return;
-                    }
-                    if (projectile.playerCollisionCallback !== null)
-                        projectile.playerCollisionCallback(this.Game.Player);
-                    this.deleteProjectile(projectile);
-                }
-            }
-            if (movingBoxCanvasCollision(projectile, this.Game.Viewport)) {
-                this.deleteProjectile(projectile);
-            }
-        });
-    }
-    move() {
-        this.loopProjectiles((projectile) => {
-            switch (projectile.state.get()) {
-                case ProjectileState.Moving:
-                    projectile.x += projectile.dx;
-                    projectile.y += projectile.dy;
-                    break;
-                case ProjectileState.ShieldBlocked:
-                    if (Direction.isVertical(projectile.direction)) {
-                        projectile.x += projectile.dy / 2;
-                        projectile.y -= projectile.dy / 2;
-                    }
-                    else {
-                        projectile.x -= projectile.dx / 2;
-                        projectile.y += projectile.dx / 2;
-                    }
-                    break;
-            }
-        });
-    }
-    draw() {
-        this.loopProjectiles((projectile) => {
-            this.Game.Viewport.currentScene.drawImage(projectile.sprite, projectile.x, projectile.y, projectile.width, projectile.height);
-        });
-    }
-    updateObservers() {
-        this.loopProjectiles((projectile) => {
-            projectile.state.update(this.Game.dt);
-            if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
-                this.deleteProjectile(projectile);
-            }
-        });
-    }
-    addProjectile(projectile) {
-        this.projectiles.push(projectile);
-    }
-    deleteProjectile(projectile) {
-        if (projectile.deleteCallback !== null)
-            projectile.deleteCallback();
-        this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
-    }
-    deleteAllProjectiles() {
-        this.loopProjectiles((projectile) => {
-            if (projectile.deleteCallback !== null)
-                projectile.deleteCallback();
-        });
-        this.projectiles = [];
-    }
-    loopProjectiles(callback) {
-        this.projectiles.forEach((projectile) => {
-            callback(projectile);
-        });
-    }
-}
-
 class SpriteLoader {
     static load(src) {
         let sprite = new Image();
@@ -1269,57 +1175,6 @@ class Game {
     }
 }
 
-var GameOverScreenState;
-(function (GameOverScreenState) {
-    GameOverScreenState[GameOverScreenState["PlayerAnimation"] = 0] = "PlayerAnimation";
-    GameOverScreenState[GameOverScreenState["HideGame"] = 1] = "HideGame";
-    GameOverScreenState[GameOverScreenState["BlackScreen"] = 2] = "BlackScreen";
-})(GameOverScreenState || (GameOverScreenState = {}));
-class GameOverScreen {
-    constructor(game) {
-        this.Game = game;
-        this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
-        this.state = new StateObserver(GameOverScreenState.PlayerAnimation);
-        this.hideGamePaneSpeed = 8;
-        this.hideGamePanePosition = 0;
-    }
-    draw() {
-        switch (this.state.get()) {
-            case GameOverScreenState.PlayerAnimation:
-                this.Game.Viewport.draw();
-                this.Game.EnemyManager.draw();
-                this.Game.Hud.draw();
-                this.Game.Player.drawGameOver();
-                if (this.Game.Player.isDiedObserver.currentFrame > 145)
-                    this.state.setNextState(GameOverScreenState.HideGame);
-                break;
-            case GameOverScreenState.HideGame:
-                if (this.state.isFirstFrame) {
-                    this.Game.Panes.reset();
-                }
-                this.Game.Viewport.draw();
-                this.Game.Hud.draw();
-                this.Game.Panes.drawClose();
-                if (this.Game.Panes.isAnimationFinished) {
-                    this.state.setNextState(GameOverScreenState.BlackScreen);
-                }
-                break;
-            case GameOverScreenState.BlackScreen:
-                if (this.state.isFirstFrame)
-                    this.music.play();
-                if (this.Game.EventManager.isEnterPressed) {
-                    this.music.pause();
-                    this.Game.restart();
-                }
-                this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
-                this.Game.fillText("GAME OVER", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
-                this.Game.fillText("press enter to retry", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
-                break;
-        }
-        this.state.update(this.Game.dt);
-    }
-}
-
 class Hud {
     constructor(game) {
         this.Game = game;
@@ -2104,6 +1959,100 @@ class Player extends GameMovingBox {
     }
 }
 
+class ProjectileManager {
+    constructor(game) {
+        this.Game = game;
+        this.projectiles = [];
+        this.shieldSound = AudioLoader.load("./sounds/effect/Shield.wav");
+    }
+    collisions() {
+        this.loopProjectiles((projectile) => {
+            if (projectile.state.is(ProjectileState.ShieldBlocked))
+                return;
+            if (projectile.hasEnemiesCollision) {
+                this.Game.EnemyManager.loopEnemies((enemy) => {
+                    if (movingBoxsCollision(enemy, projectile)) {
+                        if (projectile.enemiesCollisionCallback !== null)
+                            projectile.enemiesCollisionCallback(enemy);
+                        this.deleteProjectile(projectile);
+                    }
+                });
+            }
+            if (projectile.hasPlayerCollision) {
+                if (movingBoxsCollision(this.Game.Player.hitBox, projectile)) {
+                    if (projectile.canBeShieldBlocked &&
+                        this.Game.Player.isMovingObserver.is(false) &&
+                        this.Game.Player.isAttackObserver.is(false) &&
+                        Direction.areOpposite(this.Game.Player.direction, projectile.direction)) {
+                        this.shieldSound.play();
+                        projectile.state.setNextState(ProjectileState.ShieldBlocked);
+                        return;
+                    }
+                    if (projectile.playerCollisionCallback !== null)
+                        projectile.playerCollisionCallback(this.Game.Player);
+                    this.deleteProjectile(projectile);
+                }
+            }
+            if (movingBoxCanvasCollision(projectile, this.Game.Viewport)) {
+                this.deleteProjectile(projectile);
+            }
+        });
+    }
+    move() {
+        this.loopProjectiles((projectile) => {
+            switch (projectile.state.get()) {
+                case ProjectileState.Moving:
+                    projectile.x += projectile.dx;
+                    projectile.y += projectile.dy;
+                    break;
+                case ProjectileState.ShieldBlocked:
+                    if (Direction.isVertical(projectile.direction)) {
+                        projectile.x += projectile.dy / 2;
+                        projectile.y -= projectile.dy / 2;
+                    }
+                    else {
+                        projectile.x -= projectile.dx / 2;
+                        projectile.y += projectile.dx / 2;
+                    }
+                    break;
+            }
+        });
+    }
+    draw() {
+        this.loopProjectiles((projectile) => {
+            this.Game.Viewport.currentScene.drawImage(projectile.sprite, projectile.x, projectile.y, projectile.width, projectile.height);
+        });
+    }
+    updateObservers() {
+        this.loopProjectiles((projectile) => {
+            projectile.state.update(this.Game.dt);
+            if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
+                this.deleteProjectile(projectile);
+            }
+        });
+    }
+    addProjectile(projectile) {
+        this.projectiles.push(projectile);
+    }
+    deleteProjectile(projectile) {
+        if (projectile.deleteCallback !== null)
+            projectile.deleteCallback();
+        this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
+    }
+    deleteAllProjectiles() {
+        this.loopProjectiles((projectile) => {
+            if (projectile.deleteCallback !== null)
+                projectile.deleteCallback();
+        });
+        this.projectiles = [];
+    }
+    loopProjectiles(callback) {
+        this.projectiles.forEach((projectile) => {
+            callback(projectile);
+        });
+    }
+}
+
 var ProjectileState;
 (function (ProjectileState) {
     ProjectileState[ProjectileState["Moving"] = 0] = "Moving";
@@ -2140,51 +2089,6 @@ class Projectile extends GameMovingBox {
                 break;
         }
         this.state = new StateObserver(ProjectileState.Moving);
-    }
-}
-
-var SplashScreenState;
-(function (SplashScreenState) {
-    SplashScreenState[SplashScreenState["BlackScreen"] = 0] = "BlackScreen";
-})(SplashScreenState || (SplashScreenState = {}));
-class SplashScreen {
-    constructor(game) {
-        this.Game = game;
-        this.music = AudioLoader.load("./sounds/music/intro.mp3", true);
-        this.state = new StateObserver(SplashScreenState.BlackScreen);
-        this.startMessageAnimation = new AnimationObserver(50, 2);
-    }
-    draw() {
-        switch (this.state.get()) {
-            case SplashScreenState.BlackScreen:
-                if (this.state.isFirstFrame)
-                    this.music.play();
-                this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
-                this.Game.fillText("TLOZ-JS GAME", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
-                if (this.state.currentFrame > 50) {
-                    if (this.Game.EventManager.isEnterPressed) {
-                        this.music.pause();
-                        this.Game.state.setNextState(GameState.Run);
-                    }
-                    if (this.startMessageAnimation.currentAnimationStep === 1) {
-                        this.Game.fillText("press enter to start", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
-                    }
-                    this.startMessageAnimation.update(this.Game.dt);
-                }
-                break;
-        }
-        this.state.update(this.Game.dt);
-    }
-}
-
-class StoppedScreen {
-    constructor(game) {
-        this.Game = game;
-    }
-    draw() {
-        this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "rgba(0, 0, 0, 0.5)");
-        this.Game.fillText("PAUSE", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
-        this.Game.fillText("press p to continue", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
     }
 }
 
@@ -2437,6 +2341,123 @@ class Viewport {
     }
 }
 
+class AbstractScreen {
+    constructor(game, state, backgroundColor, title, message, showMessageAfter = 0) {
+        this.Game = game;
+        this.title = title;
+        this.message = message;
+        this.showMessageAfter = showMessageAfter;
+        this.backgroundColor = backgroundColor;
+        this.state = state;
+        this.messageAnimation = new AnimationObserver(50, 2);
+    }
+    draw() {
+        this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, this.backgroundColor);
+        this.Game.fillText(this.title, this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
+        if (this.state.currentFrame > this.showMessageAfter) {
+            if (this.messageAnimation.currentAnimationStep === 1) {
+                this.Game.fillText(this.message, this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
+            }
+            this.messageAnimation.update(this.Game.dt);
+        }
+        ;
+    }
+    updateObservers() {
+        this.state.update(this.Game.dt);
+    }
+}
+
+var GameOverScreenState;
+(function (GameOverScreenState) {
+    GameOverScreenState[GameOverScreenState["PlayerAnimation"] = 0] = "PlayerAnimation";
+    GameOverScreenState[GameOverScreenState["HideGame"] = 1] = "HideGame";
+    GameOverScreenState[GameOverScreenState["BlackScreen"] = 2] = "BlackScreen";
+})(GameOverScreenState || (GameOverScreenState = {}));
+class GameOverScreen extends AbstractScreen {
+    constructor(game) {
+        super(game, new StateObserver(GameOverScreenState.PlayerAnimation), "#000", "GAME OVER", "press enter to retry", 150);
+        this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
+    }
+    draw() {
+        switch (this.state.get()) {
+            case GameOverScreenState.PlayerAnimation:
+                this.Game.Viewport.draw();
+                this.Game.EnemyManager.draw();
+                this.Game.Hud.draw();
+                this.Game.Player.drawGameOver();
+                if (this.Game.Player.isDiedObserver.currentFrame > 145)
+                    this.state.setNextState(GameOverScreenState.HideGame);
+                break;
+            case GameOverScreenState.HideGame:
+                if (this.state.isFirstFrame) {
+                    this.Game.Panes.reset();
+                }
+                this.Game.Viewport.draw();
+                this.Game.Hud.draw();
+                this.Game.Panes.drawClose();
+                if (this.Game.Panes.isAnimationFinished) {
+                    this.state.setNextState(GameOverScreenState.BlackScreen);
+                }
+                break;
+            case GameOverScreenState.BlackScreen:
+                if (this.state.isFirstFrame)
+                    this.music.play();
+                if (this.Game.EventManager.isEnterPressed) {
+                    this.music.pause();
+                    this.Game.restart();
+                }
+                super.draw();
+                break;
+        }
+        super.updateObservers();
+    }
+}
+
+var SplashScreenState;
+(function (SplashScreenState) {
+    SplashScreenState[SplashScreenState["BlackScreen"] = 0] = "BlackScreen";
+})(SplashScreenState || (SplashScreenState = {}));
+class SplashScreen extends AbstractScreen {
+    constructor(game) {
+        super(game, new StateObserver(SplashScreenState.BlackScreen), "#000", "TLOZ-JS GAME", "press enter to start", 150);
+        this.music = AudioLoader.load("./sounds/music/intro.mp3", true);
+    }
+    draw() {
+        switch (this.state.get()) {
+            case SplashScreenState.BlackScreen:
+                if (this.state.isFirstFrame)
+                    this.music.play();
+                super.draw();
+                if (this.state.currentFrame > this.showMessageAfter) {
+                    if (this.Game.EventManager.isEnterPressed) {
+                        this.music.pause();
+                        this.Game.state.setNextState(GameState.Run);
+                    }
+                }
+                break;
+        }
+        super.updateObservers();
+    }
+}
+
+var StoppedScreenState;
+(function (StoppedScreenState) {
+    StoppedScreenState[StoppedScreenState["BlackScreen"] = 0] = "BlackScreen";
+})(StoppedScreenState || (StoppedScreenState = {}));
+class StoppedScreen extends AbstractScreen {
+    constructor(game) {
+        super(game, new StateObserver(StoppedScreenState.BlackScreen), "rgba(0, 0, 0, 0.5)", "PAUSE", "press p to continue");
+    }
+    draw() {
+        switch (this.state.get()) {
+            case StoppedScreenState.BlackScreen:
+                super.draw();
+                break;
+        }
+        super.updateObservers();
+    }
+}
+
 var WinScreenState;
 (function (WinScreenState) {
     WinScreenState[WinScreenState["PlayerAnimation"] = 0] = "PlayerAnimation";
@@ -2444,12 +2465,11 @@ var WinScreenState;
     WinScreenState[WinScreenState["BlackScreen"] = 2] = "BlackScreen";
 })(WinScreenState || (WinScreenState = {}));
 ;
-class WinScreen {
+class WinScreen extends AbstractScreen {
     constructor(game) {
+        super(game, new StateObserver(WinScreenState.PlayerAnimation), "#000", "YOU WON", "press enter to play again", 150);
         this.killedSprites = [];
-        this.Game = game;
         this.music = AudioLoader.load("./sounds/music/ending.mp3", true);
-        this.state = new StateObserver(WinScreenState.PlayerAnimation);
         this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
         this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
     }
@@ -2464,7 +2484,7 @@ class WinScreen {
                 if (this.state.currentFrame > 120)
                     this.state.setNextState(WinScreenState.HideGame);
                 break;
-            case GameOverScreenState.HideGame:
+            case WinScreenState.HideGame:
                 if (this.state.isFirstFrame)
                     this.Game.Panes.reset();
                 this.Game.Viewport.draw();
@@ -2474,7 +2494,7 @@ class WinScreen {
                 this.Game.Hud.draw();
                 this.Game.Panes.drawClose();
                 if (this.Game.Panes.isAnimationFinished) {
-                    this.state.setNextState(GameOverScreenState.BlackScreen);
+                    this.state.setNextState(WinScreenState.BlackScreen);
                 }
                 break;
             case WinScreenState.BlackScreen:
@@ -2484,11 +2504,9 @@ class WinScreen {
                     this.music.pause();
                     this.Game.restart();
                 }
-                this.Game.fillRect(0, 0, this.Game.Canvas.width, this.Game.Canvas.height, "#000");
-                this.Game.fillText("YOU WON", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3, '#fff', '24px', 'center', 'middle');
-                this.Game.fillText("press enter to play again", this.Game.Canvas.width / 2, this.Game.Canvas.height / 3 * 2, '#fff', '16px', 'center', 'middle');
+                super.draw();
                 break;
         }
-        this.state.update(this.Game.dt);
+        super.updateObservers();
     }
 }
