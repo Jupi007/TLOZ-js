@@ -42,11 +42,13 @@ class EventManager {
                 this.isEnterPressed = keydown;
                 break;
             case "q":
+            case "Q":
                 if (keydown) {
                     this.isAttackPressed = true;
                 }
                 break;
             case "p":
+            case "P":
                 if (keydown && this.Game.state.isIn(GameState.Run, GameState.Stopped)) {
                     this.Game.state.setNextState(this.Game.state.is(GameState.Run)
                                      ? GameState.Stopped
