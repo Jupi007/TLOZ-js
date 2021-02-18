@@ -837,7 +837,7 @@ class EventManager {
         e.preventDefault();
     }
     visibilityEvent(e) {
-        if (document["hidden"])
+        if (document["hidden"] && this.Game.state.is(GameState.Run))
             this.Game.state.setNextState(GameState.Stopped);
     }
     newFrame() {
