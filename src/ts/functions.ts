@@ -42,14 +42,7 @@ function simpleMovingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolea
 }
 
 function movingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolean {
-    if (
-        (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
-        (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
-        (movingBox.y + movingBox.dy >= box2.y + box2.height) ||
-        (movingBox.y + movingBox.dy + movingBox.height <= box2.y)
-    ) {
-        return false;
-    } else {
+    if (simpleMovingBoxCollision(movingBox, box2)) {
         if (movingBox.dx > 0 && movingBox.x + movingBox.width + movingBox.dx > box2.x && movingBox.x + movingBox.width <= box2.x) {
             movingBox.x = box2.x - movingBox.width;
             movingBox.dx = 0;
@@ -69,6 +62,8 @@ function movingBoxCollision(movingBox: MovingBox, box2: SimpleBox): boolean {
 
         return true;
     }
+
+    return false;
 }
 
 function movingBoxsCollision(movingBox1: MovingBox, movingBox2): boolean {
@@ -91,15 +86,13 @@ function simpleMovingBoxCanvasCollision(movingBox: MovingBox, canvas: SimpleBox)
         movingBox.y + movingBox.dy >= 0
     ) {
         return false;
-    } else {
-        return true;
     }
+
+    return true;
 }
 
 function movingBoxCanvasCollision(movingBox: MovingBox, canvas: SimpleBox): boolean {
-    if (!simpleMovingBoxCanvasCollision(movingBox, canvas)) {
-        return false;
-    } else {
+    if (simpleMovingBoxCanvasCollision(movingBox, canvas)) {
         if (movingBox.x + movingBox.dx + movingBox.width > canvas.width) {
             movingBox.dx = 0;
             movingBox.x = canvas.width - movingBox.width;
@@ -119,6 +112,8 @@ function movingBoxCanvasCollision(movingBox: MovingBox, canvas: SimpleBox): bool
 
         return true;
     }
+
+    return false;
 }
 
 function simpleMovingBoxLineCollision(movingBox: MovingBox, lineCoordinate: number, direction: Direction): boolean {
@@ -144,13 +139,12 @@ function simpleMovingBoxLineCollision(movingBox: MovingBox, lineCoordinate: numb
             }
             break;
     }
+
+    return false;
 }
 
 function movingBoxLineCollision(movingBox: MovingBox, lineCoordinate: number, direction: Direction): boolean {
-    if (!simpleMovingBoxLineCollision(movingBox, lineCoordinate, direction)) {
-        return false;
-    }
-    else {
+    if (simpleMovingBoxLineCollision(movingBox, lineCoordinate, direction)) {
         switch (direction) {
             case Direction.Up:
                 movingBox.y = lineCoordinate + 1;
@@ -169,6 +163,9 @@ function movingBoxLineCollision(movingBox: MovingBox, lineCoordinate: number, di
                 movingBox.dx = 0;
                 break;
         }
+
         return true;
     }
+
+    return false;
 }
