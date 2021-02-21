@@ -1,3 +1,5 @@
+import { SpriteLoader } from "./Libraries/Loaders.js";
+
 export class Brick {
     sprite: HTMLImageElement;
     hasCollisions: boolean;
@@ -7,8 +9,6 @@ export class Brick {
         this.hasCollisions = hasCollisions;
     }
 }
-
-import { SpriteLoader } from "./AbstractClasses.js";
 
 export namespace Bricks {
     export class Default extends Brick {

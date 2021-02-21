@@ -1,6 +1,8 @@
 import { Game, GameState } from "./Game.js";
+
+import { Collisions } from "./Libraries/Collisions.js";
+
 import { Enemy, EnemyState } from "./Enemies.js";
-import { Collisions } from "./functions.js";
 
 export class EnemyManager {
     Game: Game;

@@ -1,6 +1,6 @@
 import { GameState } from "./Game.js";
-import { AnimationObserver } from "./Observers.js";
-import { SpriteLoader } from "./AbstractClasses.js";
+import { AnimationObserver } from "./Libraries/Observers.js";
+import { SpriteLoader } from "./Libraries/Loaders.js";
 export class Hud {
     constructor(game) {
         this.Game = game;

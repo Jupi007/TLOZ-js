@@ -1,4 +1,4 @@
-import { AnimationObserver } from "../Observers.js";
+import { AnimationObserver } from "../Libraries/Observers.js";
 export class AbstractScreen {
     constructor(game, state, backgroundColor, title, message, showMessageAfter = 0) {
         this.Game = game;

@@ -1,4 +1,4 @@
-import { SimpleBox } from "./AbstractClasses.js";
+import { SimpleBox } from "./Libraries/Boxes.js";
 
 export class Item extends SimpleBox {
     sprite: HTMLImageElement;

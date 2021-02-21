@@ -1,22 +1,6 @@
-import { SimpleBox, MovingBox, Direction } from "./AbstractClasses.js";
+import { SimpleBox, MovingBox } from "./Boxes.js";
+import { Direction } from "./Direction.js";
 
-// **********************
-// Random helper function
-// **********************
-
-export function getRandomIntInclusive(min: number, max: number): number {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-export function getOneRandom(number: number): boolean {
-    return getRandomIntInclusive(1, number) === 1;
-}
-
-// **************************
-// Collision helper functions
-// **************************
 export namespace Collisions {
     export function simpleBox(box1: SimpleBox, box2: SimpleBox): boolean {
         if (

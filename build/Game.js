@@ -1,4 +1,4 @@
-import { StateObserver } from "./Observers.js";
+import { StateObserver } from "./Libraries/Observers.js";
 import { World } from "./Map.js";
 import { Viewport } from "./Viewport.js";
 import { Player } from "./Player.js";
@@ -9,10 +9,10 @@ import { ItemManager } from "./ItemManager.js";
 import { EventManager } from "./EventManager.js";
 import { Hud } from "./Hud.js";
 import { Panes } from "./Panes.js";
-import { SplashScreen } from "./screens/SplashScreen.js";
-import { GameOverScreen } from "./screens/GameOverScreen.js";
-import { WinScreen } from "./screens/WinScreen.js";
-import { StoppedScreen } from "./screens/StoppedScreen.js";
+import { SplashScreen } from "./Screens/SplashScreen.js";
+import { GameOverScreen } from "./Screens/GameOverScreen.js";
+import { WinScreen } from "./Screens/WinScreen.js";
+import { StoppedScreen } from "./Screens/StoppedScreen.js";
 export var GameState;
 (function (GameState) {
     GameState[GameState["Splash"] = 0] = "Splash";

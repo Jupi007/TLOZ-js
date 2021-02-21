@@ -1,6 +1,6 @@
 import { GameState } from "./Game.js";
+import { Collisions } from "./Libraries/Collisions.js";
 import { EnemyState } from "./Enemies.js";
-import { Collisions } from "./functions.js";
 export class EnemyManager {
     constructor(game) {
         this.enemies = [];

@@ -1,7 +1,7 @@
 import { GameState } from "../Game.js";
+import { StateObserver } from "../Libraries/Observers.js";
+import { AudioLoader } from "../Libraries/Loaders.js";
 import { AbstractScreen } from "./AbstractScreen.js";
-import { StateObserver } from "../Observers.js";
-import { AudioLoader } from "../AbstractClasses.js";
 var SplashScreenState;
 (function (SplashScreenState) {
     SplashScreenState[SplashScreenState["BlackScreen"] = 0] = "BlackScreen";

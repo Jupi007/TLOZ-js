@@ -1,4 +1,4 @@
-import { SimpleBox } from "./AbstractClasses.js";
+import { SimpleBox } from "./Libraries/Boxes.js";
 export class Item extends SimpleBox {
     constructor(x, y, width, height, sprite, collisionCallback, collisionSound) {
         super();

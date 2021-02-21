@@ -1,5 +1,6 @@
 import { Game } from "../Game.js";
-import { StateObserver, AnimationObserver } from "../Observers.js";
+
+import { StateObserver, AnimationObserver } from "../Libraries/Observers.js";
 
 export class AbstractScreen {
     Game: Game;

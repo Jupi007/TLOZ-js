@@ -1,4 +1,4 @@
-import { Collisions } from "./functions.js";
+import { Collisions } from "./Libraries/Collisions.js";
 export class ItemManager {
     constructor(game) {
         this.Game = game;

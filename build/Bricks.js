@@ -1,10 +1,10 @@
+import { SpriteLoader } from "./Libraries/Loaders.js";
 export class Brick {
     constructor(src, hasCollisions = false) {
         this.sprite = SpriteLoader.load(src);
         this.hasCollisions = hasCollisions;
     }
 }
-import { SpriteLoader } from "./AbstractClasses.js";
 export var Bricks;
 (function (Bricks) {
     class Default extends Brick {

@@ -1,7 +1,11 @@
 import { Game } from "./Game.js";
+
+import { SimpleBox } from "./Libraries/Boxes.js";
+import { AudioLoader } from "./Libraries/Loaders.js";
+import { Direction } from "./Libraries/Direction.js";
+import { Random } from "./Libraries/Random.js";
+
 import { Enemy, Octorok, BlueOctorok, Moblin, BlueMoblin, Tektite, BlueTektite } from "./Enemies.js";
-import { SimpleBox, Direction, AudioLoader } from "./AbstractClasses.js";
-import { getOneRandom } from "./functions.js";
 
 export class Cell extends SimpleBox {
     brick: Brick;
@@ -188,21 +192,21 @@ export class World {
                 2 * 64,
                 2 * 64,
                 4,
-                getOneRandom(2) ? Direction.Right : Direction.Down
+                Random.getOneInt(2) ? Direction.Right : Direction.Down
             ),
             new BlueOctorok(
                 this.Game,
                 5 * 64,
                 5 * 64,
                 4,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
             new BlueOctorok(
                 this.Game,
                 13 * 64,
                 3 * 64,
                 4,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
         ];
 
@@ -233,7 +237,7 @@ export class World {
                 8 * 64,
                 4 * 64,
                 4,
-                getOneRandom(2) ? Direction.Right : Direction.Left
+                Random.getOneInt(2) ? Direction.Right : Direction.Left
             ),
             new BlueMoblin(
                 this.Game,
@@ -306,21 +310,21 @@ export class World {
                 6 * 64,
                 4 * 64,
                 3,
-                getOneRandom(2) ? Direction.Right : Direction.Left
+                Random.getOneInt(2) ? Direction.Right : Direction.Left
             ),
             new Octorok(
                 this.Game,
                 4 * 64,
                 6 * 64,
                 3,
-                getOneRandom(2) ? Direction.Right : Direction.Left
+                Random.getOneInt(2) ? Direction.Right : Direction.Left
             ),
             new Octorok(
                 this.Game,
                 7 * 64,
                 2 * 64,
                 3,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
@@ -350,28 +354,28 @@ export class World {
                 4 * 64,
                 5 * 64,
                 3,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 10 * 64,
                 3 * 64,
                 3,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 13 * 64,
                 7 * 64,
                 3,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 12 * 64,
                 6 * 64,
                 3,
-                getOneRandom(2) ? Direction.Right : Direction.Left
+                Random.getOneInt(2) ? Direction.Right : Direction.Left
             ),
         ];
 
@@ -394,28 +398,28 @@ export class World {
                 3 * 64,
                 4 * 64,
                 3,
-                getOneRandom(2) ? Direction.Right : Direction.Left
+                Random.getOneInt(2) ? Direction.Right : Direction.Left
             ),
             new Octorok(
                 this.Game,
                 5 * 64,
                 6 * 64,
                 3,
-                getOneRandom(2) ? Direction.Right : Direction.Left
+                Random.getOneInt(2) ? Direction.Right : Direction.Left
             ),
             new Octorok(
                 this.Game,
                 10 * 64,
                 5 * 64,
                 3,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
             new Octorok(
                 this.Game,
                 14 * 64,
                 2 * 64,
                 3,
-                getOneRandom(2) ? Direction.Left : Direction.Down
+                Random.getOneInt(2) ? Direction.Left : Direction.Down
             ),
         ];
 
@@ -484,28 +488,28 @@ export class World {
                 3 * 64,
                 5 * 64,
                 3,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
             new Moblin(
                 this.Game,
                 5 * 64,
                 7 * 64,
                 3,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
             new Moblin(
                 this.Game,
                 10 * 64,
                 5 * 64,
                 3,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
             new Moblin(
                 this.Game,
                 12 * 64,
                 7 * 64,
                 3,
-                getOneRandom(2) ? Direction.Up : Direction.Down
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
         ];
     }

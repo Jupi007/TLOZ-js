@@ -1,6 +1,8 @@
 import { Game } from "./Game.js"
-import { GameMovingBox, Direction } from "./AbstractClasses.js"
-import { StateObserver } from "./Observers.js"
+
+import { GameMovingBox } from "./Libraries/Boxes.js";
+import { Direction } from "./Libraries/Direction.js";
+import { StateObserver } from "./Libraries/Observers.js";
 
 export enum ProjectileState {Moving, ShieldBlocked}
 

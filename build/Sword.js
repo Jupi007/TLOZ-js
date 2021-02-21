@@ -1,6 +1,7 @@
+import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
+import { Direction } from "./Libraries/Direction.js";
+import { Collisions } from "./Libraries/Collisions.js";
 import { Projectile } from "./Projectiles.js";
-import { SpriteLoader, AudioLoader, Direction } from "./AbstractClasses.js";
-import { Collisions } from "./functions.js";
 export class Sword {
     constructor(game) {
         this.sprites = [];

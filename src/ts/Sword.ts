@@ -1,10 +1,13 @@
 import { Game, GameState } from "./Game.js";
+
+import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
+import { Direction } from "./Libraries/Direction.js";
+import { Collisions } from "./Libraries/Collisions.js";
+
 import { Enemy, EnemyState } from "./Enemies.js";
 import { EnemyManager } from "./EnemyManager.js";
 import { Projectile } from "./Projectiles.js";
 import { Scene } from "./Map.js";
-import { SpriteLoader, AudioLoader, Direction } from "./AbstractClasses.js";
-import { Collisions } from "./functions.js";
 
 export class Sword {
     Game: Game;

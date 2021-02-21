@@ -1,5 +1,5 @@
+import { StateObserver } from "../Libraries/Observers.js";
 import { AbstractScreen } from "./AbstractScreen.js";
-import { StateObserver } from "../Observers.js";
 var StoppedScreenState;
 (function (StoppedScreenState) {
     StoppedScreenState[StoppedScreenState["BlackScreen"] = 0] = "BlackScreen";

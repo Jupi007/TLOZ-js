@@ -1,6 +1,8 @@
 import { Game } from "./Game.js";
+
+import { Collisions } from "./Libraries/Collisions.js";
+
 import { Item } from "./Items.js";
-import { Collisions } from "./functions.js";
 
 export class ItemManager {
     Game: Game;

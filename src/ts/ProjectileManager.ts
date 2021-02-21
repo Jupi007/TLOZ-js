@@ -1,7 +1,10 @@
 import { Game } from "./Game.js";
-import { Projectile, ProjectileState} from "./Projectiles.js";
-import { AudioLoader, Direction } from "./AbstractClasses.js";
-import { Collisions } from "./functions.js";
+
+import { AudioLoader } from "./Libraries/Loaders.js";
+import { Direction } from "./Libraries/Direction.js";
+import { Collisions } from "./Libraries/Collisions.js";
+
+import { Projectile, ProjectileState } from "./Projectiles.js";
 
 export class ProjectileManager {
     Game: Game;

@@ -1,7 +1,12 @@
 import { Game } from "./Game.js";
-import { MovingBoxHitBox, GameMovingBox, SpriteLoader, AudioLoader, Direction } from "./AbstractClasses.js";
-import { getRandomIntInclusive, getOneRandom, Collisions } from "./functions.js";
-import { StateObserver, AnimationObserver } from "./Observers.js";
+
+import { MovingBoxHitBox, GameMovingBox } from "./Libraries/Boxes.js";
+import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
+import { Direction } from "./Libraries/Direction.js";
+import { Collisions } from "./Libraries/Collisions.js";
+import { Random } from "./Libraries/Random.js";
+import { StateObserver, AnimationObserver } from "./Libraries/Observers.js";
+
 import { Item } from "./Items.js";
 import { Projectile } from "./Projectiles.js";
 
@@ -96,7 +101,7 @@ export class Enemy extends GameMovingBox {
     }
 
     dropItem(): boolean {
-        if (this.Game.Player.hp < this.Game.Player.maxHp && getOneRandom(3)) {
+        if (this.Game.Player.hp < this.Game.Player.maxHp && Random.getOneInt(3)) {
             this.Game.ItemManager.addItem(new Item(
                 this.x + (this.width / 2) - (24 / 2),
                 this.y + (this.height / 2) - (24 / 2),
@@ -193,8 +198,8 @@ export class SimpleMovingEnemy extends Enemy {
                     }
                 }
                 if (this.state.currentFrame > 50) {
-                    if (getOneRandom(50)) this.state.setNextState(EnemyState.Attack);
-                    if (getOneRandom(50)) this.state.setNextState(EnemyState.ChangeDirection);
+                    if (Random.getOneInt(50)) this.state.setNextState(EnemyState.Attack);
+                    if (Random.getOneInt(50)) this.state.setNextState(EnemyState.ChangeDirection);
                 }
                 break;
             case EnemyState.ChangeDirection:
@@ -367,7 +372,7 @@ export class BlueOctorok extends Octorok {
     dropItem(): boolean {
         if (super.dropItem()) return true;
 
-        if (getOneRandom(3)) {
+        if (Random.getOneInt(3)) {
             this.Game.ItemManager.addItem(new Item(
                 this.x + (this.width / 2) - (32 / 2),
                 this.y + (this.height / 2) - (32 / 2),
@@ -468,7 +473,7 @@ export class BlueMoblin extends Moblin {
     dropItem(): boolean {
         if (super.dropItem()) return true;
 
-        if (getOneRandom(3)) {
+        if (Random.getOneInt(3)) {
             this.Game.ItemManager.addItem(new Item(
                 this.x + (this.width / 2) - (32 / 2),
                 this.y + (this.height / 2) - (32 / 2),
@@ -512,17 +517,17 @@ export class Tektite extends Enemy {
             case EnemyState.Moving:
                 if (this.state.isFirstFrame) {
                     this.dy = -6;
-                    this.dx = this.realDy / 2 * ((getOneRandom(2)) ? -1 : 1);
+                    this.dx = this.realDy / 2 * ((Random.getOneInt(2)) ? -1 : 1);
                 }
                 else {
                     this.dy = this.realDy + (0.1 * this.Game.dt);
                 }
-                if ((this.state.currentFrame > 60 && getOneRandom(50)) || this.state.currentFrame > 100) this.state.setNextState(EnemyState.Wait);
+                if ((this.state.currentFrame > 60 && Random.getOneInt(50)) || this.state.currentFrame > 100) this.state.setNextState(EnemyState.Wait);
                 break;
             case EnemyState.Wait:
                 this.dx = 0;
                 this.dy = 0;
-                if ((this.state.currentFrame > 30 && getOneRandom(50)) || this.state.currentFrame > 60)  this.state.setNextState(EnemyState.Moving);
+                if ((this.state.currentFrame > 30 && Random.getOneInt(50)) || this.state.currentFrame > 60)  this.state.setNextState(EnemyState.Moving);
                 break;
         }
     }
@@ -588,7 +593,7 @@ export class BlueTektite extends Tektite {
     dropItem(): boolean {
         if (super.dropItem()) return true;
 
-        if (getOneRandom(3)) {
+        if (Random.getOneInt(3)) {
             this.Game.ItemManager.addItem(new Item(
                 this.x + (this.width / 2) - (32 / 2),
                 this.y + (this.height / 2) - (32 / 2),

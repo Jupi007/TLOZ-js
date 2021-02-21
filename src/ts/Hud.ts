@@ -1,7 +1,8 @@
 import { Game, GameState } from "./Game.js";
-import { AnimationObserver } from "./Observers.js";
-import { SpriteLoader } from "./AbstractClasses.js";
-import { getRandomIntInclusive } from "./functions.js";
+
+import { AnimationObserver } from "./Libraries/Observers.js";
+import { SpriteLoader } from "./Libraries/Loaders.js";
+import { Random } from "./Libraries/Random.js";
 
 export class Hud {
     Game: Game;

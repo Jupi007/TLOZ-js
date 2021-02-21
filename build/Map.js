@@ -1,6 +1,8 @@
+import { SimpleBox } from "./Libraries/Boxes.js";
+import { AudioLoader } from "./Libraries/Loaders.js";
+import { Direction } from "./Libraries/Direction.js";
+import { Random } from "./Libraries/Random.js";
 import { Octorok, BlueOctorok, Moblin, BlueMoblin, Tektite, BlueTektite } from "./Enemies.js";
-import { SimpleBox, Direction, AudioLoader } from "./AbstractClasses.js";
-import { getOneRandom } from "./functions.js";
 export class Cell extends SimpleBox {
     constructor(x, y, size, brick) {
         super();
@@ -103,9 +105,9 @@ export class World {
         ]);
         this.map[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[0][0].enemies = [
-            new BlueOctorok(this.Game, 2 * 64, 2 * 64, 4, getOneRandom(2) ? Direction.Right : Direction.Down),
-            new BlueOctorok(this.Game, 5 * 64, 5 * 64, 4, getOneRandom(2) ? Direction.Up : Direction.Down),
-            new BlueOctorok(this.Game, 13 * 64, 3 * 64, 4, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new BlueOctorok(this.Game, 2 * 64, 2 * 64, 4, Random.getOneInt(2) ? Direction.Right : Direction.Down),
+            new BlueOctorok(this.Game, 5 * 64, 5 * 64, 4, Random.getOneInt(2) ? Direction.Up : Direction.Down),
+            new BlueOctorok(this.Game, 13 * 64, 3 * 64, 4, Random.getOneInt(2) ? Direction.Up : Direction.Down),
         ];
         this.map[1][0].loadBricks([
             [new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall(), new Bricks.WhiteWall()],
@@ -123,7 +125,7 @@ export class World {
         this.map[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[1][0].enemies = [
             new BlueMoblin(this.Game, 5 * 64, 8 * 64, 4, Direction.Up),
-            new BlueMoblin(this.Game, 8 * 64, 4 * 64, 4, getOneRandom(2) ? Direction.Right : Direction.Left),
+            new BlueMoblin(this.Game, 8 * 64, 4 * 64, 4, Random.getOneInt(2) ? Direction.Right : Direction.Left),
             new BlueMoblin(this.Game, 10 * 64, 2 * 64, 4, Direction.Down),
         ];
         this.map[2][0].loadBricks([
@@ -160,9 +162,9 @@ export class World {
             [new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall()]
         ]);
         this.map[0][1].enemies = [
-            new Octorok(this.Game, 6 * 64, 4 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 4 * 64, 6 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 7 * 64, 2 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 6 * 64, 4 * 64, 3, Random.getOneInt(2) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 4 * 64, 6 * 64, 3, Random.getOneInt(2) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 7 * 64, 2 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
             new Octorok(this.Game, 13 * 64, 2 * 64, 3, Direction.Down),
         ];
         this.map[1][1].loadBricks([
@@ -179,10 +181,10 @@ export class World {
             [new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall()]
         ]);
         this.map[1][1].enemies = [
-            new Octorok(this.Game, 4 * 64, 5 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 10 * 64, 3 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 13 * 64, 7 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 12 * 64, 6 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 4 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 10 * 64, 3 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 13 * 64, 7 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 12 * 64, 6 * 64, 3, Random.getOneInt(2) ? Direction.Right : Direction.Left),
         ];
         this.map[2][1].loadBricks([
             [new Bricks.Wall(), new Bricks.Wall(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree()],
@@ -198,10 +200,10 @@ export class World {
             [new Bricks.Wall(), new Bricks.Wall(), new Bricks.Tree(), new Bricks.Default(), new Bricks.Tree(), new Bricks.Default(), new Bricks.Tree(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(), new Bricks.Default(), new Bricks.Tree(), new Bricks.Default(), new Bricks.Tree(), new Bricks.Default(), new Bricks.Tree()],
         ]);
         this.map[2][1].enemies = [
-            new Octorok(this.Game, 3 * 64, 4 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 5 * 64, 6 * 64, 3, getOneRandom(2) ? Direction.Right : Direction.Left),
-            new Octorok(this.Game, 10 * 64, 5 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
-            new Octorok(this.Game, 14 * 64, 2 * 64, 3, getOneRandom(2) ? Direction.Left : Direction.Down),
+            new Octorok(this.Game, 3 * 64, 4 * 64, 3, Random.getOneInt(2) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 5 * 64, 6 * 64, 3, Random.getOneInt(2) ? Direction.Right : Direction.Left),
+            new Octorok(this.Game, 10 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
+            new Octorok(this.Game, 14 * 64, 2 * 64, 3, Random.getOneInt(2) ? Direction.Left : Direction.Down),
         ];
         this.map[0][2].loadBricks([
             [new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(), new Bricks.Wall(), new Bricks.Wall()],
@@ -249,10 +251,10 @@ export class World {
             [new Bricks.Wall(), new Bricks.Wall(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree(), new Bricks.Tree()],
         ]);
         this.map[2][2].enemies = [
-            new Moblin(this.Game, 3 * 64, 5 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
-            new Moblin(this.Game, 5 * 64, 7 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
-            new Moblin(this.Game, 10 * 64, 5 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
-            new Moblin(this.Game, 12 * 64, 7 * 64, 3, getOneRandom(2) ? Direction.Up : Direction.Down),
+            new Moblin(this.Game, 3 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
+            new Moblin(this.Game, 5 * 64, 7 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
+            new Moblin(this.Game, 10 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
+            new Moblin(this.Game, 12 * 64, 7 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
         ];
     }
     getSpawnScene() {

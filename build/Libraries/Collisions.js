@@ -1,18 +1,4 @@
-import { Direction } from "./AbstractClasses.js";
-// **********************
-// Random helper function
-// **********************
-export function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-export function getOneRandom(number) {
-    return getRandomIntInclusive(1, number) === 1;
-}
-// **************************
-// Collision helper functions
-// **************************
+import { Direction } from "./Direction.js";
 export var Collisions;
 (function (Collisions) {
     function simpleBox(box1, box2) {

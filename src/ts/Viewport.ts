@@ -1,9 +1,11 @@
 import { Game, GameState } from "./Game.js";
+
+import { Direction } from "./Libraries/Direction.js";
+import { StateObserver } from "./Libraries/Observers.js";
+
 import { Scene } from "./Map.js";
 import { Enemy, EnemyState } from "./Enemies.js";
 import { EnemyManager } from "./EnemyManager.js";
-import { Direction } from "./AbstractClasses.js";
-import { StateObserver } from "./Observers.js";
 
 export class Viewport {
     Game: Game;

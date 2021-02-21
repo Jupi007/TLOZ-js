@@ -1,6 +1,8 @@
 import { Game } from "../Game.js";
+
+import { StateObserver } from "../Libraries/Observers.js";
+
 import { AbstractScreen } from "./AbstractScreen.js";
-import { StateObserver } from "../Observers.js";
 
 enum StoppedScreenState {BlackScreen}
 

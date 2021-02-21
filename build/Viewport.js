@@ -1,7 +1,7 @@
 import { GameState } from "./Game.js";
+import { Direction } from "./Libraries/Direction.js";
 import { EnemyState } from "./Enemies.js";
 import { EnemyManager } from "./EnemyManager.js";
-import { Direction } from "./AbstractClasses.js";
 export class Viewport {
     constructor(game) {
         this.Game = game;

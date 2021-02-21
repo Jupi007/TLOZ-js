@@ -1,5 +1,6 @@
-import { GameMovingBox, Direction } from "./AbstractClasses.js";
-import { StateObserver } from "./Observers.js";
+import { GameMovingBox } from "./Libraries/Boxes.js";
+import { Direction } from "./Libraries/Direction.js";
+import { StateObserver } from "./Libraries/Observers.js";
 export var ProjectileState;
 (function (ProjectileState) {
     ProjectileState[ProjectileState["Moving"] = 0] = "Moving";

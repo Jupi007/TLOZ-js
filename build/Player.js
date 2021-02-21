@@ -1,7 +1,9 @@
 import { GameState } from "./Game.js";
-import { MovingBoxHitBox, GameMovingBox, SpriteLoader, AudioLoader, Direction } from "./AbstractClasses.js";
-import { StateObserver, AnimationObserver } from "./Observers.js";
-import { Collisions } from "./functions.js";
+import { MovingBoxHitBox, GameMovingBox } from "./Libraries/Boxes.js";
+import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
+import { Direction } from "./Libraries/Direction.js";
+import { Collisions } from "./Libraries/Collisions.js";
+import { StateObserver, AnimationObserver } from "./Libraries/Observers.js";
 export class Player extends GameMovingBox {
     constructor(game) {
         super(game);
