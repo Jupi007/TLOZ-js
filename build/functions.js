@@ -1,50 +1,41 @@
-import { SimpleBox, MovingBox, Direction } from "./AbstractClasses.js";
-
+import { Direction } from "./AbstractClasses.js";
 // **********************
 // Random helper function
 // **********************
-
-export function getRandomIntInclusive(min: number, max: number): number {
+export function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-export function getOneRandom(number: number): boolean {
+export function getOneRandom(number) {
     return getRandomIntInclusive(1, number) === 1;
 }
-
 // **************************
 // Collision helper functions
 // **************************
-export namespace Collisions {
-    export function simpleBox(box1: SimpleBox, box2: SimpleBox): boolean {
-        if (
-            (box1.x >= box2.x + box2.width) ||
+export var Collisions;
+(function (Collisions) {
+    function simpleBox(box1, box2) {
+        if ((box1.x >= box2.x + box2.width) ||
             (box1.x + box1.width <= box2.x) ||
             (box1.y >= box2.y + box2.height) ||
-            (box1.y + box1.height <= box2.y)
-        ) {
+            (box1.y + box1.height <= box2.y)) {
             return false;
         }
-
         return true;
     }
-
-    export function simpleMovingBox(movingBox: MovingBox, box2: SimpleBox): boolean {
-        if (
-            (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
+    Collisions.simpleBox = simpleBox;
+    function simpleMovingBox(movingBox, box2) {
+        if ((movingBox.x + movingBox.dx >= box2.x + box2.width) ||
             (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
             (movingBox.y + movingBox.dy >= box2.y + box2.height) ||
-            (movingBox.y + movingBox.dy + movingBox.height <= box2.y)
-        ) {
+            (movingBox.y + movingBox.dy + movingBox.height <= box2.y)) {
             return false;
         }
-
         return true;
     }
-
-    export function movingBox(movingBox: MovingBox, box2: SimpleBox): boolean {
+    Collisions.simpleMovingBox = simpleMovingBox;
+    function movingBox(movingBox, box2) {
         if (this.simpleMovingBox(movingBox, box2)) {
             if (movingBox.dx > 0 && movingBox.x + movingBox.width + movingBox.dx > box2.x && movingBox.x + movingBox.width <= box2.x) {
                 movingBox.x = box2.x - movingBox.width;
@@ -62,39 +53,32 @@ export namespace Collisions {
                 movingBox.y = box2.y + box2.height;
                 movingBox.dy = 0;
             }
-
             return true;
         }
-
         return false;
     }
-
-    export function movingBoxs(movingBox1: MovingBox, movingBox2): boolean {
-        if (
-            (movingBox1.x + movingBox1.dx >= movingBox2.x + movingBox2.width + movingBox1.dx) ||
+    Collisions.movingBox = movingBox;
+    function movingBoxs(movingBox1, movingBox2) {
+        if ((movingBox1.x + movingBox1.dx >= movingBox2.x + movingBox2.width + movingBox1.dx) ||
             (movingBox1.x + movingBox1.dx + movingBox1.width <= movingBox2.x + movingBox1.dx) ||
             (movingBox1.y + movingBox1.dy >= movingBox2.y + movingBox2.height + movingBox1.dy) ||
-            (movingBox1.y + movingBox1.dy + movingBox1.height <= movingBox2.y + movingBox1.dy)
-        ) {
+            (movingBox1.y + movingBox1.dy + movingBox1.height <= movingBox2.y + movingBox1.dy)) {
             return false;
         }
         return true;
     }
-
-    export function simpleMovingBoxCanvas(movingBox: MovingBox, canvas: SimpleBox): boolean {
-        if (
-            movingBox.x + movingBox.dx + movingBox.width <= canvas.width &&
+    Collisions.movingBoxs = movingBoxs;
+    function simpleMovingBoxCanvas(movingBox, canvas) {
+        if (movingBox.x + movingBox.dx + movingBox.width <= canvas.width &&
             movingBox.x + movingBox.dx >= 0 &&
             movingBox.y + movingBox.dy + movingBox.height <= canvas.height &&
-            movingBox.y + movingBox.dy >= 0
-        ) {
+            movingBox.y + movingBox.dy >= 0) {
             return false;
         }
-
         return true;
     }
-
-    export function movingBoxCanvas(movingBox: MovingBox, canvas: SimpleBox): boolean {
+    Collisions.simpleMovingBoxCanvas = simpleMovingBoxCanvas;
+    function movingBoxCanvas(movingBox, canvas) {
         if (this.simpleMovingBoxCanvas(movingBox, canvas)) {
             if (movingBox.x + movingBox.dx + movingBox.width > canvas.width) {
                 movingBox.dx = 0;
@@ -112,14 +96,12 @@ export namespace Collisions {
                 movingBox.dy = 0;
                 movingBox.y = 0;
             }
-
             return true;
         }
-
         return false;
     }
-
-    export function simpleMovingBoxLine(movingBox: MovingBox, lineCoordinate: number, direction: Direction): boolean {
+    Collisions.movingBoxCanvas = movingBoxCanvas;
+    function simpleMovingBoxLine(movingBox, lineCoordinate, direction) {
         switch (direction) {
             case Direction.Up:
                 if (movingBox.y + movingBox.dy < lineCoordinate) {
@@ -142,11 +124,10 @@ export namespace Collisions {
                 }
                 break;
         }
-
         return false;
     }
-
-    export function movingBoxLine(movingBox: MovingBox, lineCoordinate: number, direction: Direction): boolean {
+    Collisions.simpleMovingBoxLine = simpleMovingBoxLine;
+    function movingBoxLine(movingBox, lineCoordinate, direction) {
         if (this.simpleMovingBoxLine(movingBox, lineCoordinate, direction)) {
             switch (direction) {
                 case Direction.Up:
@@ -166,10 +147,9 @@ export namespace Collisions {
                     movingBox.dx = 0;
                     break;
             }
-
             return true;
         }
-
         return false;
     }
-}
+    Collisions.movingBoxLine = movingBoxLine;
+})(Collisions || (Collisions = {}));

@@ -7,9 +7,9 @@ gulp.task('build-ts', function(){
 	return gulp.src('src/ts/**/*.ts')
 
     .pipe(typescript({
-        target: 'ES6'
+        target: 'es2020',
+        moduleResolution: "node"
     }))
-	.pipe(concat('main.js'))
 
 	.pipe(gulp.dest('build'));
 });

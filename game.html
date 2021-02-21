@@ -48,16 +48,16 @@
         </p>
     </div>
 
-    <script src="./build/main.js"></script>
+    <script type="module">
+        import {Game} from './build/Game.js';
 
-    <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
             let button = document.getElementById("startButton");
             let canvas = document.getElementById("canvas");
 
             button.addEventListener("click", (e) => {
-                Game = new Game(canvas);
-                Game.run();
+                let game = new Game(canvas);
+                game.run();
                 button.remove();
             });
         });
