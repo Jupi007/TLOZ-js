@@ -63,7 +63,10 @@ export class EventManager {
     }
 
     visibilityEvent(e): void {
-        if (document["hidden"] && this.Game.state.is(GameState.Run)) this.Game.state.setNextState(GameState.Stopped);
+        if (document["hidden"] && this.Game.state.is(GameState.Run)) {
+            this.Game.state.setNextState(GameState.Stopped)
+            this.Game.lastTime = null;
+        }
     }
 
     newFrame(): void {

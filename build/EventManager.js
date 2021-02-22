@@ -54,8 +54,10 @@ export class EventManager {
         e.preventDefault();
     }
     visibilityEvent(e) {
-        if (document["hidden"] && this.Game.state.is(GameState.Run))
+        if (document["hidden"] && this.Game.state.is(GameState.Run)) {
             this.Game.state.setNextState(GameState.Stopped);
+            this.Game.lastTime = null;
+        }
     }
     newFrame() {
         if (this.isAttackPressed) {
