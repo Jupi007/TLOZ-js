@@ -16,16 +16,28 @@ export namespace Collisions {
     }
 
     export function simpleMovingBox(movingBox: MovingBox, box2: SimpleBox): boolean {
-        if (
-            (movingBox.x + movingBox.dx >= box2.x + box2.width) ||
-            (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
-            (movingBox.y + movingBox.dy >= box2.y + box2.height) ||
-            (movingBox.y + movingBox.dy + movingBox.height <= box2.y)
-        ) {
-            return false;
+        let box1 = {
+            x: movingBox.x,
+            y: movingBox.y,
+            width: movingBox.width,
+            height: movingBox.height
+        };
+
+        if (movingBox.dx > 0) {
+            box1.width += movingBox.dx;
+        }
+        else if (movingBox.dx < 0) {
+            box1.x += movingBox.dx;
         }
 
-        return true;
+        if (movingBox.dy > 0) {
+            box1.height += movingBox.dy;
+        }
+        else if (movingBox.dy < 0) {
+            box1.y += movingBox.dy;
+        }
+
+        return this.simpleBox(box1, box2);
     }
 
     export function movingBox(movingBox: MovingBox, box2: SimpleBox): boolean {

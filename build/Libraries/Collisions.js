@@ -12,13 +12,25 @@ export var Collisions;
     }
     Collisions.simpleBox = simpleBox;
     function simpleMovingBox(movingBox, box2) {
-        if ((movingBox.x + movingBox.dx >= box2.x + box2.width) ||
-            (movingBox.x + movingBox.dx + movingBox.width <= box2.x) ||
-            (movingBox.y + movingBox.dy >= box2.y + box2.height) ||
-            (movingBox.y + movingBox.dy + movingBox.height <= box2.y)) {
-            return false;
+        let box1 = {
+            x: movingBox.x,
+            y: movingBox.y,
+            width: movingBox.width,
+            height: movingBox.height
+        };
+        if (movingBox.dx > 0) {
+            box1.width += movingBox.dx;
         }
-        return true;
+        else if (movingBox.dx < 0) {
+            box1.x += movingBox.dx;
+        }
+        if (movingBox.dy > 0) {
+            box1.height += movingBox.dy;
+        }
+        else if (movingBox.dy < 0) {
+            box1.y += movingBox.dy;
+        }
+        return this.simpleBox(box1, box2);
     }
     Collisions.simpleMovingBox = simpleMovingBox;
     function movingBox(movingBox, box2) {

@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Collisions } from "../build/functions.js";
+import { Collisions } from "../build/Libraries/Collisions.js";
 
 describe('Test Collisions.simpleBox()', () => {
     it('should have collision', () => {
@@ -46,12 +46,12 @@ describe('Test Collisions.simpleMovingBox()', () => {
             y: 0,
             width: 5,
             height: 5,
-            dx: 3,
+            dx: 50,
             dy: 0,
         };
 
         let box2 = {
-            x: 5,
+            x: 10,
             y: 0,
             width: 5,
             height: 5,
