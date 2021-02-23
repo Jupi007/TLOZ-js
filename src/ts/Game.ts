@@ -47,9 +47,6 @@ export class Game {
         this.Canvas = canvas;
         this.ctx = this.Canvas.getContext("2d");
 
-        this.lastTime = null;
-        this.dt = null;
-
         this.init();
     }
 
@@ -85,6 +82,9 @@ export class Game {
         });
 
         this.state = new StateObserver(GameState.Splash);
+
+        this.lastTime = null;
+        this.dt = null;
     }
 
     restart(): void {
