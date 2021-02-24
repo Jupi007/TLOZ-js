@@ -8,43 +8,6 @@ export abstract class SimpleBox {
     height: number;
 }
 
-export abstract class GameMovingBox extends SimpleBox {
-    Game: Game;
-
-    _dx = 0;
-    _dy = 0;
-    direction:Direction;
-
-    constructor(game: Game) {
-        super();
-        this.Game = game;
-    }
-
-    get dx(): number {
-        return this._dx * this.Game.dt;
-    }
-
-    get dy(): number {
-        return this._dy * this.Game.dt;
-    }
-
-    get realDx(): number {
-        return this._dx;
-    }
-
-    get realDy(): number {
-        return this._dy;
-    }
-
-    set dx(dx) {
-        this._dx = dx;
-    }
-
-    set dy(dy) {
-        this._dy = dy;
-    }
-}
-
 export abstract class MovingBox extends SimpleBox {
     dx = 0;
     dy = 0;

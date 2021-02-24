@@ -45,17 +45,17 @@ export class ProjectileManager {
         this.loopProjectiles((projectile) => {
             switch (projectile.state.get()) {
                 case ProjectileState.Moving:
-                    projectile.x += projectile.dx;
-                    projectile.y += projectile.dy;
+                    projectile.x += projectile.dx * this.Game.dt;
+                    projectile.y += projectile.dy * this.Game.dt;
                     break;
                 case ProjectileState.ShieldBlocked:
                     if (Direction.isVertical(projectile.direction)) {
-                        projectile.x += projectile.dy / 2;
-                        projectile.y -= projectile.dy / 2;
+                        projectile.x += projectile.dy / 2 * this.Game.dt;
+                        projectile.y -= projectile.dy / 2 * this.Game.dt;
                     }
                     else {
-                        projectile.x -= projectile.dx / 2;
-                        projectile.y += projectile.dx / 2;
+                        projectile.x -= projectile.dx / 2 * this.Game.dt;
+                        projectile.y += projectile.dx / 2 * this.Game.dt;
                     }
                     break;
             }

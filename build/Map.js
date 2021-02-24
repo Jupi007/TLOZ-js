@@ -83,7 +83,7 @@ export class World {
         this.spawnSceneColl = 1;
         this.spawnSceneRow = 2;
         this.spawnCellColl = 7;
-        this.spawnCellRow = 6;
+        this.spawnCellRow = 5.5;
         for (let c = 0; c < this.nbCol; c++) {
             this.map[c] = [];
             for (let r = 0; r < this.nbRow; r++) {

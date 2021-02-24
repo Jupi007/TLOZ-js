@@ -1,15 +1,16 @@
 import { GameState } from "./Game.js";
-import { MovingBoxHitBox, GameMovingBox } from "./Libraries/Boxes.js";
+import { MovingBoxHitBox, MovingBox } from "./Libraries/Boxes.js";
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
 import { StateObserver, AnimationObserver } from "./Libraries/Observers.js";
-export class Player extends GameMovingBox {
+export class Player extends MovingBox {
     constructor(game) {
-        super(game);
+        super();
         this.sprites = [];
         this.attackSprites = [];
         this.killedSprites = [];
+        this.Game = game;
         this.isMovingObserver = new StateObserver(false);
         this.isAttackObserver = new StateObserver(false);
         this.isDiedObserver = new StateObserver(false);
@@ -137,16 +138,16 @@ export class Player extends GameMovingBox {
     }
     slideSceneAnimationMove() {
         if (this.Game.Viewport.dc === 1) {
-            this.dx = -this.Game.Viewport.slideSceneAnimationSpeed;
+            this.dx = -this.Game.Viewport.slideSceneAnimationSpeed * this.Game.dt;
         }
         else if (this.Game.Viewport.dc === -1) {
-            this.dx = this.Game.Viewport.slideSceneAnimationSpeed;
+            this.dx = this.Game.Viewport.slideSceneAnimationSpeed * this.Game.dt;
         }
         else if (this.Game.Viewport.dr === 1) {
-            this.dy = -this.Game.Viewport.slideSceneAnimationSpeed;
+            this.dy = -this.Game.Viewport.slideSceneAnimationSpeed * this.Game.dt;
         }
         else if (this.Game.Viewport.dr === -1) {
-            this.dy = this.Game.Viewport.slideSceneAnimationSpeed;
+            this.dy = this.Game.Viewport.slideSceneAnimationSpeed * this.Game.dt;
         }
         Collisions.movingBoxCanvas(this, this.Game.Viewport);
         this.move();
@@ -173,29 +174,29 @@ export class Player extends GameMovingBox {
         });
         if (this.direction === Direction.Up || this.direction === Direction.Down) {
             if (halfLeftCollision && !halfRightCollision) {
-                this.dx = this.speed;
+                this.dx = this.speed * this.Game.dt;
             }
             else if (!halfLeftCollision && halfRightCollision) {
-                this.dx = -this.speed;
+                this.dx = -this.speed * this.Game.dt;
             }
         }
         else if (this.direction === Direction.Left || this.direction === Direction.Right) {
             if (halfUpCollision && !halfDownCollision) {
-                this.dy = this.speed;
+                this.dy = this.speed * this.Game.dt;
             }
             else if (!halfUpCollision && halfDownCollision) {
-                this.dy = -this.speed;
+                this.dy = -this.speed * this.Game.dt;
             }
         }
     }
     collisions() {
-        if (Collisions.movingBoxCanvas(this, this.Game.Viewport)) {
-            this.Game.Viewport.slideScene(this.direction);
-        }
         this.passBetweenBoxesHelper();
         this.Game.Viewport.loopCollision((cell, col, row) => {
             Collisions.movingBox(this.hitBox, cell);
         });
+        if (Collisions.movingBoxCanvas(this, this.Game.Viewport)) {
+            this.Game.Viewport.slideScene(this.direction);
+        }
     }
     listenEvents() {
         if (this.isKnockBackObserver.is(true)) {
@@ -203,16 +204,16 @@ export class Player extends GameMovingBox {
             this.isAttackObserver.setNextState(false);
             switch (this.direction) {
                 case Direction.Up:
-                    this.dy = this.knockBackSpeed;
+                    this.dy = this.knockBackSpeed * this.Game.dt;
                     break;
                 case Direction.Right:
-                    this.dx = -this.knockBackSpeed;
+                    this.dx = -this.knockBackSpeed * this.Game.dt;
                     break;
                 case Direction.Down:
-                    this.dy = -this.knockBackSpeed;
+                    this.dy = -this.knockBackSpeed * this.Game.dt;
                     break;
                 case Direction.Left:
-                    this.dx = this.knockBackSpeed;
+                    this.dx = this.knockBackSpeed * this.Game.dt;
                     break;
             }
             Collisions.movingBoxCanvas(this, this.Game.Viewport);
@@ -223,12 +224,12 @@ export class Player extends GameMovingBox {
             !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
             if (this.Game.EventManager.isDownPressed) {
                 if (this.isAttackObserver.is(false))
-                    this.dy = this.speed;
+                    this.dy = this.speed * this.Game.dt;
                 this.direction = Direction.Down;
             }
             else if (this.Game.EventManager.isUpPressed) {
                 if (this.isAttackObserver.is(false))
-                    this.dy = -this.speed;
+                    this.dy = -this.speed * this.Game.dt;
                 this.direction = Direction.Up;
             }
         }
@@ -236,12 +237,12 @@ export class Player extends GameMovingBox {
             !(this.Game.EventManager.isRightPressed && this.Game.EventManager.isLeftPressed)) {
             if (this.Game.EventManager.isRightPressed) {
                 if (this.isAttackObserver.is(false))
-                    this.dx = this.speed;
+                    this.dx = this.speed * this.Game.dt;
                 this.direction = Direction.Right;
             }
             else if (this.Game.EventManager.isLeftPressed) {
                 if (this.isAttackObserver.is(false))
-                    this.dx = -this.speed;
+                    this.dx = -this.speed * this.Game.dt;
                 this.direction = Direction.Left;
             }
         }

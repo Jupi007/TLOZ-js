@@ -1,12 +1,14 @@
 import { Game } from "./Game.js"
 
-import { GameMovingBox } from "./Libraries/Boxes.js";
+import { MovingBox } from "./Libraries/Boxes.js";
 import { Direction } from "./Libraries/Direction.js";
 import { StateObserver } from "./Libraries/Observers.js";
 
 export enum ProjectileState {Moving, ShieldBlocked}
 
-export class Projectile extends GameMovingBox {
+export class Projectile extends MovingBox {
+    Game: Game;
+
     speed: number;
 
     sprite: HTMLImageElement;
@@ -38,7 +40,9 @@ export class Projectile extends GameMovingBox {
         enemiesCollisionCallback: Function,
         deleteCallback: Function
     ) {
-        super(game);
+        super();
+
+        this.Game = game;
 
         this.x = x;
         this.y = y;

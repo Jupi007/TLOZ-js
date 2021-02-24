@@ -1,31 +1,5 @@
 export class SimpleBox {
 }
-export class GameMovingBox extends SimpleBox {
-    constructor(game) {
-        super();
-        this._dx = 0;
-        this._dy = 0;
-        this.Game = game;
-    }
-    get dx() {
-        return this._dx * this.Game.dt;
-    }
-    get dy() {
-        return this._dy * this.Game.dt;
-    }
-    get realDx() {
-        return this._dx;
-    }
-    get realDy() {
-        return this._dy;
-    }
-    set dx(dx) {
-        this._dx = dx;
-    }
-    set dy(dy) {
-        this._dy = dy;
-    }
-}
 export class MovingBox extends SimpleBox {
     constructor() {
         super(...arguments);

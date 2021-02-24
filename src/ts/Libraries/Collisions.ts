@@ -27,14 +27,16 @@ export namespace Collisions {
             box1.width += movingBox.dx;
         }
         else if (movingBox.dx < 0) {
-            box1.x += movingBox.dx;
+            box1.x -= Math.abs(movingBox.dx);
+            box1.width += Math.abs(movingBox.dx);
         }
 
         if (movingBox.dy > 0) {
             box1.height += movingBox.dy;
         }
         else if (movingBox.dy < 0) {
-            box1.y += movingBox.dy;
+            box1.y -= Math.abs(movingBox.dy);
+            box1.height += Math.abs(movingBox.dy);
         }
 
         return this.simpleBox(box1, box2);
@@ -42,21 +44,17 @@ export namespace Collisions {
 
     export function movingBox(movingBox: MovingBox, box2: SimpleBox): boolean {
         if (this.simpleMovingBox(movingBox, box2)) {
-            if (movingBox.dx > 0 && movingBox.x + movingBox.width + movingBox.dx > box2.x && movingBox.x + movingBox.width <= box2.x) {
-                movingBox.x = box2.x - movingBox.width;
-                movingBox.dx = 0;
+            if (movingBox.dx > 0 && movingBox.x + movingBox.width <= box2.x) {
+                movingBox.dx = box2.x - (movingBox.x + movingBox.width);
             }
-            if (movingBox.dx < 0 && movingBox.x + movingBox.dx < box2.x + box2.width && movingBox.x >= box2.x + box2.width) {
-                movingBox.x = box2.x + box2.width;
-                movingBox.dx = 0;
+            else if (movingBox.dx < 0 && movingBox.x >= box2.x + box2.width) {
+                movingBox.dx = (box2.x + box2.width) - movingBox.x;
             }
-            if (movingBox.dy > 0 && movingBox.y + movingBox.height + movingBox.dy > box2.y && movingBox.y + movingBox.height <= box2.y) {
-                movingBox.y = box2.y - movingBox.height;
-                movingBox.dy = 0;
+            if (movingBox.dy > 0 && movingBox.y + movingBox.height <= box2.y) {
+                movingBox.dy = box2.y - (movingBox.y + movingBox.height);
             }
-            if (movingBox.dy < 0 && movingBox.y + movingBox.dy < box2.y + box2.height && movingBox.y >= box2.y + box2.height) {
-                movingBox.y = box2.y + box2.height;
-                movingBox.dy = 0;
+            else if (movingBox.dy < 0 && movingBox.y >= box2.y + box2.height) {
+                movingBox.dy = (box2.y + box2.height) - movingBox.y;
             }
 
             return true;

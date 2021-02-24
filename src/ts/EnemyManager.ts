@@ -49,10 +49,6 @@ export class EnemyManager {
                 enemy.playerCollision();
             }
 
-            if (enemy.hasViewportCollision && Collisions.movingBoxCanvas(enemy, this.Game.Viewport)) {
-                enemy.viewportCollision();
-            }
-
             let helper = enemy.passBetweenBoxesHelper();
 
             if (enemy.hasBricksCollisions) {
@@ -64,6 +60,10 @@ export class EnemyManager {
             }
 
             enemy.customCollision();
+
+            if (enemy.hasViewportCollision && Collisions.movingBoxCanvas(enemy, this.Game.Viewport)) {
+                enemy.viewportCollision();
+            }
         });
     }
 

@@ -1,4 +1,4 @@
-import { MovingBoxHitBox, GameMovingBox } from "./Libraries/Boxes.js";
+import { MovingBoxHitBox, MovingBox } from "./Libraries/Boxes.js";
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
@@ -15,10 +15,11 @@ export var EnemyState;
     EnemyState[EnemyState["Killed"] = 4] = "Killed";
 })(EnemyState || (EnemyState = {}));
 ;
-export class Enemy extends GameMovingBox {
+export class Enemy extends MovingBox {
     constructor(game, x, y, width, height, speed, direction) {
-        super(game);
+        super();
         this.killedSprites = [];
+        this.Game = game;
         this.Game = game;
         this.x = x;
         this.y = y;
@@ -100,16 +101,16 @@ export class SimpleMovingEnemy extends Enemy {
                 if (this.isInvincibleObserver.is(false)) {
                     switch (this.direction) {
                         case Direction.Down:
-                            this.dy = this.speed;
+                            this.dy = this.speed * this.Game.dt;
                             break;
                         case Direction.Up:
-                            this.dy = -this.speed;
+                            this.dy = -this.speed * this.Game.dt;
                             break;
                         case Direction.Right:
-                            this.dx = this.speed;
+                            this.dx = this.speed * this.Game.dt;
                             break;
                         case Direction.Left:
-                            this.dx = -this.speed;
+                            this.dx = -this.speed * this.Game.dt;
                             break;
                     }
                 }
@@ -162,21 +163,21 @@ export class SimpleMovingEnemy extends Enemy {
         });
         if (this.direction === Direction.Up || this.direction === Direction.Down) {
             if (halfLeftCollision && !halfRightCollision) {
-                this.dx = this.speed;
+                this.dx = this.speed * this.Game.dt;
                 return true;
             }
             else if (!halfLeftCollision && halfRightCollision) {
-                this.dx = -this.speed;
+                this.dx = -this.speed * this.Game.dt;
                 return true;
             }
         }
         else if (this.direction === Direction.Left || this.direction === Direction.Right) {
             if (halfUpCollision && !halfDownCollision) {
-                this.dy = this.speed;
+                this.dy = this.speed * this.Game.dt;
                 return true;
             }
             else if (!halfUpCollision && halfDownCollision) {
-                this.dy = -this.speed;
+                this.dy = -this.speed * this.Game.dt;
                 return true;
             }
         }
@@ -313,7 +314,7 @@ export class BlueMoblin extends Moblin {
 }
 export class Tektite extends Enemy {
     constructor(game, x, y) {
-        super(game, x, y, 64, 64, 3, Direction.Down);
+        super(game, x, y, 64, 64, 6, Direction.Down);
         this.damage = 1;
         this.hp = 1;
         // this.hasPlayerCollision = true;
@@ -330,10 +331,10 @@ export class Tektite extends Enemy {
             case EnemyState.Moving:
                 if (this.state.isFirstFrame) {
                     this.dy = -6;
-                    this.dx = this.realDy / 2 * ((Random.getOneInt(2)) ? -1 : 1);
+                    this.dx = this.dy / 2 * ((Random.getOneInt(2)) ? -1 : 1);
                 }
                 else {
-                    this.dy = this.realDy + (0.1 * this.Game.dt);
+                    this.dy = this.dy + (0.1 * this.Game.dt);
                 }
                 if ((this.state.currentFrame > 60 && Random.getOneInt(50)) || this.state.currentFrame > 100)
                     this.state.setNextState(EnemyState.Wait);
@@ -348,23 +349,23 @@ export class Tektite extends Enemy {
     }
     customCollision() {
         if (Collisions.movingBoxLine(this, 0, Direction.Up)) {
-            this.dy = this.realDy / 2;
+            this.dy = this.dy / 2;
         }
         if (Collisions.movingBoxLine(this, this.Game.Viewport.height, Direction.Down)) {
             this.state.setNextState(EnemyState.Wait);
         }
         if (Collisions.simpleMovingBoxLine(this, 0, Direction.Left)) {
-            this.dx = -this.realDx;
+            this.dx = -this.dx;
         }
         if (Collisions.simpleMovingBoxLine(this, this.Game.Viewport.width, Direction.Right)) {
-            this.dx = -this.realDx;
+            this.dx = -this.dx;
         }
     }
     move() {
         if (this.state.is(EnemyState.Killed))
             return;
-        this.y += this.dy;
-        this.x += this.dx;
+        this.y += this.dy * this.Game.dt;
+        this.x += this.dx * this.Game.dt;
     }
     draw() {
         let sprite;

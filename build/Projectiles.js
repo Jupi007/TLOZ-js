@@ -1,4 +1,4 @@
-import { GameMovingBox } from "./Libraries/Boxes.js";
+import { MovingBox } from "./Libraries/Boxes.js";
 import { Direction } from "./Libraries/Direction.js";
 import { StateObserver } from "./Libraries/Observers.js";
 export var ProjectileState;
@@ -6,9 +6,10 @@ export var ProjectileState;
     ProjectileState[ProjectileState["Moving"] = 0] = "Moving";
     ProjectileState[ProjectileState["ShieldBlocked"] = 1] = "ShieldBlocked";
 })(ProjectileState || (ProjectileState = {}));
-export class Projectile extends GameMovingBox {
+export class Projectile extends MovingBox {
     constructor(game, x, y, width, height, speed, direction, sprite, hasPlayerCollision, canBeShieldBlocked, playerCollisionCallback, hasEnemiesCollision, enemiesCollisionCallback, deleteCallback) {
-        super(game);
+        super();
+        this.Game = game;
         this.x = x;
         this.y = y;
         this.width = width;
