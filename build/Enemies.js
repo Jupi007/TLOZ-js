@@ -16,17 +16,9 @@ export var EnemyState;
 })(EnemyState || (EnemyState = {}));
 ;
 export class Enemy extends MovingBox {
-    constructor(game, x, y, width, height, speed, direction) {
+    constructor() {
         super();
         this.killedSprites = [];
-        this.Game = game;
-        this.Game = game;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.speed = speed;
-        this.direction = direction;
         this.hasPlayerCollision = true;
         this.hasViewportCollision = true;
         this.hasBricksCollisions = true;
@@ -77,8 +69,8 @@ export class Enemy extends MovingBox {
     }
 }
 export class SimpleMovingEnemy extends Enemy {
-    constructor(game, x, y, width, height, speed, direction) {
-        super(game, x, y, width, height, speed, direction);
+    constructor() {
+        super();
         this.sprites = [];
         this.state = new StateObserver(EnemyState.ChangeDirection);
         // HalfHitBoxs are used by the passBetweenHelper() function
@@ -199,7 +191,14 @@ export class SimpleMovingEnemy extends Enemy {
 }
 export class Octorok extends SimpleMovingEnemy {
     constructor(game, x, y, speed, direction) {
-        super(game, x, y, 64, 64, speed, direction);
+        super();
+        this.Game = game;
+        this.x = x;
+        this.y = y;
+        this.width = 64;
+        this.height = 64;
+        this.speed = speed;
+        this.direction = direction;
         this.damage = 1;
         this.hp = 1;
         this.sprites[Direction.Up] = [];
@@ -253,7 +252,14 @@ export class BlueOctorok extends Octorok {
 }
 export class Moblin extends SimpleMovingEnemy {
     constructor(game, x, y, speed, direction) {
-        super(game, x, y, 64, 64, speed, direction);
+        super();
+        this.Game = game;
+        this.x = x;
+        this.y = y;
+        this.width = 64;
+        this.height = 64;
+        this.speed = speed;
+        this.direction = direction;
         this.damage = 1;
         this.hp = 1;
         this.sprites[Direction.Up] = [];
@@ -314,7 +320,14 @@ export class BlueMoblin extends Moblin {
 }
 export class Tektite extends Enemy {
     constructor(game, x, y) {
-        super(game, x, y, 64, 64, 6, Direction.Down);
+        super();
+        this.Game = game;
+        this.x = x;
+        this.y = y;
+        this.width = 64;
+        this.height = 64;
+        this.speed = 6;
+        this.direction = Direction.Down;
         this.damage = 1;
         this.hp = 1;
         // this.hasPlayerCollision = true;

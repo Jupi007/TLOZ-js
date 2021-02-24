@@ -36,21 +36,8 @@ export class Enemy extends MovingBox {
     dieSound: HTMLAudioElement;
     hitSound: HTMLAudioElement;
 
-    constructor(game: Game, x: number, y: number, width: number, height: number, speed: number, direction: Direction) {
+    constructor() {
         super();
-
-        this.Game = game;
-
-        this.Game = game;
-
-        this.x = x;
-        this.y = y;
-
-        this.width = width;
-        this.height = height;
-
-        this.speed = speed;
-        this.direction = direction;
 
         this.hasPlayerCollision = true;
         this.hasViewportCollision = true;
@@ -130,8 +117,8 @@ export class SimpleMovingEnemy extends Enemy {
     halfUpHitBox: MovingBoxHitBox;
     halfDownHitBox: MovingBoxHitBox;
 
-    constructor(game: Game, x: number, y: number, width: number, height: number, speed: number, direction: Direction) {
-        super(game, x, y, width, height, speed, direction);
+    constructor() {
+        super();
 
         this.state = new StateObserver(EnemyState.ChangeDirection);
 
@@ -305,7 +292,19 @@ export class SimpleMovingEnemy extends Enemy {
 
 export class Octorok extends SimpleMovingEnemy {
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super(game, x, y, 64, 64, speed, direction);
+        super();
+
+        this.Game = game;
+
+        this.x = x;
+        this.y = y;
+
+        this.width = 64;
+        this.height = 64;
+
+        this.speed = speed;
+
+        this.direction = direction;
 
         this.damage = 1;
         this.hp = 1;
@@ -397,7 +396,19 @@ export class Moblin extends SimpleMovingEnemy {
     arrowSprites: HTMLImageElement[];
 
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super(game, x, y, 64, 64, speed, direction);
+        super();
+
+        this.Game = game;
+
+        this.x = x;
+        this.y = y;
+
+        this.width = 64;
+        this.height = 64;
+
+        this.speed = speed;
+
+        this.direction = direction;
 
         this.damage = 1;
         this.hp = 1;
@@ -501,7 +512,19 @@ export class Tektite extends Enemy {
     speedY: number;
 
     constructor(game: Game, x: number, y: number) {
-        super(game, x, y, 64, 64, 6, Direction.Down);
+        super();
+
+        this.Game = game;
+
+        this.x = x;
+        this.y = y;
+
+        this.width = 64;
+        this.height = 64;
+
+        this.speed = 6;
+
+        this.direction = Direction.Down;
 
         this.damage = 1;
         this.hp = 1;
