@@ -7,8 +7,8 @@ import { Collisions } from "./Libraries/Collisions.js";
 import { Random } from "./Libraries/Random.js";
 import { StateObserver, AnimationObserver } from "./Libraries/Observers.js";
 
-import { Item } from "./Items.js";
-import { Projectile } from "./Projectiles.js";
+import { Heart, Clock } from "./Items.js";
+import { Fireball, Arrow } from "./Projectiles.js";
 
 export enum EnemyState {Moving, ChangeDirection, Wait, Attack, Killed};
 
@@ -93,14 +93,10 @@ export class Enemy extends MovingBox {
 
     dropItem(): boolean {
         if (this.Game.Player.hp < this.Game.Player.maxHp && Random.getOneInt(3)) {
-            this.Game.ItemManager.addItem(new Item(
+            this.Game.ItemManager.addItem(new Heart(
+                this.Game,
                 this.x + (this.width / 2) - (24 / 2),
-                this.y + (this.height / 2) - (24 / 2),
-                24,
-                24,
-                SpriteLoader.load('./sprites/png/full-heart.png'),
-                () => this.Game.Player.recoverHealth(2),
-                AudioLoader.load("./sounds/effect/Get_Heart.wav")
+                this.y + (this.height / 2) - (24 / 2)
             ));
             return true;
         }
@@ -329,21 +325,13 @@ export class Octorok extends SimpleMovingEnemy {
     }
 
     attack(): void {
-        this.Game.ProjectileManager.addProjectile(new Projectile(
+        this.Game.ProjectileManager.addProjectile(new Fireball(
             this.Game,
             this.x + (this.width / 2) - (24 / 2),
             this.y + (this.height / 2) - (30 / 2),
-            24,
-            30,
             8,
             this.direction,
-            SpriteLoader.load("./sprites/png/fireball.png"),
-            true, // Enable collision on Player
-            true, // Enable shield block
-            (player) => player.takeDamage(this.damage),
-            false, // Disable collisions on Enemies
-            null,
-            null,
+            this.damage
         ));
     }
 }
@@ -376,14 +364,10 @@ export class BlueOctorok extends Octorok {
         if (super.dropItem()) return true;
 
         if (Random.getOneInt(3)) {
-            this.Game.ItemManager.addItem(new Item(
+            this.Game.ItemManager.addItem(new Clock(
+                this.Game,
                 this.x + (this.width / 2) - (32 / 2),
-                this.y + (this.height / 2) - (32 / 2),
-                32,
-                32,
-                SpriteLoader.load('./sprites/png/clock.png'),
-                () => this.Game.Player.getInvicibility(400),
-                AudioLoader.load("./sounds/effect/Get_Item.wav")
+                this.y + (this.height / 2) - (32 / 2)
             ));
             return true;
         }
@@ -430,33 +414,16 @@ export class Moblin extends SimpleMovingEnemy {
         this.sprites[Direction.Left][2] = SpriteLoader.load("./sprites/png/moblin-left2.png");
 
         this.spritesAnimation = new AnimationObserver(25 / speed, 2);
-
-        this.arrowSprites = [];
-        this.arrowSprites[Direction.Up] = SpriteLoader.load("./sprites/png/arrow-up.png");
-        this.arrowSprites[Direction.Down] = SpriteLoader.load("./sprites/png/arrow-down.png");
-        this.arrowSprites[Direction.Right] = SpriteLoader.load("./sprites/png/arrow-right.png");
-        this.arrowSprites[Direction.Left] = SpriteLoader.load("./sprites/png/arrow-left.png");
     }
 
     attack(): void {
-        let width = (this.direction === Direction.Up || this.direction === Direction.Down) ? 20 : 64;
-        let height = (this.direction === Direction.Up || this.direction === Direction.Down) ? 64 : 20;
-
-        this.Game.ProjectileManager.addProjectile(new Projectile(
+        this.Game.ProjectileManager.addProjectile(new Arrow(
             this.Game,
             this.x + (this.width / 2) - (24 / 2),
             this.y + (this.height / 2) - (30 / 2),
-            width,
-            height,
             8,
             this.direction,
-            this.arrowSprites[this.direction],
-            true, // Enable collision on Player
-            true, // Enable shield block
-            (player) => player.takeDamage(this.damage),
-            false, // Disable collisions on Enemies
-            null,
-            null,
+            this.damage
         ));
     }
 }
@@ -489,14 +456,10 @@ export class BlueMoblin extends Moblin {
         if (super.dropItem()) return true;
 
         if (Random.getOneInt(3)) {
-            this.Game.ItemManager.addItem(new Item(
+            this.Game.ItemManager.addItem(new Clock(
+                this.Game,
                 this.x + (this.width / 2) - (32 / 2),
-                this.y + (this.height / 2) - (32 / 2),
-                32,
-                32,
-                SpriteLoader.load('./sprites/png/clock.png'),
-                () => this.Game.Player.getInvicibility(400),
-                AudioLoader.load("./sounds/effect/Get_Item.wav")
+                this.y + (this.height / 2) - (32 / 2)
             ));
             return true;
         }
@@ -624,14 +587,10 @@ export class BlueTektite extends Tektite {
         if (super.dropItem()) return true;
 
         if (Random.getOneInt(3)) {
-            this.Game.ItemManager.addItem(new Item(
+            this.Game.ItemManager.addItem(new Clock(
+                this.Game,
                 this.x + (this.width / 2) - (32 / 2),
-                this.y + (this.height / 2) - (32 / 2),
-                32,
-                32,
-                SpriteLoader.load('./sprites/png/clock.png'),
-                () => this.Game.Player.getInvicibility(400),
-                AudioLoader.load("./sounds/effect/Get_Item.wav")
+                this.y + (this.height / 2) - (32 / 2)
             ));
             return true;
         }

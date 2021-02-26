@@ -1,7 +1,7 @@
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
-import { Projectile } from "./Projectiles.js";
+import { Sword as SwordProjectile } from "./Projectiles.js";
 export class Sword {
     constructor(game) {
         this.sprites = [];
@@ -16,6 +16,7 @@ export class Sword {
         this.slashSound = AudioLoader.load("./sounds/effect/Sword_Slash.wav");
         this.flyingSound = AudioLoader.load("./sounds/effect/Sword_Shoot.wav");
         this.isFlying = false;
+        this.damage = 1;
     }
     get direction() {
         return this.Game.Player.direction;
@@ -76,7 +77,7 @@ export class Sword {
         if (this.Game.Player.isAttackObserver.get()) {
             this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (Collisions.simpleMovingBox(enemy, this)) {
-                    enemy.takeDamage(1);
+                    enemy.takeDamage(this.damage);
                 }
             });
         }
@@ -91,9 +92,7 @@ export class Sword {
             && this.Game.Player.isFullLife) {
             this.flyingSound.play();
             this.isFlying = true;
-            this.Game.ProjectileManager.addProjectile(new Projectile(this.Game, this.x, this.y, this.width, this.height, this.Game.Player.speed * 2, this.direction, this.sprites[this.direction], false, // Disable collision on Player
-            false, null, true, // Enable collisions on Enemies
-            (enemy) => enemy.takeDamage(1), () => this.isFlying = false));
+            this.Game.ProjectileManager.addProjectile(new SwordProjectile(this.Game, this.x, this.y, this.Game.Player.speed * 2, this.direction, this.damage));
         }
     }
 }

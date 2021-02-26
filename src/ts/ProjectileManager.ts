@@ -47,7 +47,7 @@ export class ProjectileManager {
                         return;
                     }
 
-                    if (projectile.playerCollisionCallback !== null) projectile.playerCollisionCallback(this.Game.Player);
+                    if (projectile.playerCollisionCallback !== null) projectile.playerCollisionCallback();
                     this.deleteProjectile(projectile);
                 }
             }
@@ -83,7 +83,7 @@ export class ProjectileManager {
     draw(): void {
         this.loopProjectiles((projectile) => {
             this.Game.Viewport.currentScene.drawImage(
-                projectile.sprite,
+                projectile.sprites[projectile.direction],
                 projectile.x,
                 projectile.y,
                 projectile.width,

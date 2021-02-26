@@ -32,7 +32,7 @@ export class ProjectileManager {
                         return;
                     }
                     if (projectile.playerCollisionCallback !== null)
-                        projectile.playerCollisionCallback(this.Game.Player);
+                        projectile.playerCollisionCallback();
                     this.deleteProjectile(projectile);
                 }
             }
@@ -63,7 +63,7 @@ export class ProjectileManager {
     }
     draw() {
         this.loopProjectiles((projectile) => {
-            this.Game.Viewport.currentScene.drawImage(projectile.sprite, projectile.x, projectile.y, projectile.width, projectile.height);
+            this.Game.Viewport.currentScene.drawImage(projectile.sprites[projectile.direction], projectile.x, projectile.y, projectile.width, projectile.height);
         });
     }
     updateObservers() {

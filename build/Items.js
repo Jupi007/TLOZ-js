@@ -1,13 +1,37 @@
 import { SimpleBox } from "./Libraries/Boxes.js";
+import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 export class Item extends SimpleBox {
-    constructor(x, y, width, height, sprite, collisionCallback, collisionSound) {
+    constructor() {
         super();
+    }
+}
+export class Heart extends Item {
+    constructor(game, x, y) {
+        super();
+        this.Game = game;
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
-        this.sprite = sprite;
-        this.collisionCallback = collisionCallback;
-        this.collisionSound = collisionSound;
+        this.width = 24;
+        this.height = 24;
+        this.sprite = SpriteLoader.load('./sprites/png/full-heart.png');
+        this.collisionSound = AudioLoader.load("./sounds/effect/Get_Heart.wav");
+    }
+    collisionCallback() {
+        this.Game.Player.recoverHealth(2);
+    }
+}
+export class Clock extends Item {
+    constructor(game, x, y) {
+        super();
+        this.Game = game;
+        this.x = x;
+        this.y = y;
+        this.width = 32;
+        this.height = 32;
+        this.sprite = SpriteLoader.load('./sprites/png/clock.png');
+        this.collisionSound = AudioLoader.load("./sounds/effect/Get_Item.wav");
+    }
+    collisionCallback() {
+        this.Game.Player.getInvicibility(400);
     }
 }
