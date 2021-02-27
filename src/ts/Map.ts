@@ -6,6 +6,7 @@ import { Direction } from "./Libraries/Direction.js";
 import { Random } from "./Libraries/Random.js";
 
 import { Enemy, Octorok, BlueOctorok, Moblin, BlueMoblin, Tektite, BlueTektite } from "./Enemies.js";
+import { Brick, Bricks, BrickCollection } from "./Bricks.js";
 
 export class Cell extends SimpleBox {
     brick: Brick;
@@ -27,12 +28,12 @@ export class Scene {
 
     cells: Cell[][] = [];
 
-    x:number;
-    y:number;
+    x: number;
+    y: number;
 
     // Coordinates of the scene in the overworld
-    c:number;
-    r:number;
+    c: number;
+    r: number;
 
     nbRow: number;
     nbCol: number;
@@ -63,8 +64,8 @@ export class Scene {
 
         this.music = music;
 
-        this.defaultBrick = new Bricks.Default();
-        this.defaultWallBrick = new Bricks.Wall();
+        this.defaultBrick = BrickCollection.get("default");
+        this.defaultWallBrick = BrickCollection.get("wall");
 
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
@@ -83,9 +84,9 @@ export class Scene {
                 this.cells[0][r].brick = this.defaultWallBrick;
             }
         }
-        if (this.c == this.World.nbCol-1) {
+        if (this.c == this.World.nbCol - 1) {
             for (let r = 0; r < this.nbRow; r++) {
-                this.cells[this.nbCol-1][r].brick = this.defaultWallBrick;
+                this.cells[this.nbCol - 1][r].brick = this.defaultWallBrick;
             }
         }
         if (this.r == 0) {
@@ -93,9 +94,9 @@ export class Scene {
                 this.cells[c][0].brick = this.defaultWallBrick;
             }
         }
-        if (this.r == this.World.nbRow-1) {
+        if (this.r == this.World.nbRow - 1) {
             for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][this.nbRow-1].brick = this.defaultWallBrick;
+                this.cells[c][this.nbRow - 1].brick = this.defaultWallBrick;
             }
         }
     }
@@ -108,10 +109,10 @@ export class Scene {
         return this.cells[col][row];
     }
 
-    loadBricks(bricks: Brick[][]): void {
+    loadBricks(bricks: any[][]): void {
         bricks.forEach((row, r) => {
-            row.forEach((brick, c) => {
-                this.cells[c][r].brick = brick;
+            row.forEach((brickName, c) => {
+                this.cells[c][r].brick = BrickCollection.get(brickName);
             });
         });
     }
@@ -132,8 +133,6 @@ export class Scene {
         );
     }
 }
-
-import { Brick, Bricks } from "./Bricks.js";
 
 export class World {
     Game: Game;
@@ -173,17 +172,17 @@ export class World {
         }
 
         this.map[0][0].loadBricks([
-            [new Bricks.WhiteWall(), new Bricks.WhiteWall(),            new Bricks.WhiteWall(),    new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),   new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),        new Bricks.WhiteWall(),           new Bricks.WhiteWall()       ],
-            [new Bricks.WhiteWall(), new Bricks.WhiteWall(),            new Bricks.WhiteWall(),    new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),   new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),        new Bricks.WhiteWall(),           new Bricks.WhiteWall()       ],
-            [new Bricks.WhiteWall(), new Bricks.WhiteWallBottomRight(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey(),    ],
-            [new Bricks.WhiteWall(), new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),  new Bricks.Grave(),         new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.Grave(),         new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.Grave(),         new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.Grave(),             new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey(),    ],
-            [new Bricks.WhiteWall(), new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.WhiteWall(), new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),  new Bricks.Grave(),         new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.Grave(),         new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.Grave(),         new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.Grave(),             new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.WhiteWall(), new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.WhiteWall(), new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),  new Bricks.Grave(),         new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.Grave(),         new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.Grave(),             new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.WhiteWall(), new Bricks.WhiteWallTopRight(),    new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.WhiteWall(), new Bricks.WhiteWall(),            new Bricks.WhiteWallTop(), new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),new Bricks.WhiteWallTop(),  new Bricks.Stairs(),        new Bricks.WhiteWallTop(),      new Bricks.WhiteWallTop(),      new Bricks.WhiteWallTop(),      new Bricks.WhiteWallTop(),     new Bricks.WhiteWallTop(),        new Bricks.WhiteWallTop()    ],
-            [new Bricks.WhiteWall(), new Bricks.WhiteWall(),            new Bricks.WhiteWall(),    new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),   new Bricks.WhiteWall(),     new Bricks.Stairs(),        new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),        new Bricks.WhiteWall(),           new Bricks.WhiteWall()       ]
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
+            ["white-wall", "white-wall-br", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey",],
+            ["white-wall", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "default-grey",],
+            ["white-wall", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
+            ["white-wall", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "default-grey"],
+            ["white-wall", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
+            ["white-wall", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "default-grey"],
+            ["white-wall", "white-wall-tr", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
+            ["white-wall", "white-wall", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "stairs", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t"],
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "stairs", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"]
         ]);
         this.map[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[0][0].enemies = [
@@ -211,17 +210,17 @@ export class World {
         ];
 
         this.map[1][0].loadBricks([
-            [new Bricks.WhiteWall(),   new Bricks.WhiteWall(),   new Bricks.WhiteWall(),    new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),   new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),        new Bricks.WhiteWall(),           new Bricks.WhiteWall()       ],
-            [new Bricks.WhiteWall(),   new Bricks.WhiteWall(),   new Bricks.WhiteWall(),    new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),   new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),        new Bricks.WhiteWall(),           new Bricks.WhiteWall()       ],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey(),    ],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.WhiteTree(),     new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.WhiteTree(),     new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.WhiteTree(),     new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.WhiteTree(),         new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey(),    ],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.WhiteTree(),     new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.WhiteTree(),     new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.WhiteTree(),     new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.WhiteTree(),         new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.WhiteTree(),     new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.WhiteTree(),     new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.WhiteTree(),     new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.WhiteTree(),         new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),      new Bricks.DefaultGrey(),         new Bricks.DefaultGrey()     ],
-            [new Bricks.WhiteWall(),   new Bricks.WhiteWall(),   new Bricks.WhiteWallTop(), new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),      new Bricks.WhiteWallTop(),      new Bricks.WhiteWallTop(),      new Bricks.WhiteWallTop(),     new Bricks.WhiteWallTop(),        new Bricks.WhiteWallTop()    ],
-            [new Bricks.WhiteWall(),   new Bricks.WhiteWall(),   new Bricks.WhiteWall(),    new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),   new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),         new Bricks.WhiteWall(),        new Bricks.WhiteWall(),           new Bricks.WhiteWall()       ]
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
+            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey",],
+            ["default-grey", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "default-grey",],
+            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
+            ["default-grey", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "default-grey"],
+            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
+            ["default-grey", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "default-grey"],
+            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
+            ["white-wall", "white-wall", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t"],
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"]
         ]);
         this.map[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[1][0].enemies = [
@@ -249,17 +248,17 @@ export class World {
         ];
 
         this.map[2][0].loadBricks([
-            [new Bricks.WhiteWall(),   new Bricks.WhiteWall(),   new Bricks.WhiteWall(),    new Bricks.WhiteWall(),          new Bricks.WhiteWall(),           new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),   new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),          new Bricks.WhiteWall(),            new Bricks.WhiteWall(),         new Bricks.WhiteWall(),           new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.WhiteWall(),   new Bricks.WhiteWall(),   new Bricks.WhiteWall(),    new Bricks.WhiteWall(),          new Bricks.WhiteWall(),           new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),   new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),          new Bricks.WhiteWall(),            new Bricks.WhiteWall(),         new Bricks.WhiteWall(),           new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),         new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),       new Bricks.WhiteWallBottomLeft(), new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.MonumentTopLeft(),    new Bricks.MonumentTopRight(),    new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.WhiteTree(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.MonumentTopLeft(),    new Bricks.MonumentTopRight(),     new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),         new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.MonumentBottomLeft(), new Bricks.MonumentBottomRight(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.MonumentBottomLeft(), new Bricks.MonumentBottomRight(),  new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),         new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),         new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),         new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),         new Bricks.DefaultGrey(),   new Bricks.Grave(),         new Bricks.DefaultGrey(), new Bricks.Grave(),         new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),         new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),         new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),       new Bricks.DefaultGrey(),         new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.DefaultGrey(), new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),  new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),         new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(), new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),   new Bricks.DefaultGrey(),        new Bricks.DefaultGrey(),          new Bricks.DefaultGrey(),       new Bricks.WhiteWallTopLeft(),    new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.WhiteWall(),   new Bricks.WhiteWall(),   new Bricks.WhiteWallTop(), new Bricks.WhiteWallTop(),       new Bricks.WhiteWallTop(),        new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),  new Bricks.WhiteWallTop(),       new Bricks.WhiteWallTop(),         new Bricks.WhiteWallTop(),      new Bricks.WhiteWall(),           new Bricks.WhiteWall(),           new Bricks.WhiteWall()],
-            [new Bricks.WhiteWall(),   new Bricks.WhiteWall(),   new Bricks.WhiteWall(),    new Bricks.WhiteWall(),          new Bricks.WhiteWall(),           new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),   new Bricks.WhiteWall(),     new Bricks.WhiteWall(),     new Bricks.WhiteWall(),          new Bricks.WhiteWall(),            new Bricks.WhiteWall(),         new Bricks.WhiteWall(),           new Bricks.WhiteWall(),           new Bricks.WhiteWall()]
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
+            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall-bl", "white-wall", "white-wall"],
+            ["default-grey", "default-grey", "default-grey", "monument-tl", "monument-tr", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "monument-tl", "monument-tr", "default-grey", "default-grey", "white-wall", "white-wall"],
+            ["default-grey", "default-grey", "default-grey", "monument-bl", "monument-br", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "monument-bl", "monument-br", "default-grey", "default-grey", "white-wall", "white-wall"],
+            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall", "white-wall"],
+            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "grave", "default-grey", "grave", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall", "white-wall"],
+            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall", "white-wall"],
+            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall-tl", "white-wall", "white-wall"],
+            ["white-wall", "white-wall", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall", "white-wall", "white-wall"],
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"]
         ]);
         this.map[2][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.map[2][0].enemies = [
@@ -292,17 +291,17 @@ export class World {
         ];
 
         this.map[0][1].loadBricks([
-            [new Bricks.Wall(), new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),    new Bricks.Wall(),          new Bricks.Stairs(),        new Bricks.Wall(),           new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),        new Bricks.Wall(),           new Bricks.Wall()          ],
-            [new Bricks.Wall(), new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),    new Bricks.Wall(),          new Bricks.Stairs(),        new Bricks.Wall(),           new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),        new Bricks.Wall(),           new Bricks.Wall()          ],
-            [new Bricks.Wall(), new Bricks.WallBottomRight(), new Bricks.Default(), new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(), new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),        new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),     new Bricks.WallBottomLeft(), new Bricks.Wall()          ],
-            [new Bricks.Wall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.Default(), new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),        new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),     new Bricks.Default(),        new Bricks.WallBottomLeft()],
-            [new Bricks.Wall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(),  new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),     new Bricks.Default(),        new Bricks.Default()       ],
-            [new Bricks.Wall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.Default(), new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),        new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),     new Bricks.Default(),        new Bricks.Default()       ],
-            [new Bricks.Wall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(),  new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),     new Bricks.Default(),        new Bricks.Default()       ],
-            [new Bricks.Wall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.SingleRedWall(), new Bricks.Default(), new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),        new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),     new Bricks.Default(),        new Bricks.WallTopLeft()   ],
-            [new Bricks.Wall(), new Bricks.WallTopRight(),    new Bricks.Default(), new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(), new Bricks.Default(),       new Bricks.Default(),       new Bricks.Default(),        new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),     new Bricks.WallTopLeft(),    new Bricks.Wall()          ],
-            [new Bricks.Wall(), new Bricks.Wall(),            new Bricks.WallTop(), new Bricks.WallTop(),       new Bricks.WallTop(),       new Bricks.WallTop(),       new Bricks.WallTop(),       new Bricks.WallTop(), new Bricks.WallTop(),       new Bricks.WallTop(),       new Bricks.WallTopRight(),   new Bricks.Default(), new Bricks.Default(), new Bricks.WallTopLeft(), new Bricks.Wall(),           new Bricks.Wall()          ],
-            [new Bricks.Wall(), new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),    new Bricks.Wall(),          new Bricks.Wall(),          new Bricks.Wall(),           new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),        new Bricks.Wall(),           new Bricks.Wall()          ]
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "stairs", "wall", "wall", "wall", "wall", "wall", "wall"],
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "stairs", "wall", "wall", "wall", "wall", "wall", "wall"],
+            ["wall", "wall-br", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "wall-bl", "wall"],
+            ["wall", "default", "default", "single-red-wall", "single-red-wall", "single-red-wall", "single-red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "wall-bl"],
+            ["wall", "default", "default", "default", "default", "default", "default", "default", "single-red-wall", "single-red-wall", "single-red-wall", "default", "default", "default", "default", "default"],
+            ["wall", "default", "default", "single-red-wall", "single-red-wall", "single-red-wall", "single-red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
+            ["wall", "default", "default", "default", "default", "default", "default", "default", "single-red-wall", "single-red-wall", "single-red-wall", "default", "default", "default", "default", "default"],
+            ["wall", "default", "default", "single-red-wall", "single-red-wall", "single-red-wall", "single-red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "wall-tl"],
+            ["wall", "wall-tr", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "wall-tl", "wall"],
+            ["wall", "wall", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-tr", "default", "default", "wall-tl", "wall", "wall"],
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "default", "default", "wall", "wall", "wall"]
         ]);
         this.map[0][1].enemies = [
             new Octorok(
@@ -336,17 +335,17 @@ export class World {
         ];
 
         this.map[1][1].loadBricks([
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),           new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()          ],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),           new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()          ],
-            [new Bricks.Wall(),            new Bricks.WallBottomRight(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.WallBottomLeft(), new Bricks.WallBottomRight(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),        new Bricks.WallBottomLeft(), new Bricks.Wall()          ],
-            [new Bricks.WallBottomRight(), new Bricks.Default(),         new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),        new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(),        new Bricks.Default(),        new Bricks.WallBottomLeft()],
-            [new Bricks.Default(),         new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),        new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),        new Bricks.Default(),        new Bricks.Default()       ],
-            [new Bricks.Default(),         new Bricks.Default(),         new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),        new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(),        new Bricks.Default(),        new Bricks.Default()       ],
-            [new Bricks.Default(),         new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),        new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),        new Bricks.Default(),        new Bricks.Default()       ],
-            [new Bricks.WallTopRight(),    new Bricks.Default(),         new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),        new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(),        new Bricks.Default(),        new Bricks.WallTopLeft()   ],
-            [new Bricks.Wall(),            new Bricks.WallTopRight(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.WallTopLeft(),    new Bricks.WallTopRight(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),        new Bricks.WallTopLeft(),    new Bricks.Wall()          ],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.WallTop(), new Bricks.WallTop(),    new Bricks.WallTop(), new Bricks.WallTop(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Wall(),           new Bricks.Wall(),            new Bricks.WallTop(), new Bricks.WallTop(), new Bricks.WallTop(),    new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()          ],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Default(), new Bricks.Default(),    new Bricks.Wall(),           new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()          ]
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
+            ["wall", "wall-br", "default", "default", "default", "default", "default", "default", "wall-bl", "wall-br", "default", "default", "default", "default", "wall-bl", "wall"],
+            ["wall-br", "default", "default", "single-wall", "default", "single-wall", "default", "default", "default", "default", "default", "default", "single-wall", "default", "default", "wall-bl"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
+            ["default", "default", "default", "single-wall", "default", "single-wall", "default", "default", "default", "default", "default", "default", "single-wall", "default", "default", "default"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
+            ["wall-tr", "default", "default", "single-wall", "default", "single-wall", "default", "default", "default", "default", "default", "default", "single-wall", "default", "default", "wall-tl"],
+            ["wall", "wall-tr", "default", "default", "default", "default", "default", "default", "wall-tl", "wall-tr", "default", "default", "default", "default", "wall-tl", "wall"],
+            ["wall", "wall", "wall-t", "wall-t", "wall-t", "wall-t", "default", "default", "wall", "wall", "wall-t", "wall-t", "wall-t", "wall", "wall", "wall"],
+            ["wall", "wall", "wall", "wall", "wall", "wall", "default", "default", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"]
         ]);
         this.map[1][1].enemies = [
             new Octorok(
@@ -380,17 +379,17 @@ export class World {
         ];
 
         this.map[2][1].loadBricks([
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.WallBottomRight(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.WallBottomRight(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Default(),         new Bricks.Default(),         new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Default(),         new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Default(),         new Bricks.Default(),         new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.WallTopRight(),    new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.WallTopRight(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
+            ["wall", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree"],
+            ["wall", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree"],
+            ["wall", "wall-br", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
+            ["wall-br", "default", "default", "default", "default", "default", "default", "tree", "default", "default", "default", "tree", "default", "tree", "default", "tree"],
+            ["default", "default", "tree", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
+            ["default", "default", "default", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
+            ["default", "default", "tree", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
+            ["wall-tr", "default", "default", "default", "default", "default", "default", "tree", "default", "default", "default", "tree", "default", "tree", "default", "tree"],
+            ["wall", "wall-tr", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
+            ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
+            ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
         ]);
         this.map[2][1].enemies = [
             new Octorok(
@@ -424,17 +423,17 @@ export class World {
         ];
 
         this.map[0][2].loadBricks([
-            [new Bricks.Wall(), new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),            new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()   ],
-            [new Bricks.Wall(), new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.WallBottomRight(), new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()   ],
-            [new Bricks.Wall(), new Bricks.WallBottomRight(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()   ],
-            [new Bricks.Wall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.WallBottomLeft(), new Bricks.Wall(),           new Bricks.Wall()   ],
-            [new Bricks.Wall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),        new Bricks.WallBottomLeft(), new Bricks.Wall()   ],
-            [new Bricks.Wall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),        new Bricks.Default(),        new Bricks.Default()],
-            [new Bricks.Wall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),        new Bricks.WallTopLeft(),    new Bricks.WallTop()],
-            [new Bricks.Wall(), new Bricks.WallTopRight(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(), new Bricks.SingleWall(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.WallTopLeft(),    new Bricks.Wall(),           new Bricks.Wall()   ],
-            [new Bricks.Wall(), new Bricks.Wall(),            new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(), new Bricks.Default(),    new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()   ],
-            [new Bricks.Wall(), new Bricks.Wall(),            new Bricks.WallTop(), new Bricks.WallTop(), new Bricks.WallTop(),    new Bricks.WallTop(), new Bricks.WallTop(), new Bricks.WallTop(),    new Bricks.WallTop(), new Bricks.WallTop(),    new Bricks.WallTop(),         new Bricks.WallTop(), new Bricks.WallTop(), new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()   ],
-            [new Bricks.Wall(), new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),    new Bricks.Wall(),       new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall()   ]
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "default", "default", "wall", "wall", "wall"],
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall-br", "default", "default", "wall", "wall", "wall"],
+            ["wall", "wall-br", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "wall", "wall", "wall"],
+            ["wall", "default", "default", "default", "default", "default", "default", "single-wall", "default", "default", "default", "default", "default", "wall-bl", "wall", "wall"],
+            ["wall", "default", "default", "default", "default", "default", "default", "default", "default", "single-wall", "default", "default", "default", "default", "wall-bl", "wall"],
+            ["wall", "default", "default", "default", "single-wall", "default", "default", "single-wall", "default", "default", "default", "default", "default", "default", "default", "default"],
+            ["wall", "default", "default", "default", "default", "default", "default", "default", "default", "single-wall", "default", "default", "default", "default", "wall-tl", "wall-t"],
+            ["wall", "wall-tr", "default", "default", "default", "default", "default", "single-wall", "default", "default", "default", "default", "default", "wall-tl", "wall", "wall"],
+            ["wall", "wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "wall", "wall", "wall"],
+            ["wall", "wall", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall", "wall", "wall"],
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"]
         ]);
         this.map[0][2].enemies = [
             new Tektite(
@@ -456,31 +455,31 @@ export class World {
 
         // Spawn scene
         this.map[1][2].loadBricks([
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),            new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),        new Bricks.Wall()   ],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.WallBottomRight(), new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),        new Bricks.Wall()   ],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.WallBottomRight(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),        new Bricks.Wall()   ],
-            [new Bricks.Wall(),            new Bricks.WallBottomRight(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.WallBottomLeft(), new Bricks.Wall(),           new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),        new Bricks.Wall()   ],
-            [new Bricks.WallBottomRight(), new Bricks.Default(),         new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),        new Bricks.WallBottomLeft(), new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),        new Bricks.Wall()   ],
-            [new Bricks.Default(),         new Bricks.Default(),         new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),        new Bricks.Default(),        new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),     new Bricks.Default()],
-            [new Bricks.WallTop(),         new Bricks.Default(),         new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),        new Bricks.Default(),        new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.WallTopLeft(), new Bricks.WallTop()],
-            [new Bricks.Wall(),            new Bricks.WallTopRight(),    new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),        new Bricks.Default(),        new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),        new Bricks.Wall()   ],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(),        new Bricks.Default(),        new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Wall(),        new Bricks.Wall()   ],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.WallTop(),         new Bricks.WallTop(), new Bricks.WallTop(), new Bricks.WallTop(),         new Bricks.WallTop(), new Bricks.WallTop(), new Bricks.WallTop(),        new Bricks.WallTop(),        new Bricks.WallTop(), new Bricks.WallTop(), new Bricks.WallTop(), new Bricks.WallTop(), new Bricks.Wall(),        new Bricks.Wall()   ],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),            new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),           new Bricks.Wall(),           new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),    new Bricks.Wall(),        new Bricks.Wall()   ]
+            ["wall", "wall", "wall", "wall", "wall", "wall", "default", "default", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
+            ["wall", "wall", "wall", "passage", "wall", "wall-br", "default", "default", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
+            ["wall", "wall", "wall-br", "default", "default", "default", "default", "default", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
+            ["wall", "wall-br", "default", "default", "default", "default", "default", "default", "wall-bl", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
+            ["wall-br", "default", "default", "default", "default", "default", "default", "default", "default", "wall-bl", "wall", "wall", "wall", "wall", "wall", "wall"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
+            ["wall-t", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "wall-tl", "wall-t"],
+            ["wall", "wall-tr", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "wall", "wall"],
+            ["wall", "wall", "wall-tr", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "wall-tl", "wall", "wall"],
+            ["wall", "wall", "wall", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall", "wall", "wall"],
+            ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"]
         ]);
 
         this.map[2][2].loadBricks([
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.WallBottomRight(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.WallBottomRight(), new Bricks.Default(),         new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Default(),         new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.WallTop(),         new Bricks.Default(),         new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.Default(),         new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree(),    new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.WallTopRight(),    new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Default(), new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree()],
-            [new Bricks.Wall(),            new Bricks.Wall(),            new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree(),    new Bricks.Tree()],
+            ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
+            ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
+            ["wall", "wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
+            ["wall", "wall-br", "default", "default", "default", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
+            ["wall-br", "default", "tree", "default", "tree", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
+            ["default", "default", "default", "default", "default", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
+            ["wall-t", "default", "tree", "default", "tree", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
+            ["wall", "default", "default", "default", "default", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
+            ["wall", "wall-tr", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
+            ["wall", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree"],
+            ["wall", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree"],
         ]);
         this.map[2][2].enemies = [
             new Moblin(

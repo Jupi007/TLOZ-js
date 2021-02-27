@@ -1,5 +1,6 @@
 import { GameState } from "./Game.js";
 import { Direction } from "./Libraries/Direction.js";
+import { Collisions } from "./Libraries/Collisions.js";
 import { EnemyState } from "./Enemies.js";
 import { EnemyManager } from "./EnemyManager.js";
 export class Viewport {
@@ -55,6 +56,65 @@ export class Viewport {
             }, this.nextScene);
         }
     }
+    collisions() {
+        this.Game.Player.passBetweenBoxesHelper();
+        this.loopCollision((cell, col, row) => {
+            Collisions.movingBox(this.Game.Player.hitBox, cell);
+        });
+        this.loopCells((cell, col, row) => {
+        });
+        if (Collisions.movingBoxCanvas(this.Game.Player, this)) {
+            this.slideScene(this.Game.Player.direction);
+        }
+    }
+    slideScene(direction) {
+        let currentSceneCol = this.currentScene.c;
+        let currentSceneRow = this.currentScene.r;
+        if (direction === Direction.Left) {
+            this.dc = -1;
+        }
+        else if (direction === Direction.Right) {
+            this.dc = 1;
+        }
+        else if (direction === Direction.Up) {
+            this.dr = -1;
+        }
+        else if (direction === Direction.Down) {
+            this.dr = 1;
+        }
+        else {
+            return;
+        }
+        if (!(currentSceneCol + this.dc < 0 ||
+            currentSceneCol + this.dc > this.Game.World.nbCol - 1 ||
+            currentSceneRow + this.dr < 0 ||
+            currentSceneRow + this.dr > this.Game.World.nbRow - 1)) {
+            this.nextScene = this.Game.World.map[currentSceneCol + this.dc][currentSceneRow + this.dr];
+            if (direction === Direction.Left) {
+                this.nextScene.x = -this.width;
+                this.nextScene.y = 0;
+            }
+            else if (direction === Direction.Right) {
+                this.nextScene.x = this.width;
+                this.nextScene.y = 0;
+            }
+            else if (direction === Direction.Up) {
+                this.nextScene.y = -this.height;
+                this.nextScene.x = 0;
+            }
+            else if (direction === Direction.Down) {
+                this.nextScene.y = this.height;
+                this.nextScene.x = 0;
+            }
+            this.Game.Player.dx = 0;
+            this.Game.Player.dy = 0;
+            this.Game.Player.isAttackObserver.setNextState(false);
+            this.Game.useCustomLoop(() => this.slideSceneLoop());
+            return;
+        }
+        this.dc = 0;
+        this.dr = 0;
+    }
     slideSceneAnimationMove() {
         let speed = this.slideSceneAnimationSpeed * this.Game.dt;
         if (this.dc === 1) {
@@ -105,57 +165,7 @@ export class Viewport {
         this.Game.Player.slideSceneAnimationMove();
         this.Game.drawGame();
     }
-    collisions() {
-    }
     drawImage(sprite, x, y, width, height) {
         this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
-    }
-    slideScene(direction) {
-        let currentSceneCol = this.currentScene.c;
-        let currentSceneRow = this.currentScene.r;
-        if (direction === Direction.Left) {
-            this.dc = -1;
-        }
-        else if (direction === Direction.Right) {
-            this.dc = 1;
-        }
-        else if (direction === Direction.Up) {
-            this.dr = -1;
-        }
-        else if (direction === Direction.Down) {
-            this.dr = 1;
-        }
-        else {
-            return;
-        }
-        if (!(currentSceneCol + this.dc < 0 ||
-            currentSceneCol + this.dc > this.Game.World.nbCol - 1 ||
-            currentSceneRow + this.dr < 0 ||
-            currentSceneRow + this.dr > this.Game.World.nbRow - 1)) {
-            this.nextScene = this.Game.World.map[currentSceneCol + this.dc][currentSceneRow + this.dr];
-            if (direction === Direction.Left) {
-                this.nextScene.x = -this.width;
-                this.nextScene.y = 0;
-            }
-            else if (direction === Direction.Right) {
-                this.nextScene.x = this.width;
-                this.nextScene.y = 0;
-            }
-            else if (direction === Direction.Up) {
-                this.nextScene.y = -this.height;
-                this.nextScene.x = 0;
-            }
-            else if (direction === Direction.Down) {
-                this.nextScene.y = this.height;
-                this.nextScene.x = 0;
-            }
-            this.Game.Player.dx = 0;
-            this.Game.Player.dy = 0;
-            this.Game.Player.isAttackObserver.setNextState(false);
-            this.Game.useCustomLoop(() => this.slideSceneLoop());
-            return;
-        }
-        this.dc = 0;
-        this.dr = 0;
     }
 }

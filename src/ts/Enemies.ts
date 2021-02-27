@@ -10,7 +10,7 @@ import { StateObserver, AnimationObserver } from "./Libraries/Observers.js";
 import { Heart, Clock } from "./Items.js";
 import { Fireball, Arrow } from "./Projectiles.js";
 
-export enum EnemyState {Moving, ChangeDirection, Wait, Attack, Killed};
+export enum EnemyState { Moving, ChangeDirection, Wait, Attack, Killed };
 
 export class Enemy extends MovingBox {
     Game: Game;
@@ -54,7 +54,7 @@ export class Enemy extends MovingBox {
         this.hitSound = AudioLoader.load("./sounds/effect/Enemy_Hit.wav");
     }
 
-    aiThinking(): void {}
+    aiThinking(): void { }
     move(): void {
         this.y += this.dy;
         this.x += this.dx;
@@ -62,15 +62,15 @@ export class Enemy extends MovingBox {
         this.dy = 0;
     }
 
-    draw(): void {}
+    draw(): void { }
 
     playerCollision(): void {
         this.Game.Player.takeDamage(this.damage);
     }
-    viewportCollision(): void {}
-    bricksCollision(): void {}
+    viewportCollision(): void { }
+    bricksCollision(): void { }
     passBetweenBoxesHelper(): boolean { return false; }
-    customCollision(): void {}
+    customCollision(): void { }
 
     takeDamage(damage): void {
         if (this.isInvincibleObserver.is(true) || this.state.is(EnemyState.Killed)) return;
@@ -283,7 +283,7 @@ export class SimpleMovingEnemy extends Enemy {
         );
     }
 
-    attack(): void {}
+    attack(): void { }
 }
 
 export class Octorok extends SimpleMovingEnemy {
@@ -520,7 +520,7 @@ export class Tektite extends Enemy {
             case EnemyState.Wait:
                 this.dx = 0;
                 this.dy = 0;
-                if ((this.state.currentFrame > 30 && Random.getOneInt(50)) || this.state.currentFrame > 60)  this.state.setNextState(EnemyState.Moving);
+                if ((this.state.currentFrame > 30 && Random.getOneInt(50)) || this.state.currentFrame > 60) this.state.setNextState(EnemyState.Moving);
                 break;
         }
     }

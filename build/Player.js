@@ -189,15 +189,7 @@ export class Player extends MovingBox {
             }
         }
     }
-    collisions() {
-        this.passBetweenBoxesHelper();
-        this.Game.Viewport.loopCollision((cell, col, row) => {
-            Collisions.movingBox(this.hitBox, cell);
-        });
-        if (Collisions.movingBoxCanvas(this, this.Game.Viewport)) {
-            this.Game.Viewport.slideScene(this.direction);
-        }
-    }
+    collisions() { }
     listenEvents() {
         if (this.isKnockBackObserver.is(true)) {
             this.isMovingObserver.setNextState(false);

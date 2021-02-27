@@ -326,17 +326,7 @@ export class Player extends MovingBox {
         }
     }
 
-    collisions(): void {
-        this.passBetweenBoxesHelper();
-
-        this.Game.Viewport.loopCollision((cell, col, row) => {
-            Collisions.movingBox(this.hitBox, cell);
-        });
-
-        if (Collisions.movingBoxCanvas(this, this.Game.Viewport)) {
-            this.Game.Viewport.slideScene(this.direction);
-        }
-    }
+    collisions(): void {}
 
     listenEvents(): void {
         if (this.isKnockBackObserver.is(true)) {

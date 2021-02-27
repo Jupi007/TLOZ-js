@@ -153,12 +153,12 @@ export class Game {
         this.Sword.listenEvents();
         this.EnemyManager.aiThinking();
 
+        this.Sword.collisions();
         this.Player.collisions();
         this.ItemManager.collisions();
         this.EnemyManager.collisions();
-        this.Viewport.collisions();
         this.ProjectileManager.collisions();
-        this.Sword.collisions();
+        this.Viewport.collisions();
 
         this.Player.move();
         this.EnemyManager.move();
