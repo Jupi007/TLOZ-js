@@ -16,6 +16,8 @@
     "author": "Paul Kepinski",
     "license": "ISC",
     "scripts": {
-        "test": "mocha --require esm"
+        "test": "mocha --require esm",
+        "build": "gulp",
+        "watch": "gulp watch"
     }
 }

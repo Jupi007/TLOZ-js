@@ -22,6 +22,32 @@ export class Cell extends SimpleBox {
     }
 }
 
+export class Passage extends SimpleBox {
+    Game: Game;
+    Scene: Scene;
+
+    targetWorldIndex: number;
+    targetSceneC: number;
+    targetSceneR: number;
+
+    constructor(game: Game, scene: Scene, c: number, r: number, targetWorldIndex: number, targetSceneC: number, targetSceneR: number) {
+        super();
+
+        this.Game = game;
+        this.Scene = scene;
+
+        this.x = c * this.Scene.cellSize;
+        this.y = r * this.Scene.cellSize;
+
+        this.width = this.Scene.cellSize;
+        this.height = this.Scene.cellSize;
+
+        this.targetWorldIndex = targetWorldIndex;
+        this.targetSceneC = targetSceneC;
+        this.targetSceneR = targetSceneR;
+    }
+}
+
 export class Scene {
     Game: Game;
     World: World;
@@ -31,7 +57,7 @@ export class Scene {
     x: number;
     y: number;
 
-    // Coordinates of the scene in the overworld
+    // Coordinates of the scene in the world
     c: number;
     r: number;
 
@@ -40,21 +66,23 @@ export class Scene {
     cellSize: number;
 
     enemies: Enemy[];
+    passages: Passage[];
 
     music: HTMLAudioElement;
 
     defaultBrick: Brick;
     defaultWallBrick: Brick;
 
-    constructor(game: Game, overworld: World, c: number, r: number, music: HTMLAudioElement) {
+    constructor(game: Game, world: World, c: number, r: number, music: HTMLAudioElement, defaultBrick: Brick) {
         this.Game = game;
-        this.World = overworld;
+        this.World = world;
 
         this.nbRow = 11;
         this.nbCol = 16;
         this.cellSize = 64;
 
         this.enemies = [];
+        this.passages = [];
 
         this.x = 0;
         this.y = 0;
@@ -64,9 +92,6 @@ export class Scene {
 
         this.music = music;
 
-        this.defaultBrick = BrickCollection.get("default");
-        this.defaultWallBrick = BrickCollection.get("wall");
-
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
@@ -74,29 +99,8 @@ export class Scene {
                     this.cellSize * c,
                     this.cellSize * r,
                     this.cellSize,
-                    this.defaultBrick
+                    defaultBrick
                 );
-            }
-        }
-
-        if (this.c == 0) {
-            for (let r = 0; r < this.nbRow; r++) {
-                this.cells[0][r].brick = this.defaultWallBrick;
-            }
-        }
-        if (this.c == this.World.nbCol - 1) {
-            for (let r = 0; r < this.nbRow; r++) {
-                this.cells[this.nbCol - 1][r].brick = this.defaultWallBrick;
-            }
-        }
-        if (this.r == 0) {
-            for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][0].brick = this.defaultWallBrick;
-            }
-        }
-        if (this.r == this.World.nbRow - 1) {
-            for (let c = 0; c < this.nbCol; c++) {
-                this.cells[c][this.nbRow - 1].brick = this.defaultWallBrick;
             }
         }
     }
@@ -132,16 +136,68 @@ export class Scene {
             height
         );
     }
+
+    upperEdgeCollision(): void {
+        this.Game.Viewport.slideScene(Direction.Up);
+    }
+
+    rightEdgeCollision(): void {
+        this.Game.Viewport.slideScene(Direction.Right);
+    }
+
+    bottomEdgeCollision(): void {
+        this.Game.Viewport.slideScene(Direction.Down);
+    }
+
+    leftEdgeCollision(): void {
+        this.Game.Viewport.slideScene(Direction.Left);
+    }
 }
 
 export class World {
     Game: Game;
 
-    map: Scene[][] = [];
+    scenes: Scene[][] = [];
 
-    nbRow: number;
     nbCol: number;
+    nbRow: number;
 
+    constructor(game: Game, nbCol: number, nbRow: number, defaultMusic: HTMLAudioElement, defaultBrick: Brick) {
+        this.Game = game;
+
+        this.nbCol = nbCol;
+        this.nbRow = nbRow;
+
+        for (let c = 0; c < this.nbCol; c++) {
+            this.scenes[c] = [];
+            for (let r = 0; r < this.nbRow; r++) {
+                this.scenes[c][r] = new Scene(
+                    this.Game,
+                    this,
+                    c,
+                    r,
+                    defaultMusic,
+                    defaultBrick
+                );
+            }
+        }
+    }
+
+    loopScenes(callback: Function): void {
+        this.scenes.forEach((col, c) => {
+            col.forEach((scene, r) => {
+                callback(scene);
+            });
+        });
+    }
+}
+
+export class Map {
+    Game: Game;
+
+    worlds: World[];
+
+    spawnWorldIndex: number;
     spawnSceneColl: number;
     spawnSceneRow: number;
     spawnCellColl: number;
@@ -150,28 +206,25 @@ export class World {
     constructor(game: Game) {
         this.Game = game;
 
-        this.nbRow = 3;
-        this.nbCol = 3;
+        this.spawnWorldIndex = 0;
 
         this.spawnSceneColl = 1;
         this.spawnSceneRow = 2;
+
         this.spawnCellColl = 7;
         this.spawnCellRow = 5.5;
 
-        for (let c = 0; c < this.nbCol; c++) {
-            this.map[c] = [];
-            for (let r = 0; r < this.nbRow; r++) {
-                this.map[c][r] = new Scene(
-                    this.Game,
-                    this,
-                    c,
-                    r,
-                    AudioLoader.load("./sounds/music/overworld.mp3", true)
-                );
-            }
-        }
+        this.worlds = [];
 
-        this.map[0][0].loadBricks([
+        this.worlds[0] = new World(
+            this.Game,
+            3,
+            3,
+            AudioLoader.load("./sounds/music/overworld.mp3", true),
+            BrickCollection.get("default")
+        );
+
+        this.worlds[0].scenes[0][0].loadBricks([
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall-br", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey",],
@@ -184,8 +237,8 @@ export class World {
             ["white-wall", "white-wall", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "stairs", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "stairs", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"]
         ]);
-        this.map[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
-        this.map[0][0].enemies = [
+        this.worlds[0].scenes[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
+        this.worlds[0].scenes[0][0].enemies = [
             new BlueOctorok(
                 this.Game,
                 2 * 64,
@@ -209,7 +262,7 @@ export class World {
             ),
         ];
 
-        this.map[1][0].loadBricks([
+        this.worlds[0].scenes[1][0].loadBricks([
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey",],
@@ -222,8 +275,8 @@ export class World {
             ["white-wall", "white-wall", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"]
         ]);
-        this.map[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
-        this.map[1][0].enemies = [
+        this.worlds[0].scenes[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
+        this.worlds[0].scenes[1][0].enemies = [
             new BlueMoblin(
                 this.Game,
                 5 * 64,
@@ -247,7 +300,7 @@ export class World {
             ),
         ];
 
-        this.map[2][0].loadBricks([
+        this.worlds[0].scenes[2][0].loadBricks([
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall-bl", "white-wall", "white-wall"],
@@ -260,8 +313,8 @@ export class World {
             ["white-wall", "white-wall", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"]
         ]);
-        this.map[2][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
-        this.map[2][0].enemies = [
+        this.worlds[0].scenes[2][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
+        this.worlds[0].scenes[2][0].enemies = [
             new BlueOctorok(
                 this.Game,
                 5 * 64,
@@ -290,7 +343,7 @@ export class World {
             ),
         ];
 
-        this.map[0][1].loadBricks([
+        this.worlds[0].scenes[0][1].loadBricks([
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "stairs", "wall", "wall", "wall", "wall", "wall", "wall"],
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "stairs", "wall", "wall", "wall", "wall", "wall", "wall"],
             ["wall", "wall-br", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "wall-bl", "wall"],
@@ -303,7 +356,7 @@ export class World {
             ["wall", "wall", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-tr", "default", "default", "wall-tl", "wall", "wall"],
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "default", "default", "wall", "wall", "wall"]
         ]);
-        this.map[0][1].enemies = [
+        this.worlds[0].scenes[0][1].enemies = [
             new Octorok(
                 this.Game,
                 6 * 64,
@@ -334,7 +387,7 @@ export class World {
             ),
         ];
 
-        this.map[1][1].loadBricks([
+        this.worlds[0].scenes[1][1].loadBricks([
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
             ["wall", "wall-br", "default", "default", "default", "default", "default", "default", "wall-bl", "wall-br", "default", "default", "default", "default", "wall-bl", "wall"],
@@ -347,7 +400,7 @@ export class World {
             ["wall", "wall", "wall-t", "wall-t", "wall-t", "wall-t", "default", "default", "wall", "wall", "wall-t", "wall-t", "wall-t", "wall", "wall", "wall"],
             ["wall", "wall", "wall", "wall", "wall", "wall", "default", "default", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"]
         ]);
-        this.map[1][1].enemies = [
+        this.worlds[0].scenes[1][1].enemies = [
             new Octorok(
                 this.Game,
                 4 * 64,
@@ -378,7 +431,7 @@ export class World {
             ),
         ];
 
-        this.map[2][1].loadBricks([
+        this.worlds[0].scenes[2][1].loadBricks([
             ["wall", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree"],
             ["wall", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree"],
             ["wall", "wall-br", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
@@ -391,7 +444,7 @@ export class World {
             ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
             ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
         ]);
-        this.map[2][1].enemies = [
+        this.worlds[0].scenes[2][1].enemies = [
             new Octorok(
                 this.Game,
                 3 * 64,
@@ -422,7 +475,7 @@ export class World {
             ),
         ];
 
-        this.map[0][2].loadBricks([
+        this.worlds[0].scenes[0][2].loadBricks([
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "default", "default", "wall", "wall", "wall"],
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall-br", "default", "default", "wall", "wall", "wall"],
             ["wall", "wall-br", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "wall", "wall", "wall"],
@@ -435,7 +488,7 @@ export class World {
             ["wall", "wall", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall-t", "wall", "wall", "wall"],
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"]
         ]);
-        this.map[0][2].enemies = [
+        this.worlds[0].scenes[0][2].enemies = [
             new Tektite(
                 this.Game,
                 3 * 64,
@@ -454,7 +507,7 @@ export class World {
         ];
 
         // Spawn scene
-        this.map[1][2].loadBricks([
+        this.worlds[0].scenes[1][2].loadBricks([
             ["wall", "wall", "wall", "wall", "wall", "wall", "default", "default", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
             ["wall", "wall", "wall", "passage", "wall", "wall-br", "default", "default", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
             ["wall", "wall", "wall-br", "default", "default", "default", "default", "default", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"],
@@ -468,7 +521,19 @@ export class World {
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"]
         ]);
 
-        this.map[2][2].loadBricks([
+        this.worlds[0].scenes[1][2].passages = [
+            new Passage(
+                this.Game,
+                this.worlds[0].scenes[1][2],
+                3,
+                1,
+                1,
+                0,
+                0
+            ),
+        ];
+
+        this.worlds[0].scenes[2][2].loadBricks([
             ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
             ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
             ["wall", "wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "tree"],
@@ -481,7 +546,7 @@ export class World {
             ["wall", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree"],
             ["wall", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree"],
         ]);
-        this.map[2][2].enemies = [
+        this.worlds[0].scenes[2][2].enemies = [
             new Moblin(
                 this.Game,
                 3 * 64,
@@ -511,17 +576,76 @@ export class World {
                 Random.getOneInt(2) ? Direction.Up : Direction.Down
             ),
         ];
+
+        this.worlds[1] = new World(
+            this.Game,
+            1,
+            1,
+            AudioLoader.load("./sounds/music/death_mountain.mp3", true),
+            BrickCollection.get("default-dark")
+        );
+
+        this.worlds[1].scenes[0][0].loadBricks([
+            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
+        ]);
+
+        this.worlds[1].scenes[0][0].bottomEdgeCollision = function() {
+            this.Game.Viewport.changeWorld(0, 1, 2, 3, 1);
+        };
+
+        this.worlds[1].scenes[0][0].enemies = [
+            new Moblin(
+                this.Game,
+                3 * 64,
+                5 * 64,
+                3,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+            new BlueMoblin(
+                this.Game,
+                5 * 64,
+                7 * 64,
+                3,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+            new Moblin(
+                this.Game,
+                10 * 64,
+                5 * 64,
+                3,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+            new BlueMoblin(
+                this.Game,
+                12 * 64,
+                7 * 64,
+                3,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+        ];
+    }
+
+    getSpawnWorld(): World {
+        return this.worlds[this.spawnWorldIndex];
     }
 
     getSpawnScene(): Scene {
-        return this.map[this.spawnSceneColl][this.spawnSceneRow];
+        return this.worlds[this.spawnWorldIndex].scenes[this.spawnSceneColl][this.spawnSceneRow];
     }
 
-    loopScenes(callback: Function): void {
-        this.map.forEach((col, c) => {
-            col.forEach((scene, r) => {
-                callback(scene);
-            });
+    loopWorlds(callback: Function): void {
+        this.worlds.forEach((world, i) => {
+            callback(world);
         });
     }
 }

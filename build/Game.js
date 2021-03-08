@@ -1,5 +1,5 @@
 import { StateObserver } from "./Libraries/Observers.js";
-import { World } from "./Map.js";
+import { Map } from "./Map.js";
 import { Viewport } from "./Viewport.js";
 import { Player } from "./Player.js";
 import { Sword } from "./Sword.js";
@@ -31,7 +31,7 @@ export class Game {
     }
     init() {
         this.EventManager = new EventManager(this);
-        this.World = new World(this);
+        this.Map = new Map(this);
         this.Viewport = new Viewport(this);
         this.Player = new Player(this);
         this.Sword = new Sword(this);
@@ -48,12 +48,14 @@ export class Game {
         this.Hud.width = this.Viewport.width;
         this.Canvas.width = this.Viewport.width;
         this.Canvas.height = this.Viewport.height + this.Hud.height;
-        this.Player.x = this.Viewport.cellSize * this.World.spawnCellColl;
-        this.Player.y = this.Viewport.cellSize * this.World.spawnCellRow;
-        this.World.loopScenes((scene) => {
-            if (scene.hasEnemies) {
-                this.Player.targetScore++;
-            }
+        this.Player.x = this.Viewport.cellSize * this.Map.spawnCellColl;
+        this.Player.y = this.Viewport.cellSize * this.Map.spawnCellRow;
+        this.Map.loopWorlds((world) => {
+            world.loopScenes((scene) => {
+                if (scene.hasEnemies) {
+                    this.Player.targetScore++;
+                }
+            });
         });
         this.state = new StateObserver(GameState.Splash);
         this.lastTime = null;

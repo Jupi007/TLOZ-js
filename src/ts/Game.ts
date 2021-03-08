@@ -1,6 +1,6 @@
 import { StateObserver } from "./Libraries/Observers.js";
 
-import { World } from "./Map.js";
+import { Map } from "./Map.js";
 import { Viewport } from "./Viewport.js";
 import { Player } from "./Player.js";
 import { Sword } from "./Sword.js";
@@ -15,7 +15,7 @@ import { GameOverScreen } from "./Screens/GameOverScreen.js";
 import { WinScreen } from "./Screens/WinScreen.js";
 import { StoppedScreen } from "./Screens/StoppedScreen.js";
 
-export enum GameState {Splash, Run, Stopped, CustomLoop, GameOver, Win};
+export enum GameState { Splash, Run, Stopped, CustomLoop, GameOver, Win };
 
 export class Game {
     Canvas: HTMLCanvasElement;
@@ -24,7 +24,7 @@ export class Game {
     lastTime: number;
     dt: number;
 
-    World: World;
+    Map: Map;
     Viewport: Viewport;
     Player: Player;
     Sword: Sword;
@@ -52,7 +52,7 @@ export class Game {
 
     init(): void {
         this.EventManager = new EventManager(this);
-        this.World = new World(this);
+        this.Map = new Map(this);
         this.Viewport = new Viewport(this);
         this.Player = new Player(this);
         this.Sword = new Sword(this);
@@ -72,13 +72,15 @@ export class Game {
         this.Canvas.width = this.Viewport.width;
         this.Canvas.height = this.Viewport.height + this.Hud.height;
 
-        this.Player.x = this.Viewport.cellSize * this.World.spawnCellColl;
-        this.Player.y = this.Viewport.cellSize * this.World.spawnCellRow;
+        this.Player.x = this.Viewport.cellSize * this.Map.spawnCellColl;
+        this.Player.y = this.Viewport.cellSize * this.Map.spawnCellRow;
 
-        this.World.loopScenes((scene) => {
-            if (scene.hasEnemies) {
-                this.Player.targetScore++;
-            }
+        this.Map.loopWorlds((world) => {
+            world.loopScenes((scene) => {
+                if (scene.hasEnemies) {
+                    this.Player.targetScore++;
+                }
+            });
         });
 
         this.state = new StateObserver(GameState.Splash);
@@ -252,11 +254,11 @@ export class Game {
         textBaseline: CanvasTextBaseline = 'alphabetic',
     ) {
         this.ctx.beginPath();
-            this.ctx.font = fontSize + ' NES-font';
-            this.ctx.fillStyle = color;
-            this.ctx.textAlign = textAlign;
-            this.ctx.textBaseline = textBaseline;
-            this.ctx.fillText(text, x, y);
+        this.ctx.font = fontSize + ' NES-font';
+        this.ctx.fillStyle = color;
+        this.ctx.textAlign = textAlign;
+        this.ctx.textBaseline = textBaseline;
+        this.ctx.fillText(text, x, y);
         this.ctx.closePath();
     }
 }

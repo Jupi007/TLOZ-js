@@ -81,12 +81,12 @@ export class Hud {
     }
 
     drawMap(): void {
-        let cellHeight = (this.height  - this.Game.World.nbCol - 1) / this.Game.World.nbCol;
+        let cellHeight = (this.height - this.Game.Viewport.currentWorld.nbCol - 1) / this.Game.Viewport.currentWorld.nbCol;
         let cellWidth = (cellHeight * this.Game.Viewport.width) / this.Game.Viewport.height;
 
-        let x = (this.width / 2) - (cellWidth * this.Game.World.nbRow + this.Game.World.nbRow - 1) / 2
+        let x = (this.width / 2) - (cellWidth * this.Game.Viewport.currentWorld.nbRow + this.Game.Viewport.currentWorld.nbRow - 1) / 2
 
-        this.Game.World.loopScenes((scene) => {
+        this.Game.Viewport.currentWorld.loopScenes((scene) => {
             this.Game.fillRect(
                 x + cellWidth * scene.c + 2 * scene.c,
                 cellHeight * scene.r + 2 * scene.r,

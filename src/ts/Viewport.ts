@@ -4,20 +4,26 @@ import { Direction } from "./Libraries/Direction.js";
 import { StateObserver } from "./Libraries/Observers.js";
 import { Collisions } from "./Libraries/Collisions.js";
 
-import { Scene } from "./Map.js";
+import { Passage, Scene, World, Map } from "./Map.js";
 import { Enemy, EnemyState } from "./Enemies.js";
 import { EnemyManager } from "./EnemyManager.js";
 
 export class Viewport {
     Game: Game;
+
+    currentWorld: World;
+    nextWorld: World;
+
     currentScene: Scene;
     nextScene: Scene;
+
+    justReachOutPassage: boolean;
 
     x: number;
     y: number;
 
-    dc:number;
-    dr:number;
+    dc: number;
+    dr: number;
 
     slideSceneAnimationSpeed: number;
 
@@ -25,8 +31,14 @@ export class Viewport {
 
     constructor(game: Game) {
         this.Game = game;
-        this.currentScene = this.Game.World.getSpawnScene();
+
+        this.currentWorld = this.Game.Map.getSpawnWorld();
+        this.nextWorld = null;
+
+        this.currentScene = this.Game.Map.getSpawnScene();
         this.nextScene = null;
+
+        this.justReachOutPassage = true;
 
         this.music = this.currentScene.music;
 
@@ -108,12 +120,27 @@ export class Viewport {
             Collisions.movingBox(this.Game.Player.hitBox, cell);
         });
 
-        this.loopCells((cell, col, row) => {
-            
+        this.currentScene.passages.forEach((passage: Passage) => {
+            if (Collisions.simpleMovingBox(this.Game.Player.hitBox, passage)) {
+                if (!this.justReachOutPassage) {
+                    this.changeWorld(passage.targetWorldIndex, passage.targetSceneC, passage.targetSceneR);
+                }
+            } else if (this.justReachOutPassage) {
+                this.justReachOutPassage = false;
+            }
         });
 
-        if (Collisions.movingBoxCanvas(this.Game.Player, this)) {
-            this.slideScene(this.Game.Player.direction);
+        if (Collisions.movingBoxLine(this.Game.Player, 0, Direction.Up)) {
+            this.currentScene.upperEdgeCollision();
+        }
+        else if (Collisions.movingBoxLine(this.Game.Player, this.Game.Viewport.height, Direction.Down)) {
+            this.currentScene.bottomEdgeCollision();
+        }
+        else if (Collisions.movingBoxLine(this.Game.Player, 0, Direction.Left)) {
+            this.currentScene.leftEdgeCollision();
+        }
+        else if (Collisions.movingBoxLine(this.Game.Player, this.Game.Viewport.width, Direction.Right)) {
+            this.currentScene.rightEdgeCollision();
         }
     }
 
@@ -137,13 +164,13 @@ export class Viewport {
             return;
         }
 
-        if ( !(
+        if (!(
             currentSceneCol + this.dc < 0 ||
-            currentSceneCol + this.dc > this.Game.World.nbCol - 1 ||
+            currentSceneCol + this.dc > this.currentWorld.nbCol - 1 ||
             currentSceneRow + this.dr < 0 ||
-            currentSceneRow + this.dr > this.Game.World.nbRow - 1
-        ) ) {
-            this.nextScene = this.Game.World.map[currentSceneCol + this.dc][currentSceneRow + this.dr];
+            currentSceneRow + this.dr > this.currentWorld.nbRow - 1
+        )) {
+            this.nextScene = this.currentWorld.scenes[currentSceneCol + this.dc][currentSceneRow + this.dr];
 
             if (direction === Direction.Left) {
                 this.nextScene.x = -this.width;
@@ -196,9 +223,9 @@ export class Viewport {
         }
 
         if (
-            (this.nextScene.y <= 0 && this.dr ===  1) ||
+            (this.nextScene.y <= 0 && this.dr === 1) ||
             (this.nextScene.y >= 0 && this.dr === -1) ||
-            (this.nextScene.x <= 0 && this.dc ===  1) ||
+            (this.nextScene.x <= 0 && this.dc === 1) ||
             (this.nextScene.x >= 0 && this.dc === -1)
         ) {
             this.nextScene.y = 0;
@@ -227,6 +254,39 @@ export class Viewport {
             this.Game.ItemManager.deleteAllItems();
 
             this.Game.state.setNextState(GameState.Run);
+        }
+    }
+
+    changeWorld(targetWorldIndex: number, targetSceneC: number, targetSceneR: number, targetCellC: number | null = null, targetCellR: number | null = null): void {
+        this.nextWorld = this.Game.Map.worlds[targetWorldIndex];
+        this.nextScene = this.nextWorld.scenes[targetSceneC][targetSceneR];
+
+        if (this.music.src != this.nextScene.music.src) {
+            this.music.pause();
+            this.music.currentTime = 0;
+            this.music = this.nextScene.music;
+            this.music.play();
+        }
+
+        this.currentWorld = this.nextWorld;
+        this.currentScene = this.nextScene
+
+        this.Game.EnemyManager.loopEnemies((enemy) => {
+            if (enemy.state.is(EnemyState.Killed)) {
+                this.Game.EnemyManager.killEnemy(enemy);
+            }
+        })
+        this.Game.EnemyManager = new EnemyManager(this.Game);
+        this.Game.ProjectileManager.deleteAllProjectiles();
+        this.Game.ItemManager.deleteAllItems();
+
+        if (targetCellC !== null && targetCellR !== null) {
+            this.Game.Player.x = targetCellC * this.currentScene.cellSize;
+            this.Game.Player.y = targetCellR * this.currentScene.cellSize;
+            this.justReachOutPassage = true;
+        } else {
+            this.Game.Player.x = (this.currentScene.nbCol * this.currentScene.cellSize) / 2 - this.Game.Player.width / 2;
+            this.Game.Player.y = (this.currentScene.nbRow - 1) * this.currentScene.cellSize;
         }
     }
 

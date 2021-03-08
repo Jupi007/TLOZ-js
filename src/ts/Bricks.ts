@@ -21,6 +21,9 @@ export class BrickCollection {
             case "default-grey":
                 return new Bricks.DefaultGrey();
                 break;
+            case "default-dark":
+                return new Bricks.DefaultDark();
+                break;
             case "stairs":
                 return new Bricks.Stairs();
                 break;
@@ -36,6 +39,9 @@ export class BrickCollection {
 
             case "wall":
                 return new Bricks.Wall();
+                break;
+            case "wall-dark":
+                return new Bricks.WallDark();
                 break;
             case "single-wall":
                 return new Bricks.SingleWall();
@@ -120,6 +126,13 @@ export namespace Bricks {
         }
     }
 
+    export class DefaultDark extends Brick {
+        constructor() {
+            super();
+            this.sprite = SpriteLoader.load("./sprites/png/bricks/default-dark.png");
+        }
+    }
+
     export class Stairs extends Brick {
         constructor() {
             super();
@@ -155,6 +168,14 @@ export namespace Bricks {
         constructor() {
             super();
             this.sprite = SpriteLoader.load("./sprites/png/bricks/wall.png");
+            this.hasCollisions = true;
+        }
+    }
+
+    export class WallDark extends Brick {
+        constructor() {
+            super();
+            this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-dark.png");
             this.hasCollisions = true;
         }
     }
