@@ -195,7 +195,8 @@ export class Player extends MovingBox {
             Collisions.movingBoxCanvas(this, this.Game.Viewport);
             return;
         }
-        this.isAttackObserver.setNextState(this.Game.EventManager.isAttackPressed ? true : false);
+        if (this.Game.Sword.isEnabled)
+            this.isAttackObserver.setNextState(this.Game.EventManager.isAttackPressed);
         if ((this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) &&
             !(this.Game.EventManager.isDownPressed && this.Game.EventManager.isUpPressed)) {
             if (this.Game.EventManager.isDownPressed) {
@@ -222,7 +223,7 @@ export class Player extends MovingBox {
                 this.direction = Direction.Left;
             }
         }
-        this.isMovingObserver.setNextState((this.dx != 0 || this.dy != 0) ? true : false);
+        this.isMovingObserver.setNextState((this.dx != 0 || this.dy != 0));
     }
     increaseScore() {
         this.score++;

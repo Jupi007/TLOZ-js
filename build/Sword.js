@@ -16,6 +16,7 @@ export class Sword {
         this.slashSound = AudioLoader.load("./sounds/effect/Sword_Slash.wav");
         this.flyingSound = AudioLoader.load("./sounds/effect/Sword_Shoot.wav");
         this.isFlying = false;
+        this.isEnabled = false;
         this.damage = 1;
     }
     get direction() {
@@ -66,6 +67,8 @@ export class Sword {
         }
     }
     draw() {
+        if (!this.isEnabled)
+            return;
         if (this.Game.Player.isAttackObserver.get()) {
             this.Game.Viewport.drawImage(this.sprites[this.direction], this.x, this.y, this.width, this.height);
         }
@@ -74,6 +77,8 @@ export class Sword {
         this.Game.Viewport.drawImage(this.sprites[Direction.Up], this.Game.Player.x, this.Game.Player.y - this.swordWidth, this.swordHeight, this.swordWidth);
     }
     collisions() {
+        if (!this.isEnabled)
+            return;
         if (this.Game.Player.isAttackObserver.get()) {
             this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (Collisions.simpleMovingBox(enemy, this)) {
@@ -83,6 +88,8 @@ export class Sword {
         }
     }
     listenEvents() {
+        if (!this.isEnabled)
+            return;
         if (this.Game.Player.isAttackObserver.get() && this.Game.Player.isAttackObserver.isFirstFrame) {
             this.slashSound.play();
         }

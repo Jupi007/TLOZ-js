@@ -337,7 +337,7 @@ export class Player extends MovingBox {
             return;
         }
 
-        this.isAttackObserver.setNextState(this.Game.EventManager.isAttackPressed ? true : false);
+        if (this.Game.Sword.isEnabled) this.isAttackObserver.setNextState(this.Game.EventManager.isAttackPressed);
 
         if (
             (this.Game.EventManager.isDownPressed || this.Game.EventManager.isUpPressed) &&
@@ -366,7 +366,7 @@ export class Player extends MovingBox {
             }
         }
 
-        this.isMovingObserver.setNextState((this.dx != 0 || this.dy != 0) ? true : false);
+        this.isMovingObserver.setNextState((this.dx != 0 || this.dy != 0));
     }
 
     increaseScore(): void {

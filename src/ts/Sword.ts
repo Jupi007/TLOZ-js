@@ -1,13 +1,10 @@
-import { Game, GameState } from "./Game.js";
+import { Game } from "./Game.js";
 
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
 
-import { Enemy, EnemyState } from "./Enemies.js";
-import { EnemyManager } from "./EnemyManager.js";
 import { Sword as SwordProjectile } from "./Projectiles.js";
-import { Scene } from "./Map.js";
 
 export class Sword {
     Game: Game;
@@ -23,6 +20,7 @@ export class Sword {
     flyingSound: HTMLAudioElement;
 
     isFlying: boolean;
+    isEnabled: boolean;
 
     damage: number;
 
@@ -42,6 +40,7 @@ export class Sword {
         this.flyingSound = AudioLoader.load("./sounds/effect/Sword_Shoot.wav");
 
         this.isFlying = false;
+        this.isEnabled = false;
 
         this.damage = 1;
     }
@@ -93,6 +92,8 @@ export class Sword {
     }
 
     draw(): void {
+        if (!this.isEnabled) return;
+
         if (this.Game.Player.isAttackObserver.get()) {
             this.Game.Viewport.drawImage(
                 this.sprites[this.direction],
@@ -115,6 +116,8 @@ export class Sword {
     }
 
     collisions(): void {
+        if (!this.isEnabled) return;
+
         if (this.Game.Player.isAttackObserver.get()) {
             this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (Collisions.simpleMovingBox(enemy, this)) {
@@ -125,6 +128,8 @@ export class Sword {
     }
 
     listenEvents(): void {
+        if (!this.isEnabled) return;
+
         if (this.Game.Player.isAttackObserver.get() && this.Game.Player.isAttackObserver.isFirstFrame) {
             this.slashSound.play();
         }
