@@ -5,7 +5,7 @@ import { StateObserver } from "./Libraries/Observers.js";
 import { Collisions } from "./Libraries/Collisions.js";
 
 import { Passage, Scene, World, Map } from "./Map.js";
-import { Enemy, EnemyState } from "./Enemies.js";
+import { EnemyState } from "./Enemies.js";
 import { EnemyManager } from "./EnemyManager.js";
 
 export class Viewport {
@@ -17,12 +17,16 @@ export class Viewport {
     currentScene: Scene;
     nextScene: Scene;
 
+    slideSceneDirection: Direction;
+
+    targetCellR: number;
+    targetCellC: number;
+    changeWorldFromPassage: boolean;
+    changeWorldToPassage: boolean;
     justReachOutPassage: boolean;
 
     x: number;
     y: number;
-
-    slideSceneDirection: Direction;
 
     slideSceneAnimationSpeed: number;
 
@@ -37,7 +41,7 @@ export class Viewport {
         this.currentScene = this.Game.Map.getSpawnScene();
         this.nextScene = null;
 
-        this.justReachOutPassage = true;
+        this.justReachOutPassage = false;
 
         this.music = this.currentScene.music;
 
@@ -119,7 +123,7 @@ export class Viewport {
         this.currentScene.passages.forEach((passage: Passage) => {
             if (Collisions.simpleMovingBox(this.Game.Player.hitBox, passage)) {
                 if (!this.justReachOutPassage) {
-                    this.changeWorld(passage.targetWorldIndex, passage.targetSceneC, passage.targetSceneR);
+                    this.changeWorld(true, passage.targetWorldIndex, passage.targetSceneC, passage.targetSceneR);
                 }
             } else if (this.justReachOutPassage) {
                 this.justReachOutPassage = false;
@@ -294,16 +298,20 @@ export class Viewport {
         this.Game.drawGame();
     }
 
-    changeWorld(targetWorldIndex: number, targetSceneC: number, targetSceneR: number, targetCellC: number | null = null, targetCellR: number | null = null): void {
+    changeWorld(fromPassage: boolean, targetWorldIndex: number, targetSceneC: number, targetSceneR: number, targetCellC: number | null = null, targetCellR: number | null = null): void {
+        this.changeWorldFromPassage = fromPassage;
+        this.changeWorldToPassage = (targetCellC !== null && targetCellR !== null) ? true : false;
+
+        this.targetCellC = targetCellC;
+        this.targetCellR = targetCellR;
+
         this.nextWorld = this.Game.Map.worlds[targetWorldIndex];
         this.nextScene = this.nextWorld.scenes[targetSceneC][targetSceneR];
 
-        if (this.music.src != this.nextScene.music.src) {
-            this.music.pause();
-            this.music.currentTime = 0;
-            this.music = this.nextScene.music;
-            this.music.play();
-        }
+        this.music.pause();
+        this.music.currentTime = 0;
+        this.music = this.nextScene.music;
+        this.music.play();
 
         this.currentWorld = this.nextWorld;
         this.currentScene = this.nextScene
@@ -312,14 +320,19 @@ export class Viewport {
             if (enemy.state.is(EnemyState.Killed)) {
                 this.Game.EnemyManager.removeEnemy(enemy);
             }
-        })
+        });
+
         this.Game.EnemyManager = new EnemyManager(this.Game);
         this.Game.ProjectileManager.deleteAllProjectiles();
         this.Game.ItemManager.deleteAllItems();
 
-        if (targetCellC !== null && targetCellR !== null) {
-            this.Game.Player.x = targetCellC * this.currentScene.cellSize;
-            this.Game.Player.y = targetCellR * this.currentScene.cellSize;
+        if (this.changeWorldToPassage) {
+            this.Game.Player.x = this.targetCellC * this.currentScene.cellSize;
+            this.Game.Player.y = this.targetCellR * this.currentScene.cellSize;
+
+            this.targetCellC = 0;
+            this.targetCellR = 0;
+
             this.justReachOutPassage = true;
         } else {
             this.Game.Player.x = (this.currentScene.nbCol * this.currentScene.cellSize) / 2 - this.Game.Player.width / 2;

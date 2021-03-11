@@ -600,7 +600,7 @@ export class Map {
         ]);
 
         this.worlds[1].scenes[0][0].bottomEdgeCollision = function() {
-            this.Game.Viewport.changeWorld(0, 1, 2, 3, 1);
+            this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
         };
 
         this.worlds[1].scenes[0][0].enemies = [

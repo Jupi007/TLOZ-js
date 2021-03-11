@@ -294,7 +294,7 @@ export class Map {
             ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
         ]);
         this.worlds[1].scenes[0][0].bottomEdgeCollision = function () {
-            this.Game.Viewport.changeWorld(0, 1, 2, 3, 1);
+            this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
         };
         this.worlds[1].scenes[0][0].enemies = [
             new Moblin(this.Game, 3 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),

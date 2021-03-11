@@ -10,7 +10,7 @@ export class Viewport {
         this.nextWorld = null;
         this.currentScene = this.Game.Map.getSpawnScene();
         this.nextScene = null;
-        this.justReachOutPassage = true;
+        this.justReachOutPassage = false;
         this.music = this.currentScene.music;
         this.x = 0;
         this.y = 0;
@@ -65,7 +65,7 @@ export class Viewport {
         this.currentScene.passages.forEach((passage) => {
             if (Collisions.simpleMovingBox(this.Game.Player.hitBox, passage)) {
                 if (!this.justReachOutPassage) {
-                    this.changeWorld(passage.targetWorldIndex, passage.targetSceneC, passage.targetSceneR);
+                    this.changeWorld(true, passage.targetWorldIndex, passage.targetSceneC, passage.targetSceneR);
                 }
             }
             else if (this.justReachOutPassage) {
@@ -203,15 +203,17 @@ export class Viewport {
         this.slideScenePlayerMove();
         this.Game.drawGame();
     }
-    changeWorld(targetWorldIndex, targetSceneC, targetSceneR, targetCellC = null, targetCellR = null) {
+    changeWorld(fromPassage, targetWorldIndex, targetSceneC, targetSceneR, targetCellC = null, targetCellR = null) {
+        this.changeWorldFromPassage = fromPassage;
+        this.changeWorldToPassage = (targetCellC !== null && targetCellR !== null) ? true : false;
+        this.targetCellC = targetCellC;
+        this.targetCellR = targetCellR;
         this.nextWorld = this.Game.Map.worlds[targetWorldIndex];
         this.nextScene = this.nextWorld.scenes[targetSceneC][targetSceneR];
-        if (this.music.src != this.nextScene.music.src) {
-            this.music.pause();
-            this.music.currentTime = 0;
-            this.music = this.nextScene.music;
-            this.music.play();
-        }
+        this.music.pause();
+        this.music.currentTime = 0;
+        this.music = this.nextScene.music;
+        this.music.play();
         this.currentWorld = this.nextWorld;
         this.currentScene = this.nextScene;
         this.Game.EnemyManager.loopEnemies((enemy) => {
@@ -222,9 +224,11 @@ export class Viewport {
         this.Game.EnemyManager = new EnemyManager(this.Game);
         this.Game.ProjectileManager.deleteAllProjectiles();
         this.Game.ItemManager.deleteAllItems();
-        if (targetCellC !== null && targetCellR !== null) {
-            this.Game.Player.x = targetCellC * this.currentScene.cellSize;
-            this.Game.Player.y = targetCellR * this.currentScene.cellSize;
+        if (this.changeWorldToPassage) {
+            this.Game.Player.x = this.targetCellC * this.currentScene.cellSize;
+            this.Game.Player.y = this.targetCellR * this.currentScene.cellSize;
+            this.targetCellC = 0;
+            this.targetCellR = 0;
             this.justReachOutPassage = true;
         }
         else {
