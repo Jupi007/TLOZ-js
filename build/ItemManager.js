@@ -3,6 +3,7 @@ export class ItemManager {
     constructor(game) {
         this.Game = game;
         this.items = [];
+        this.permanentItems = [];
     }
     collisions() {
         this.loopItems((item) => {
@@ -22,14 +23,28 @@ export class ItemManager {
     addItem(item) {
         this.items.push(item);
     }
+    addPermanentItem(item) {
+        this.permanentItems.push(item);
+    }
     deleteItem(item) {
-        this.items.splice(this.items.indexOf(item), 1);
+        let itemIndex = this.items.indexOf(item);
+        let permanentItemIndex = this.permanentItems.indexOf(item);
+        if (itemIndex > -1) {
+            this.items.splice(itemIndex, 1);
+        }
+        else if (permanentItemIndex > -1) {
+            this.permanentItems.splice(permanentItemIndex, 1);
+        }
     }
     deleteAllItems() {
         this.items = [];
+        this.permanentItems = [];
     }
     loopItems(callback) {
         this.items.forEach((item) => {
+            callback(item);
+        });
+        this.permanentItems.forEach((item) => {
             callback(item);
         });
     }

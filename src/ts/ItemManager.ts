@@ -8,11 +8,13 @@ export class ItemManager {
     Game: Game;
 
     items: Item[];
+    permanentItems: Item[];
 
     constructor(game: Game) {
         this.Game = game;
 
         this.items = [];
+        this.permanentItems = [];
     }
 
     collisions(): void {
@@ -44,16 +46,31 @@ export class ItemManager {
         this.items.push(item);
     }
 
+    addPermanentItem(item: Item): void {
+        this.permanentItems.push(item);
+    }
+
     deleteItem(item: Item): void {
-        this.items.splice(this.items.indexOf(item), 1);
+        let itemIndex = this.items.indexOf(item);
+        let permanentItemIndex = this.permanentItems.indexOf(item);
+        
+        if (itemIndex > -1) {
+            this.items.splice(itemIndex, 1);
+        } else if (permanentItemIndex > -1) {
+            this.permanentItems.splice(permanentItemIndex, 1);
+        }
     }
 
     deleteAllItems(): void {
         this.items = [];
+        this.permanentItems = [];
     }
 
     loopItems(callback: Function): void {
         this.items.forEach((item: Item) => {
+            callback(item);
+        });
+        this.permanentItems.forEach((item: Item) => {
             callback(item);
         });
     }

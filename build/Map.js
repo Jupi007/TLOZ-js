@@ -4,6 +4,7 @@ import { Direction } from "./Libraries/Direction.js";
 import { Random } from "./Libraries/Random.js";
 import { Octorok, BlueOctorok, Moblin, BlueMoblin, Tektite, BlueTektite } from "./Enemies.js";
 import { BrickCollection } from "./Bricks.js";
+import { Sword as SwordItem } from "./Items.js";
 export class Cell extends SimpleBox {
     constructor(x, y, size, brick) {
         super();
@@ -38,6 +39,7 @@ export class Scene {
         this.cellSize = 64;
         this.enemies = [];
         this.passages = [];
+        this.permanentItems = [];
         this.x = 0;
         this.y = 0;
         this.c = c;
@@ -296,11 +298,38 @@ export class Map {
         this.worlds[1].scenes[0][0].bottomEdgeCollision = function () {
             this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
         };
-        this.worlds[1].scenes[0][0].enemies = [
-            new Moblin(this.Game, 3 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
-            new BlueMoblin(this.Game, 5 * 64, 7 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
-            new Moblin(this.Game, 10 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
-            new BlueMoblin(this.Game, 12 * 64, 7 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
+        /*this.worlds[1].scenes[0][0].enemies = [
+            new Moblin(
+                this.Game,
+                3 * 64,
+                5 * 64,
+                3,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+            new BlueMoblin(
+                this.Game,
+                5 * 64,
+                7 * 64,
+                3,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+            new Moblin(
+                this.Game,
+                10 * 64,
+                5 * 64,
+                3,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+            new BlueMoblin(
+                this.Game,
+                12 * 64,
+                7 * 64,
+                3,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+        ];*/
+        this.worlds[1].scenes[0][0].permanentItems = [
+            new SwordItem(this.Game, 5 * 64, 5 * 64),
         ];
     }
     getSpawnWorld() {

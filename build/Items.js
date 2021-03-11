@@ -35,3 +35,18 @@ export class Clock extends Item {
         this.Game.Player.getInvicibility(400);
     }
 }
+export class Sword extends Item {
+    constructor(game, x, y) {
+        super();
+        this.Game = game;
+        this.x = x;
+        this.y = y;
+        this.width = 28;
+        this.height = 64;
+        this.sprite = SpriteLoader.load("./sprites/png/sword-up.png");
+        this.collisionSound = AudioLoader.load("./sounds/effect/Get_Item.wav");
+    }
+    collisionCallback() {
+        this.Game.Sword.isEnabled = true;
+    }
+}

@@ -252,6 +252,8 @@ export class Viewport {
                 this.music.play();
             }
 
+            this.currentScene.permanentItems = this.Game.ItemManager.permanentItems;
+
             this.currentScene = this.nextScene;
             this.nextScene = null;
 
@@ -263,6 +265,7 @@ export class Viewport {
             this.Game.EnemyManager = new EnemyManager(this.Game);
             this.Game.ProjectileManager.deleteAllProjectiles();
             this.Game.ItemManager.deleteAllItems();
+            this.Game.ItemManager.permanentItems = this.currentScene.permanentItems;
 
             this.Game.state.setNextState(GameState.Run);
         }
@@ -313,6 +316,8 @@ export class Viewport {
         this.music = this.nextScene.music;
         this.music.play();
 
+        this.currentScene.permanentItems = this.Game.ItemManager.permanentItems;
+
         this.currentWorld = this.nextWorld;
         this.currentScene = this.nextScene
 
@@ -325,6 +330,7 @@ export class Viewport {
         this.Game.EnemyManager = new EnemyManager(this.Game);
         this.Game.ProjectileManager.deleteAllProjectiles();
         this.Game.ItemManager.deleteAllItems();
+        this.Game.ItemManager.permanentItems = this.currentScene.permanentItems;
 
         if (this.changeWorldToPassage) {
             this.Game.Player.x = this.targetCellC * this.currentScene.cellSize;

@@ -6,7 +6,8 @@ import { Direction } from "./Libraries/Direction.js";
 import { Random } from "./Libraries/Random.js";
 
 import { Enemy, Octorok, BlueOctorok, Moblin, BlueMoblin, Tektite, BlueTektite } from "./Enemies.js";
-import { Brick, Bricks, BrickCollection } from "./Bricks.js";
+import { Brick, BrickCollection } from "./Bricks.js";
+import { Item, Sword as SwordItem } from "./Items.js";
 
 export class Cell extends SimpleBox {
     brick: Brick;
@@ -67,6 +68,7 @@ export class Scene {
 
     enemies: Enemy[];
     passages: Passage[];
+    permanentItems: Item[];
 
     music: HTMLAudioElement;
 
@@ -83,6 +85,7 @@ export class Scene {
 
         this.enemies = [];
         this.passages = [];
+        this.permanentItems = [];
 
         this.x = 0;
         this.y = 0;
@@ -603,7 +606,7 @@ export class Map {
             this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
         };
 
-        this.worlds[1].scenes[0][0].enemies = [
+        /*this.worlds[1].scenes[0][0].enemies = [
             new Moblin(
                 this.Game,
                 3 * 64,
@@ -631,6 +634,14 @@ export class Map {
                 7 * 64,
                 3,
                 Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+        ];*/
+
+        this.worlds[1].scenes[0][0].permanentItems = [
+            new SwordItem(
+                this.Game,
+                5*64,
+                5*64
             ),
         ];
     }
