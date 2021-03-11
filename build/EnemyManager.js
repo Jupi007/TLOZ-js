@@ -14,7 +14,7 @@ export class EnemyManager {
             callback(enemy);
         });
     }
-    killEnemy(enemy) {
+    removeEnemy(enemy) {
         const enemyIndex = this.enemies.indexOf(enemy);
         if (enemyIndex > -1) {
             this.enemies.splice(enemyIndex, 1);
@@ -64,7 +64,7 @@ export class EnemyManager {
                     this.Game.Viewport.currentScene.drawImage(enemy.killedSprites[2], enemy.x, enemy.y, enemy.width, enemy.height);
                 }
                 else {
-                    this.Game.EnemyManager.killEnemy(enemy);
+                    this.Game.EnemyManager.removeEnemy(enemy);
                 }
                 return;
             }

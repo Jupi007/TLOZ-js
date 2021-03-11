@@ -23,7 +23,7 @@ export class EnemyManager {
         });
     }
 
-    killEnemy(enemy: Enemy): void {
+    removeEnemy(enemy: Enemy): void {
         const enemyIndex = this.enemies.indexOf(enemy);
 
         if (enemyIndex > -1) {
@@ -95,7 +95,7 @@ export class EnemyManager {
                     );
                 }
                 else {
-                    this.Game.EnemyManager.killEnemy(enemy);
+                    this.Game.EnemyManager.removeEnemy(enemy);
                 }
                 return;
             }

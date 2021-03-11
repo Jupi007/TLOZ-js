@@ -246,7 +246,7 @@ export class Viewport {
 
             this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (enemy.state.is(EnemyState.Killed)) {
-                    this.Game.EnemyManager.killEnemy(enemy);
+                    this.Game.EnemyManager.removeEnemy(enemy);
                 }
             })
             this.Game.EnemyManager = new EnemyManager(this.Game);
@@ -273,7 +273,7 @@ export class Viewport {
 
         this.Game.EnemyManager.loopEnemies((enemy) => {
             if (enemy.state.is(EnemyState.Killed)) {
-                this.Game.EnemyManager.killEnemy(enemy);
+                this.Game.EnemyManager.removeEnemy(enemy);
             }
         })
         this.Game.EnemyManager = new EnemyManager(this.Game);
