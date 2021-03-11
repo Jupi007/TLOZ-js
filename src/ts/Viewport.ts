@@ -22,8 +22,7 @@ export class Viewport {
     x: number;
     y: number;
 
-    dc: number;
-    dr: number;
+    slideSceneDirection: Direction;
 
     slideSceneAnimationSpeed: number;
 
@@ -44,9 +43,6 @@ export class Viewport {
 
         this.x = 0;
         this.y = 0;
-
-        this.dr = 0;
-        this.dc = 0;
 
         this.slideSceneAnimationSpeed = 10;
     }
@@ -145,94 +141,105 @@ export class Viewport {
     }
 
     slideScene(direction: Direction): void {
+        this.slideSceneDirection = direction;
+
         let currentSceneCol = this.currentScene.c;
         let currentSceneRow = this.currentScene.r;
 
-        if (direction === Direction.Left) {
-            this.dc = -1;
-        }
-        else if (direction === Direction.Right) {
-            this.dc = 1;
-        }
-        else if (direction === Direction.Up) {
-            this.dr = -1;
-        }
-        else if (direction === Direction.Down) {
-            this.dr = 1;
-        }
-        else {
-            return;
-        }
+        let dc = 0;
+        let dr = 0;
 
-        if (!(
-            currentSceneCol + this.dc < 0 ||
-            currentSceneCol + this.dc > this.currentWorld.nbCol - 1 ||
-            currentSceneRow + this.dr < 0 ||
-            currentSceneRow + this.dr > this.currentWorld.nbRow - 1
-        )) {
-            this.nextScene = this.currentWorld.scenes[currentSceneCol + this.dc][currentSceneRow + this.dr];
+        switch (direction) {
+            case Direction.Left:
+                dc = -1;
+                break;
 
-            if (direction === Direction.Left) {
-                this.nextScene.x = -this.width;
-                this.nextScene.y = 0;
-            }
-            else if (direction === Direction.Right) {
-                this.nextScene.x = this.width;
-                this.nextScene.y = 0;
-            }
-            else if (direction === Direction.Up) {
-                this.nextScene.y = -this.height;
-                this.nextScene.x = 0;
-            }
-            else if (direction === Direction.Down) {
-                this.nextScene.y = this.height;
-                this.nextScene.x = 0;
-            }
+            case Direction.Right:
+                dc = 1;
+                break;
 
-            this.Game.Player.dx = 0;
-            this.Game.Player.dy = 0;
-            this.Game.Player.isAttackObserver.setNextState(false);
+            case Direction.Up:
+                dr = -1;
+                break;
 
-            this.Game.useCustomLoop(() => this.slideSceneLoop());
-
-            return;
-        }
-
-        this.dc = 0;
-        this.dr = 0;
-    }
-
-    slideSceneAnimationMove(): void {
-        let speed = this.slideSceneAnimationSpeed * this.Game.dt;
-
-        if (this.dc === 1) {
-            this.currentScene.x -= speed;
-            this.nextScene.x -= speed;
-        }
-        else if (this.dc === -1) {
-            this.currentScene.x += speed;
-            this.nextScene.x += speed;
-        }
-        else if (this.dr === 1) {
-            this.currentScene.y -= speed;
-            this.nextScene.y -= speed;
-        }
-        else if (this.dr === -1) {
-            this.currentScene.y += speed;
-            this.nextScene.y += speed;
+            case Direction.Down:
+                dr = 1;
+                break;
         }
 
         if (
-            (this.nextScene.y <= 0 && this.dr === 1) ||
-            (this.nextScene.y >= 0 && this.dr === -1) ||
-            (this.nextScene.x <= 0 && this.dc === 1) ||
-            (this.nextScene.x >= 0 && this.dc === -1)
+            currentSceneCol + dc < 0 ||
+            currentSceneCol + dc > this.currentWorld.nbCol - 1 ||
+            currentSceneRow + dr < 0 ||
+            currentSceneRow + dr > this.currentWorld.nbRow - 1
+        ) {
+            return;
+        }
+
+        this.nextScene = this.currentWorld.scenes[currentSceneCol + dc][currentSceneRow + dr];
+
+        switch (direction) {
+            case Direction.Left:
+                this.nextScene.x = -this.width;
+                this.nextScene.y = 0;
+                break;
+
+            case Direction.Right:
+                this.nextScene.x = this.width;
+                this.nextScene.y = 0;
+                break;
+
+            case Direction.Up:
+                this.nextScene.y = -this.height;
+                this.nextScene.x = 0;
+                break;
+
+            case Direction.Down:
+                this.nextScene.y = this.height;
+                this.nextScene.x = 0;
+                break;
+        }
+
+        this.Game.Player.dx = 0;
+        this.Game.Player.dy = 0;
+        this.Game.Player.isAttackObserver.setNextState(false);
+
+        this.Game.useCustomLoop(() => this.slideSceneLoop());
+    }
+
+    slideSceneMove(): void {
+        let speed = this.slideSceneAnimationSpeed * this.Game.dt;
+
+        switch (this.slideSceneDirection) {
+            case Direction.Left:
+                this.currentScene.x += speed;
+                this.nextScene.x += speed;
+                break;
+
+            case Direction.Right:
+                this.currentScene.x -= speed;
+                this.nextScene.x -= speed;
+                break;
+
+            case Direction.Up:
+                this.currentScene.y += speed;
+                this.nextScene.y += speed;
+                break;
+
+            case Direction.Down:
+                this.currentScene.y -= speed;
+                this.nextScene.y -= speed;
+                break;
+        }
+
+        if (
+            (this.nextScene.y <= 0 && this.slideSceneDirection === Direction.Down) ||
+            (this.nextScene.y >= 0 && this.slideSceneDirection === Direction.Up) ||
+            (this.nextScene.x <= 0 && this.slideSceneDirection === Direction.Right) ||
+            (this.nextScene.x >= 0 && this.slideSceneDirection === Direction.Left)
         ) {
             this.nextScene.y = 0;
             this.nextScene.x = 0;
-
-            this.dr = 0;
-            this.dc = 0;
 
             if (this.music.src != this.nextScene.music.src) {
                 this.music.pause();
@@ -255,6 +262,36 @@ export class Viewport {
 
             this.Game.state.setNextState(GameState.Run);
         }
+    }
+
+    slideScenePlayerMove(): void {
+        switch (this.slideSceneDirection) {
+            case Direction.Left:
+                this.Game.Player.dx = this.slideSceneAnimationSpeed * this.Game.dt;
+                break;
+
+            case Direction.Right:
+                this.Game.Player.dx = -this.slideSceneAnimationSpeed * this.Game.dt;
+                break;
+
+            case Direction.Up:
+                this.Game.Player.dy = this.slideSceneAnimationSpeed * this.Game.dt;
+                break;
+
+            case Direction.Down:
+                this.Game.Player.dy = -this.slideSceneAnimationSpeed * this.Game.dt;
+                break;
+        }
+
+        Collisions.movingBoxCanvas(this.Game.Player, this);
+        this.Game.Player.move();
+    }
+
+    slideSceneLoop(): void {
+        this.slideSceneMove();
+        this.slideScenePlayerMove();
+
+        this.Game.drawGame();
     }
 
     changeWorld(targetWorldIndex: number, targetSceneC: number, targetSceneR: number, targetCellC: number | null = null, targetCellR: number | null = null): void {
@@ -288,13 +325,6 @@ export class Viewport {
             this.Game.Player.x = (this.currentScene.nbCol * this.currentScene.cellSize) / 2 - this.Game.Player.width / 2;
             this.Game.Player.y = (this.currentScene.nbRow - 1) * this.currentScene.cellSize;
         }
-    }
-
-    slideSceneLoop(): void {
-        this.slideSceneAnimationMove();
-        this.Game.Player.slideSceneAnimationMove();
-
-        this.Game.drawGame();
     }
 
     drawImage(

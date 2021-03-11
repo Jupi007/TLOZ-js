@@ -272,21 +272,6 @@ export class Player extends MovingBox {
         this.dy = 0;
     }
 
-    slideSceneAnimationMove(): void {
-        if (this.Game.Viewport.dc === 1) {
-            this.dx = -this.Game.Viewport.slideSceneAnimationSpeed * this.Game.dt;
-        } else if (this.Game.Viewport.dc === -1) {
-            this.dx = this.Game.Viewport.slideSceneAnimationSpeed * this.Game.dt;
-        } else if (this.Game.Viewport.dr === 1) {
-            this.dy = -this.Game.Viewport.slideSceneAnimationSpeed * this.Game.dt;
-        } else if (this.Game.Viewport.dr === -1) {
-            this.dy = this.Game.Viewport.slideSceneAnimationSpeed * this.Game.dt;
-        }
-
-        Collisions.movingBoxCanvas(this, this.Game.Viewport);
-        this.move();
-    }
-
     // Helper to pass between two boxes
     passBetweenBoxesHelper(): void {
         let halfLeftCollision = false;
