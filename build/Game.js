@@ -158,6 +158,14 @@ export class Game {
         this.Player.draw();
         this.Hud.draw();
     }
+    drawGameWithoutPlayer() {
+        this.Viewport.draw();
+        this.EnemyManager.draw();
+        this.Sword.draw();
+        this.ItemManager.draw();
+        this.ProjectileManager.draw();
+        this.Hud.draw();
+    }
     drawImage(sprite, x, y, width, height) {
         this.ctx.beginPath();
         this.ctx.imageSmoothingEnabled = false;

@@ -1,4 +1,5 @@
 import { Game, GameState } from "./Game.js";
+import { Item } from "./Items.js";
 
 import { MovingBoxHitBox, MovingBox } from "./Libraries/Boxes.js";
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
@@ -31,6 +32,8 @@ export class Player extends MovingBox {
 
     score: number;
     targetScore: number;
+
+    obtainedItem: Item;
 
     sprites: HTMLImageElement[][] = [];
     spritesAnimation: AnimationObserver;
@@ -227,38 +230,38 @@ export class Player extends MovingBox {
         if (this.isDiedObserver.currentFrame <= 125) {
             switch (this.diedAnimation.currentAnimationStep) {
                 case 1:
-                    this.Game.Player.direction = Direction.Down;
+                    this.direction = Direction.Down;
                     break;
                 case 2:
-                    this.Game.Player.direction = Direction.Left;
+                    this.direction = Direction.Left;
                     break;
                 case 3:
-                    this.Game.Player.direction = Direction.Up;
+                    this.direction = Direction.Up;
                     break;
                 case 4:
-                    this.Game.Player.direction = Direction.Right;
+                    this.direction = Direction.Right;
                     break;
             }
 
-            this.Game.Player.draw();
+            this.draw();
             this.diedAnimation.update(this.Game.dt);
         }
         else if (this.isDiedObserver.currentFrame <= 135) {
             this.Game.Viewport.currentScene.drawImage(
                 this.killedSprites[1],
-                this.Game.Player.x,
-                this.Game.Player.y,
-                this.Game.Player.width,
-                this.Game.Player.height
+                this.x,
+                this.y,
+                this.width,
+                this.height
             );
         }
         else if (this.isDiedObserver.currentFrame <= 145) {
             this.Game.Viewport.currentScene.drawImage(
                 this.killedSprites[2],
-                this.Game.Player.x,
-                this.Game.Player.y,
-                this.Game.Player.width,
-                this.Game.Player.height
+                this.x,
+                this.y,
+                this.width,
+                this.height
             );
         }
         this.isDiedObserver.update(this.Game.dt);
@@ -402,8 +405,8 @@ export class Player extends MovingBox {
             this.isDiedObserver.setNextState(false);
 
             this.isInvincibleObserver.setNextState(false);
-            this.Game.Player.isMovingObserver.setNextState(false);
-            this.Game.Player.isAttackObserver.setNextState(false);
+            this.isMovingObserver.setNextState(false);
+            this.isAttackObserver.setNextState(false);
 
             this.Game.Viewport.music.pause();
             this.lowHealthSound.pause();
@@ -435,6 +438,42 @@ export class Player extends MovingBox {
     getInvicibility(duration: number = this.defaultInvincibleDuration): void {
         this.invincibleDuration = duration;
         this.isInvincibleObserver.setNextState(true);
+    }
+    
+    getImportantItem(item: Item) {
+        this.obtainedItem = item;
+
+        this.Game.Viewport.music.pause();
+        this.Game.Viewport.music.currentTime = 0;
+
+        this.Game.useCustomLoop(() => this.getImportantItemLoop());
+    }
+
+    getImportantItemDraw() {
+        this.Game.Viewport.drawImage(
+            this.winSprite,
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
+        this.Game.Viewport.drawImage(
+            this.obtainedItem.sprite,
+            this.x,
+            this.y - this.obtainedItem.height,
+            this.obtainedItem.width,
+            this.obtainedItem.height
+        );
+
+        if (this.Game.state.currentFrame > 120) {
+            this.Game.Viewport.music.play();
+            this.Game.state.setNextState(GameState.Run);
+        }        
+    }
+
+    getImportantItemLoop(): void {
+        this.Game.drawGameWithoutPlayer();
+        this.getImportantItemDraw();
     }
 
     updateObservers(): void {

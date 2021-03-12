@@ -210,6 +210,15 @@ export class Game {
         this.Hud.draw();
     }
 
+    drawGameWithoutPlayer(): void {
+        this.Viewport.draw();
+        this.EnemyManager.draw();
+        this.Sword.draw();
+        this.ItemManager.draw();
+        this.ProjectileManager.draw();
+        this.Hud.draw();
+    }
+
     drawImage(
         sprite: HTMLImageElement,
         x: number,

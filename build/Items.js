@@ -44,9 +44,10 @@ export class Sword extends Item {
         this.width = 28;
         this.height = 64;
         this.sprite = SpriteLoader.load("./sprites/png/sword-up.png");
-        this.collisionSound = AudioLoader.load("./sounds/effect/Get_Item.wav");
+        this.collisionSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
     }
     collisionCallback() {
+        this.Game.Player.getImportantItem(this);
         this.Game.Sword.isEnabled = true;
     }
 }
