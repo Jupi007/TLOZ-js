@@ -3,7 +3,6 @@ import { AudioLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Random } from "./Libraries/Random.js";
 import { Octorok, BlueOctorok, Moblin, BlueMoblin, Tektite, BlueTektite } from "./Enemies.js";
-import { BrickCollection } from "./Bricks.js";
 import { Sword as SwordItem } from "./Items.js";
 export class Cell extends SimpleBox {
     constructor(x, y, size, brick) {
@@ -61,7 +60,7 @@ export class Scene {
     loadBricks(bricks) {
         bricks.forEach((row, r) => {
             row.forEach((brickName, c) => {
-                this.cells[c][r].brick = BrickCollection.get(brickName);
+                this.cells[c][r].brick = this.Game.BrickCollection.get(brickName);
             });
         });
     }
@@ -111,7 +110,7 @@ export class Map {
         this.spawnCellColl = 7;
         this.spawnCellRow = 5.5;
         this.worlds = [];
-        this.worlds[0] = new World(this.Game, 3, 3, AudioLoader.load("./sounds/music/overworld.mp3", true), BrickCollection.get("default"));
+        this.worlds[0] = new World(this.Game, 3, 3, AudioLoader.load("./sounds/music/overworld.mp3", true), this.Game.BrickCollection.get("default"));
         this.worlds[0].scenes[0][0].loadBricks([
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
@@ -281,14 +280,14 @@ export class Map {
             new Moblin(this.Game, 10 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
             new Moblin(this.Game, 12 * 64, 7 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
         ];
-        this.worlds[1] = new World(this.Game, 1, 1, AudioLoader.load("./sounds/music/death_mountain.mp3", true), BrickCollection.get("default-dark"));
+        this.worlds[1] = new World(this.Game, 1, 1, AudioLoader.load("./sounds/music/death_mountain.mp3", true), this.Game.BrickCollection.get("default-dark"));
         this.worlds[1].scenes[0][0].loadBricks([
             ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
@@ -329,7 +328,7 @@ export class Map {
             ),
         ];*/
         this.worlds[1].scenes[0][0].permanentItems = [
-            new SwordItem(this.Game, 5 * 64, 5 * 64),
+            new SwordItem(this.Game, 8 * 64 - 14, 5 * 64),
         ];
     }
     getSpawnWorld() {

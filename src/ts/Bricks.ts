@@ -1,100 +1,133 @@
+import { Game } from "./Game.js";
 import { SpriteLoader } from "./Libraries/Loaders.js";
+import { AnimationObserver } from "./Libraries/Observers.js";
 
 export class Brick {
-    sprite: HTMLImageElement;
+    Game: Game;
+
+    private _sprite: HTMLImageElement;
     hasCollisions: boolean;
 
-    constructor() {
+    constructor(game: Game) {
+        this.Game = game;
+
         this.hasCollisions = false;
+    }
+
+    public get sprite(): HTMLImageElement {
+        return this._sprite;
+    }
+
+    public set sprite(value: HTMLImageElement) {
+        this._sprite = value;
+    }
+}
+
+export class AnimatedBrick extends Brick {
+    sprites: HTMLImageElement[] = [];
+    spritesAnimation: AnimationObserver;
+
+    constructor(game: Game) {
+        super(game);
     }
 }
 
 export class BrickCollection {
-    static get(brick: string): Brick {
+    Game: Game;
+
+    constructor(game: Game) {
+        this.Game = game;
+    }
+    
+    get(brick: string): Brick {
         switch (brick) {
             case "passage":
-                return new Bricks.Passage();
+                return new Bricks.Passage(this.Game);
                 break;
             case "default":
-                return new Bricks.Default();
+                return new Bricks.Default(this.Game);
                 break;
             case "default-grey":
-                return new Bricks.DefaultGrey();
+                return new Bricks.DefaultGrey(this.Game);
                 break;
             case "default-dark":
-                return new Bricks.DefaultDark();
+                return new Bricks.DefaultDark(this.Game);
                 break;
             case "stairs":
-                return new Bricks.Stairs();
+                return new Bricks.Stairs(this.Game);
                 break;
             case "tree":
-                return new Bricks.Tree();
+                return new Bricks.Tree(this.Game);
                 break;
             case "white-tree":
-                return new Bricks.WhiteTree();
+                return new Bricks.WhiteTree(this.Game);
                 break;
             case "grave":
-                return new Bricks.Grave();
+                return new Bricks.Grave(this.Game);
                 break;
 
             case "wall":
-                return new Bricks.Wall();
+                return new Bricks.Wall(this.Game);
                 break;
             case "wall-dark":
-                return new Bricks.WallDark();
+                return new Bricks.WallDark(this.Game);
                 break;
             case "single-wall":
-                return new Bricks.SingleWall();
+                return new Bricks.SingleWall(this.Game);
                 break;
             case "single-red-wall":
-                return new Bricks.SingleRedWall();
+                return new Bricks.SingleRedWall(this.Game);
                 break;
             case "wall-t":
-                return new Bricks.WallTop();
+                return new Bricks.WallTop(this.Game);
                 break;
             case "wall-tr":
-                return new Bricks.WallTopRight();
+                return new Bricks.WallTopRight(this.Game);
                 break;
             case "wall-tl":
-                return new Bricks.WallTopLeft();
+                return new Bricks.WallTopLeft(this.Game);
                 break;
             case "wall-br":
-                return new Bricks.WallBottomRight();
+                return new Bricks.WallBottomRight(this.Game);
                 break;
             case "wall-bl":
-                return new Bricks.WallBottomLeft();
+                return new Bricks.WallBottomLeft(this.Game);
                 break;
 
             case "white-wall":
-                return new Bricks.WhiteWall();
+                return new Bricks.WhiteWall(this.Game);
                 break;
             case "white-wall-t":
-                return new Bricks.WhiteWallTop();
+                return new Bricks.WhiteWallTop(this.Game);
                 break;
             case "white-wall-tr":
-                return new Bricks.WhiteWallTopRight();
+                return new Bricks.WhiteWallTopRight(this.Game);
                 break;
             case "white-wall-tl":
-                return new Bricks.WhiteWallTopLeft();
+                return new Bricks.WhiteWallTopLeft(this.Game);
                 break;
             case "white-wall-br":
-                return new Bricks.WhiteWallBottomRight();
+                return new Bricks.WhiteWallBottomRight(this.Game);
                 break;
             case "white-wall-bl":
-                return new Bricks.WhiteWallBottomLeft();
+                return new Bricks.WhiteWallBottomLeft(this.Game);
                 break;
 
             case "monument-tr":
-                return new Bricks.MonumentTopRight();
+                return new Bricks.MonumentTopRight(this.Game);
                 break;
             case "monument-tl":
-                return new Bricks.MonumentTopLeft();
+                return new Bricks.MonumentTopLeft(this.Game);
                 break;
             case "monument-br":
-                return new Bricks.MonumentBottomRight();
+                return new Bricks.MonumentBottomRight(this.Game);
                 break;
             case "monument-bl":
-                return new Bricks.MonumentBottomLeft();
+                return new Bricks.MonumentBottomLeft(this.Game);
+                break;
+            
+            case "fire":
+                return new Bricks.Fire(this.Game);
                 break;
 
             default:
@@ -106,213 +139,260 @@ export class BrickCollection {
 
 export namespace Bricks {
     export class Passage extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/passage.png");
         }
     }
 
     export class Default extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/default.png");
         }
     }
 
     export class DefaultGrey extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/default-grey.png");
         }
     }
 
     export class DefaultDark extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/default-dark.png");
         }
     }
 
     export class Stairs extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/stairs.png");
         }
     }
 
     export class Tree extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/tree.png");
             this.hasCollisions = true;
         }
     }
 
     export class WhiteTree extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/white-tree.png");
             this.hasCollisions = true;
         }
     }
 
     export class Grave extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/grave.png");
             this.hasCollisions = true;
         }
     }
 
     export class Wall extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/wall.png");
             this.hasCollisions = true;
         }
     }
 
     export class WallDark extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-dark.png");
             this.hasCollisions = true;
         }
     }
 
     export class SingleWall extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/single-wall.png");
             this.hasCollisions = true;
         }
     }
 
     export class SingleRedWall extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/single-red-wall.png");
             this.hasCollisions = true;
         }
     }
 
     export class WallTop extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-top.png");
             this.hasCollisions = true;
         }
     }
 
     export class WallTopRight extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-top-right.png");
             this.hasCollisions = true;
         }
     }
 
     export class WallTopLeft extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-top-left.png");
             this.hasCollisions = true;
         }
     }
 
     export class WallBottomRight extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-bottom-right.png");
             this.hasCollisions = true;
         }
     }
 
     export class WallBottomLeft extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-bottom-left.png");
             this.hasCollisions = true;
         }
     }
 
     export class WhiteWall extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/white-wall.png");
             this.hasCollisions = true;
         }
     }
 
     export class WhiteWallTop extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/white-wall-top.png");
             this.hasCollisions = true;
         }
     }
 
     export class WhiteWallTopRight extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/white-wall-top-right.png");
             this.hasCollisions = true;
         }
     }
 
     export class WhiteWallTopLeft extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/white-wall-top-left.png");
             this.hasCollisions = true;
         }
     }
 
     export class WhiteWallBottomRight extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/white-wall-bottom-right.png");
             this.hasCollisions = true;
         }
     }
 
     export class WhiteWallBottomLeft extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/white-wall-bottom-left.png");
             this.hasCollisions = true;
         }
     }
 
     export class MonumentTopRight extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/monument-top-right.png");
             this.hasCollisions = true;
         }
     }
 
     export class MonumentTopLeft extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/monument-top-left.png");
             this.hasCollisions = true;
         }
     }
 
     export class MonumentBottomRight extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/monument-bottom-right.png");
             this.hasCollisions = true;
         }
     }
 
     export class MonumentBottomLeft extends Brick {
-        constructor() {
-            super();
+        constructor(game: Game) {
+            super(game);
+
             this.sprite = SpriteLoader.load("./sprites/png/bricks/monument-bottom-left.png");
             this.hasCollisions = true;
+        }
+    }
+
+    export class Fire extends AnimatedBrick {
+        constructor(game: Game) {
+            super(game);
+
+            this.hasCollisions = true;
+
+            this.sprites[1] = SpriteLoader.load("./sprites/png/bricks/fire1.png");
+            this.sprites[2] = SpriteLoader.load("./sprites/png/bricks/fire2.png");
+
+            this.spritesAnimation = new AnimationObserver(14, 2);
+        }
+
+        public get sprite(): HTMLImageElement {
+             let sprite = this.sprites[this.spritesAnimation.currentAnimationStep];
+             this.spritesAnimation.update(this.Game.dt);
+
+             return sprite;
         }
     }
 }

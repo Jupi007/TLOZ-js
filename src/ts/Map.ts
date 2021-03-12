@@ -6,7 +6,7 @@ import { Direction } from "./Libraries/Direction.js";
 import { Random } from "./Libraries/Random.js";
 
 import { Enemy, Octorok, BlueOctorok, Moblin, BlueMoblin, Tektite, BlueTektite } from "./Enemies.js";
-import { Brick, BrickCollection } from "./Bricks.js";
+import { Brick } from "./Bricks.js";
 import { Item, Sword as SwordItem } from "./Items.js";
 
 export class Cell extends SimpleBox {
@@ -119,7 +119,7 @@ export class Scene {
     loadBricks(bricks: any[][]): void {
         bricks.forEach((row, r) => {
             row.forEach((brickName, c) => {
-                this.cells[c][r].brick = BrickCollection.get(brickName);
+                this.cells[c][r].brick = this.Game.BrickCollection.get(brickName);
             });
         });
     }
@@ -224,7 +224,7 @@ export class Map {
             3,
             3,
             AudioLoader.load("./sounds/music/overworld.mp3", true),
-            BrickCollection.get("default")
+            this.Game.BrickCollection.get("default")
         );
 
         this.worlds[0].scenes[0][0].loadBricks([
@@ -585,7 +585,7 @@ export class Map {
             1,
             1,
             AudioLoader.load("./sounds/music/death_mountain.mp3", true),
-            BrickCollection.get("default-dark")
+            this.Game.BrickCollection.get("default-dark")
         );
 
         this.worlds[1].scenes[0][0].loadBricks([
@@ -594,7 +594,7 @@ export class Map {
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
@@ -640,8 +640,8 @@ export class Map {
         this.worlds[1].scenes[0][0].permanentItems = [
             new SwordItem(
                 this.Game,
-                5*64,
-                5*64
+                8 * 64 - 14,
+                5 * 64
             ),
         ];
     }

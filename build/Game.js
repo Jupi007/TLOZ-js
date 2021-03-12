@@ -1,4 +1,5 @@
 import { StateObserver } from "./Libraries/Observers.js";
+import { BrickCollection } from "./Bricks.js";
 import { Map } from "./Map.js";
 import { Viewport } from "./Viewport.js";
 import { Player } from "./Player.js";
@@ -31,6 +32,7 @@ export class Game {
     }
     init() {
         this.EventManager = new EventManager(this);
+        this.BrickCollection = new BrickCollection(this);
         this.Map = new Map(this);
         this.Viewport = new Viewport(this);
         this.Player = new Player(this);
