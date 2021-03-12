@@ -112,6 +112,10 @@ export class Scene {
         return this.enemies.length > 0;
     }
 
+    get hasPermanentItems(): boolean {
+        return this.permanentItems.length > 0;
+    }
+
     getCell(col: number, row: number): Cell {
         return this.cells[col][row];
     }
@@ -532,7 +536,7 @@ export class Map {
                 1,
                 1,
                 0,
-                0
+                1
             ),
         ];
 
@@ -583,7 +587,7 @@ export class Map {
         this.worlds[1] = new World(
             this.Game,
             1,
-            1,
+            2,
             AudioLoader.load("./sounds/music/death_mountain.mp3", true),
             this.Game.BrickCollection.get("default-dark")
         );
@@ -602,41 +606,6 @@ export class Map {
             ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
         ]);
 
-        this.worlds[1].scenes[0][0].bottomEdgeCollision = function() {
-            this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
-        };
-
-        /*this.worlds[1].scenes[0][0].enemies = [
-            new Moblin(
-                this.Game,
-                3 * 64,
-                5 * 64,
-                3,
-                Random.getOneInt(2) ? Direction.Up : Direction.Down
-            ),
-            new BlueMoblin(
-                this.Game,
-                5 * 64,
-                7 * 64,
-                3,
-                Random.getOneInt(2) ? Direction.Up : Direction.Down
-            ),
-            new Moblin(
-                this.Game,
-                10 * 64,
-                5 * 64,
-                3,
-                Random.getOneInt(2) ? Direction.Up : Direction.Down
-            ),
-            new BlueMoblin(
-                this.Game,
-                12 * 64,
-                7 * 64,
-                3,
-                Random.getOneInt(2) ? Direction.Up : Direction.Down
-            ),
-        ];*/
-
         this.worlds[1].scenes[0][0].permanentItems = [
             new SwordItem(
                 this.Game,
@@ -644,6 +613,41 @@ export class Map {
                 5 * 64
             ),
         ];
+
+        this.worlds[1].scenes[0][1].loadBricks([
+            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
+        ]);
+
+        this.worlds[1].scenes[0][1].enemies = [
+            new Moblin(
+                this.Game,
+                1 * 64,
+                1 * 64,
+                3,
+                Direction.Down
+            ),
+            new Moblin(
+                this.Game,
+                14 * 64,
+                1 * 64,
+                3,
+                Direction.Down
+            ),
+        ];
+
+        this.worlds[1].scenes[0][1].bottomEdgeCollision = function() {
+            this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
+        };
     }
 
     getSpawnWorld(): World {

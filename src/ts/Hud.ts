@@ -81,18 +81,27 @@ export class Hud {
     }
 
     drawMap(): void {
-        let cellHeight = (this.height - this.Game.Viewport.currentWorld.nbCol - 1) / this.Game.Viewport.currentWorld.nbCol;
+        let cellHeight = (this.height - this.Game.Viewport.currentWorld.nbRow - 1) / this.Game.Viewport.currentWorld.nbRow;
         let cellWidth = (cellHeight * this.Game.Viewport.width) / this.Game.Viewport.height;
 
-        let x = (this.width / 2) - (cellWidth * this.Game.Viewport.currentWorld.nbRow + this.Game.Viewport.currentWorld.nbRow - 1) / 2
+        let x = (this.width - cellWidth * this.Game.Viewport.currentWorld.nbCol + this.Game.Viewport.currentWorld.nbCol - 1) / 2
 
         this.Game.Viewport.currentWorld.loopScenes((scene) => {
+            let bgColor = '#00a230';
+
+            if (scene.hasPermanentItems) {
+                bgColor = '#e2d64a'
+            }
+            else if (scene.hasEnemies) {
+                bgColor = '#d11c0d';
+            }
+
             this.Game.fillRect(
                 x + cellWidth * scene.c + 2 * scene.c,
                 cellHeight * scene.r + 2 * scene.r,
                 cellWidth,
                 cellHeight,
-                scene.hasEnemies ? '#d11c0d' : '#00a230'
+                bgColor
             );
         });
 

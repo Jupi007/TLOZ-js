@@ -54,6 +54,9 @@ export class Scene {
     get hasEnemies() {
         return this.enemies.length > 0;
     }
+    get hasPermanentItems() {
+        return this.permanentItems.length > 0;
+    }
     getCell(col, row) {
         return this.cells[col][row];
     }
@@ -259,7 +262,7 @@ export class Map {
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"]
         ]);
         this.worlds[0].scenes[1][2].passages = [
-            new Passage(this.Game, this.worlds[0].scenes[1][2], 3, 1, 1, 0, 0),
+            new Passage(this.Game, this.worlds[0].scenes[1][2], 3, 1, 1, 0, 1),
         ];
         this.worlds[0].scenes[2][2].loadBricks([
             ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
@@ -280,7 +283,7 @@ export class Map {
             new Moblin(this.Game, 10 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
             new Moblin(this.Game, 12 * 64, 7 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
         ];
-        this.worlds[1] = new World(this.Game, 1, 1, AudioLoader.load("./sounds/music/death_mountain.mp3", true), this.Game.BrickCollection.get("default-dark"));
+        this.worlds[1] = new World(this.Game, 1, 2, AudioLoader.load("./sounds/music/death_mountain.mp3", true), this.Game.BrickCollection.get("default-dark"));
         this.worlds[1].scenes[0][0].loadBricks([
             ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
@@ -294,42 +297,29 @@ export class Map {
             ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
             ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
         ]);
-        this.worlds[1].scenes[0][0].bottomEdgeCollision = function () {
-            this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
-        };
-        /*this.worlds[1].scenes[0][0].enemies = [
-            new Moblin(
-                this.Game,
-                3 * 64,
-                5 * 64,
-                3,
-                Random.getOneInt(2) ? Direction.Up : Direction.Down
-            ),
-            new BlueMoblin(
-                this.Game,
-                5 * 64,
-                7 * 64,
-                3,
-                Random.getOneInt(2) ? Direction.Up : Direction.Down
-            ),
-            new Moblin(
-                this.Game,
-                10 * 64,
-                5 * 64,
-                3,
-                Random.getOneInt(2) ? Direction.Up : Direction.Down
-            ),
-            new BlueMoblin(
-                this.Game,
-                12 * 64,
-                7 * 64,
-                3,
-                Random.getOneInt(2) ? Direction.Up : Direction.Down
-            ),
-        ];*/
         this.worlds[1].scenes[0][0].permanentItems = [
             new SwordItem(this.Game, 8 * 64 - 14, 5 * 64),
         ];
+        this.worlds[1].scenes[0][1].loadBricks([
+            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
+            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
+        ]);
+        this.worlds[1].scenes[0][1].enemies = [
+            new Moblin(this.Game, 1 * 64, 1 * 64, 3, Direction.Down),
+            new Moblin(this.Game, 14 * 64, 1 * 64, 3, Direction.Down),
+        ];
+        this.worlds[1].scenes[0][1].bottomEdgeCollision = function () {
+            this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
+        };
     }
     getSpawnWorld() {
         return this.worlds[this.spawnWorldIndex];
