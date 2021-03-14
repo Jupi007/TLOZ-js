@@ -333,7 +333,7 @@ export var Bricks;
             this.hasCollisions = true;
             this.sprites[1] = SpriteLoader.load("./sprites/png/bricks/fire1.png");
             this.sprites[2] = SpriteLoader.load("./sprites/png/bricks/fire2.png");
-            this.spritesAnimation = new AnimationObserver(14, 2);
+            this.spritesAnimation = new AnimationObserver(10, 2);
         }
         get sprite() {
             let sprite = this.sprites[this.spritesAnimation.currentAnimationStep];
