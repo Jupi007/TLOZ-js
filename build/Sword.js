@@ -2,8 +2,10 @@ import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
 import { Sword as SwordProjectile } from "./Projectiles.js";
-export class Sword {
+import { SimpleBox } from "./Libraries/Boxes.js";
+export class Sword extends SimpleBox {
     constructor(game) {
+        super();
         this.sprites = [];
         this.Game = game;
         this.swordWidth = 64;

@@ -1,4 +1,4 @@
-import { SimpleBox, MovingBox } from "./Boxes.js";
+import { SimpleBox, MovingBox, MovingBoxHitBox, Canvas } from "./Boxes.js";
 import { Direction } from "./Direction.js";
 
 export namespace Collisions {
@@ -15,7 +15,7 @@ export namespace Collisions {
         return true;
     }
 
-    export function simpleMovingBox(movingBox: MovingBox, box2: SimpleBox): boolean {
+    export function simpleMovingBox(movingBox: MovingBox|MovingBoxHitBox, box2: SimpleBox): boolean {
         let box1 = {
             x: movingBox.x,
             y: movingBox.y,
@@ -42,7 +42,7 @@ export namespace Collisions {
         return this.simpleBox(box1, box2);
     }
 
-    export function movingBox(movingBox: MovingBox, box2: SimpleBox): boolean {
+    export function movingBox(movingBox: MovingBox|MovingBoxHitBox, box2: SimpleBox): boolean {
         if (this.simpleMovingBox(movingBox, box2)) {
             if (movingBox.dx > 0 && movingBox.x + movingBox.width <= box2.x) {
                 movingBox.dx = box2.x - (movingBox.x + movingBox.width);
@@ -63,7 +63,7 @@ export namespace Collisions {
         return false;
     }
 
-    export function movingBoxs(movingBox1: MovingBox, movingBox2): boolean {
+    export function movingBoxs(movingBox1: MovingBox|MovingBoxHitBox, movingBox2: MovingBox|MovingBoxHitBox): boolean {
         if (
             (movingBox1.x + movingBox1.dx >= movingBox2.x + movingBox2.width + movingBox1.dx) ||
             (movingBox1.x + movingBox1.dx + movingBox1.width <= movingBox2.x + movingBox1.dx) ||
@@ -75,7 +75,7 @@ export namespace Collisions {
         return true;
     }
 
-    export function simpleMovingBoxCanvas(movingBox: MovingBox, canvas: SimpleBox): boolean {
+    export function simpleMovingBoxCanvas(movingBox: MovingBox|MovingBoxHitBox, canvas: Canvas): boolean {
         if (
             movingBox.x + movingBox.dx + movingBox.width <= canvas.width &&
             movingBox.x + movingBox.dx >= 0 &&
@@ -88,7 +88,7 @@ export namespace Collisions {
         return true;
     }
 
-    export function movingBoxCanvas(movingBox: MovingBox, canvas: SimpleBox): boolean {
+    export function movingBoxCanvas(movingBox: MovingBox|MovingBoxHitBox, canvas: Canvas): boolean {
         if (this.simpleMovingBoxCanvas(movingBox, canvas)) {
             if (movingBox.x + movingBox.dx + movingBox.width > canvas.width) {
                 movingBox.dx = 0;
@@ -113,7 +113,7 @@ export namespace Collisions {
         return false;
     }
 
-    export function simpleMovingBoxLine(movingBox: MovingBox, lineCoordinate: number, direction: Direction): boolean {
+    export function simpleMovingBoxLine(movingBox: MovingBox|MovingBoxHitBox, lineCoordinate: number, direction: Direction): boolean {
         switch (direction) {
             case Direction.Up:
                 if (movingBox.y + movingBox.dy < lineCoordinate) {
@@ -140,7 +140,7 @@ export namespace Collisions {
         return false;
     }
 
-    export function movingBoxLine(movingBox: MovingBox, lineCoordinate: number, direction: Direction): boolean {
+    export function movingBoxLine(movingBox: MovingBox|MovingBoxHitBox, lineCoordinate: number, direction: Direction): boolean {
         if (this.simpleMovingBoxLine(movingBox, lineCoordinate, direction)) {
             switch (direction) {
                 case Direction.Up:

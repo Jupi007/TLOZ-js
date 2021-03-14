@@ -1,75 +1,129 @@
-import { Game } from "../Game.js";
 import { Direction } from "./Direction.js";
 
-export abstract class SimpleBox {
+export interface Canvas {
     x: number;
     y: number;
     width: number;
     height: number;
 }
 
+export abstract class SimpleBox {
+    private _x: number;
+    private _y: number;
+    private _width: number;
+    private _height: number;
+
+    public get width(): number {
+        return this._width;
+    }
+    public set width(value: number) {
+        this._width = value;
+    }
+    public get height(): number {
+        return this._height;
+    }
+    public set height(value: number) {
+        this._height = value;
+    }
+
+    public get x(): number {
+        return this._x
+    }
+    public set x(x: number) {
+        this._x = Math.round(x)
+    }
+
+    public get y(): number {
+        return this._y
+    }
+    public set y(y: number) {
+        this._y = Math.round(y);
+    }
+}
+
 export abstract class MovingBox extends SimpleBox {
-    dx = 0;
-    dy = 0;
-    direction:Direction;
+    private _dx = 0;
+    private _dy = 0;
+    private _direction: Direction;
+
+    public get dx() {
+        return this._dx;
+    }
+    public set dx(value) {
+        this._dx = value;
+    }
+
+    public get dy() {
+        return this._dy;
+    }
+    public set dy(value) {
+        this._dy = value;
+    }
+    
+    public get direction(): Direction {
+        return this._direction;
+    }
+    public set direction(value: Direction) {
+        this._direction = value;
+    }
 }
 
 export class MovingBoxHitBox {
-    Box: MovingBox;
+    private _Box: MovingBox;
 
-    hitX: number;
-    hitY: number;
-    hitWidth: number;
-    hitHeight: number;
+    private _hitX: number;
+    private _hitY: number;
+    private _hitWidth: number;
+    private _hitHeight: number;
 
     constructor(box: MovingBox, x: number, y: number, width: number, height: number) {
-        this.Box = box;
-        this.hitX = x;
-        this.hitY = y;
-        this.hitWidth = width;
-        this.hitHeight = height;
+        this._Box = box;
+        this._hitX = x;
+        this._hitY = y;
+        this._hitWidth = width;
+        this._hitHeight = height;
     }
 
-    get x(): number {
-        return this.Box.x + this.hitX;
+    public get x(): number {
+        return this._Box.x + this._hitX;
     }
-    set x(x: number) {
-        this.Box.x = x - this.hitX;
-    }
-
-    get y(): number {
-        return this.Box.y + this.hitY;
-    }
-    set y(y: number) {
-        this.Box.y = y - this.hitY;
+    public set x(x: number) {
+        this._Box.x = x - this._hitX;
     }
 
-    get width(): number {
-        return this.hitWidth;
+    public get y(): number {
+        return this._Box.y + this._hitY;
+    }
+    public set y(y: number) {
+        this._Box.y = y - this._hitY;
     }
 
-    get height(): number {
-        return this.hitHeight;
+    public get width(): number {
+        return this._hitWidth;
     }
 
-    get dx(): number {
-        return this.Box.dx;
-    }
-    set dx(dx: number) {
-        this.Box.dx = dx;
+    public get height(): number {
+        return this._hitHeight;
     }
 
-    get dy(): number {
-        return this.Box.dy;
+    public get dx(): number {
+        return this._Box.dx;
     }
-    set dy(dy: number) {
-        this.Box.dy = dy;
+    public set dx(dx: number) {
+        this._Box.dx = dx;
     }
 
-    get direction(): number {
-        return this.Box.direction;
+    public get dy(): number {
+        return this._Box.dy;
     }
-    set direction(direction: number) {
-        this.Box.direction = direction;
+    public set dy(dy: number) {
+        this._Box.dy = dy;
+    }
+
+    public get direction(): number {
+        return this._Box.direction;
+    }
+    public set direction(direction: number) {
+        this._Box.direction = direction;
     }
 }

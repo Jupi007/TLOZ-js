@@ -5,8 +5,9 @@ import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
 
 import { Sword as SwordProjectile } from "./Projectiles.js";
+import { SimpleBox } from "./Libraries/Boxes.js";
 
-export class Sword {
+export class Sword extends SimpleBox {
     Game: Game;
 
     swordWidth: number;
@@ -25,6 +26,8 @@ export class Sword {
     damage: number;
 
     constructor(game: Game) {
+        super();
+
         this.Game = game;
 
         this.swordWidth = 64;
