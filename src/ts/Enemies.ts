@@ -113,8 +113,11 @@ export class SimpleMovingEnemy extends Enemy {
     halfUpHitBox: MovingBoxHitBox;
     halfDownHitBox: MovingBoxHitBox;
 
-    constructor() {
+    constructor(width: number, height: number) {
         super();
+
+        this.width = width;
+        this.height = height;
 
         this.state = new StateObserver(EnemyState.ChangeDirection);
 
@@ -288,15 +291,15 @@ export class SimpleMovingEnemy extends Enemy {
 
 export class Octorok extends SimpleMovingEnemy {
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super();
+        let width = 64;
+        let height = 64;
+        
+        super(width, height);
 
         this.Game = game;
 
         this.x = x;
         this.y = y;
-
-        this.width = 64;
-        this.height = 64;
 
         this.speed = speed;
 
@@ -380,7 +383,10 @@ export class Moblin extends SimpleMovingEnemy {
     arrowSprites: HTMLImageElement[];
 
     constructor(game: Game, x: number, y: number, speed: number, direction: Direction) {
-        super();
+        let width = 64;
+        let height = 64;
+        
+        super(width, height);
 
         this.Game = game;
 

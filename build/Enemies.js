@@ -69,9 +69,11 @@ export class Enemy extends MovingBox {
     }
 }
 export class SimpleMovingEnemy extends Enemy {
-    constructor() {
+    constructor(width, height) {
         super();
         this.sprites = [];
+        this.width = width;
+        this.height = height;
         this.state = new StateObserver(EnemyState.ChangeDirection);
         // HalfHitBoxs are used by the passBetweenHelper() function
         // | ** | -- |
@@ -191,12 +193,12 @@ export class SimpleMovingEnemy extends Enemy {
 }
 export class Octorok extends SimpleMovingEnemy {
     constructor(game, x, y, speed, direction) {
-        super();
+        let width = 64;
+        let height = 64;
+        super(width, height);
         this.Game = game;
         this.x = x;
         this.y = y;
-        this.width = 64;
-        this.height = 64;
         this.speed = speed;
         this.direction = direction;
         this.damage = 1;
@@ -249,7 +251,9 @@ export class BlueOctorok extends Octorok {
 }
 export class Moblin extends SimpleMovingEnemy {
     constructor(game, x, y, speed, direction) {
-        super();
+        let width = 64;
+        let height = 64;
+        super(width, height);
         this.Game = game;
         this.x = x;
         this.y = y;
