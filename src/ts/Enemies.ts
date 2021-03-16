@@ -106,6 +106,8 @@ export class Enemy extends MovingBox {
 }
 
 export class SimpleMovingEnemy extends Enemy {
+    hasChangedDirection: boolean;
+
     sprites: HTMLImageElement[][] = [];
 
     halfLeftHitBox: MovingBoxHitBox;
@@ -193,8 +195,9 @@ export class SimpleMovingEnemy extends Enemy {
                 }
                 break;
             case EnemyState.ChangeDirection:
-                if (this.state.isFirstFrame) {
+                if (this.state.currentFrame >= 15 && !this.hasChangedDirection) {
                     this.direction = Direction.getRandom();
+                    this.hasChangedDirection = true;
                 }
                 if (this.state.currentFrame > 30) {
                     this.state.setNextState(EnemyState.Moving);
@@ -274,6 +277,7 @@ export class SimpleMovingEnemy extends Enemy {
 
     changeDirection(): void {
         this.state.setNextState(EnemyState.ChangeDirection);
+        this.hasChangedDirection = false;
     }
 
     draw(): void {
