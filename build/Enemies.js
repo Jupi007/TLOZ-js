@@ -242,7 +242,7 @@ export class BlueOctorok extends Octorok {
     dropItem() {
         if (super.dropItem())
             return true;
-        if (Random.getOneInt(3)) {
+        if (Random.getOneInt(3) && !this.Game.Player.isInvincibleObserver.is(true)) {
             this.Game.ItemManager.addItem(new Clock(this.Game, this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2)));
             return true;
         }
@@ -302,7 +302,7 @@ export class BlueMoblin extends Moblin {
     dropItem() {
         if (super.dropItem())
             return true;
-        if (Random.getOneInt(3)) {
+        if (Random.getOneInt(3) && !this.Game.Player.isInvincibleObserver.is(true)) {
             this.Game.ItemManager.addItem(new Clock(this.Game, this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2)));
             return true;
         }
@@ -397,7 +397,7 @@ export class BlueTektite extends Tektite {
     dropItem() {
         if (super.dropItem())
             return true;
-        if (Random.getOneInt(3)) {
+        if (Random.getOneInt(3) && !this.Game.Player.isInvincibleObserver.is(true)) {
             this.Game.ItemManager.addItem(new Clock(this.Game, this.x + (this.width / 2) - (32 / 2), this.y + (this.height / 2) - (32 / 2)));
             return true;
         }
