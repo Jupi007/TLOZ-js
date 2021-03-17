@@ -154,16 +154,16 @@ export var Collisions;
         let halfUpCollision = false;
         let halfDownCollision = false;
         Game.Viewport.loopCollision((cell, col, row) => {
-            if (Collisions.simpleMovingBox(box.halfLeftHitBox, cell)) {
+            if (Collisions.simpleMovingBox(box.halfHitBoxes.halfLeftHitBox, cell)) {
                 halfLeftCollision = true;
             }
-            if (Collisions.simpleMovingBox(box.halfRightHitBox, cell)) {
+            if (Collisions.simpleMovingBox(box.halfHitBoxes.halfRightHitBox, cell)) {
                 halfRightCollision = true;
             }
-            if (Collisions.simpleMovingBox(box.halfUpHitBox, cell)) {
+            if (Collisions.simpleMovingBox(box.halfHitBoxes.halfUpHitBox, cell)) {
                 halfUpCollision = true;
             }
-            if (Collisions.simpleMovingBox(box.halfDownHitBox, cell)) {
+            if (Collisions.simpleMovingBox(box.halfHitBoxes.halfDownHitBox, cell)) {
                 halfDownCollision = true;
             }
         });

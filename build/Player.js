@@ -1,5 +1,5 @@
 import { GameState } from "./Game.js";
-import { MovingBoxHitBox, MovingBox } from "./Libraries/Boxes.js";
+import { MovingBox, MovingBoxHitBox, MovingBoxHalfHitBoxes } from "./Libraries/Boxes.js";
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
@@ -36,19 +36,7 @@ export class Player extends MovingBox {
         // | ** | ** |
         // | ** | ** |
         this.hitBox = new MovingBoxHitBox(this, 0, this.height / 2, this.width, this.height / 2);
-        // HalfHitBoxs are used by the passBetweenHelper() function
-        // | ** | -- |
-        // | ** | -- |
-        this.halfLeftHitBox = new MovingBoxHitBox(this.hitBox, 0, 0, this.hitBox.width / 2, this.hitBox.height);
-        // | -- | ** |
-        // | -- | ** |
-        this.halfRightHitBox = new MovingBoxHitBox(this.hitBox, this.hitBox.width / 2, 0, this.hitBox.width / 2, this.hitBox.height);
-        // | ** | ** |
-        // | -- | -- |
-        this.halfUpHitBox = new MovingBoxHitBox(this.hitBox, 0, 0, this.hitBox.width, this.hitBox.height / 2);
-        // | -- | -- |
-        // | ** | ** |
-        this.halfDownHitBox = new MovingBoxHitBox(this.hitBox, 0, this.hitBox.height / 2, this.hitBox.width, this.hitBox.height / 2);
+        this.halfHitBoxes = new MovingBoxHalfHitBoxes(this.hitBox);
         this.sprites[Direction.Up] = [];
         this.sprites[Direction.Up][1] = SpriteLoader.load("./sprites/png/link-up1.png");
         this.sprites[Direction.Up][2] = SpriteLoader.load("./sprites/png/link-up2.png");

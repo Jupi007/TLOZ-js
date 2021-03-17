@@ -95,3 +95,12 @@ export class MovingBoxHitBox {
         this._Box.direction = direction;
     }
 }
+export class MovingBoxHalfHitBoxes {
+    constructor(box) {
+        this.box = box;
+        this.halfLeftHitBox = new MovingBoxHitBox(this.box, 0, 0, this.box.width / 2, this.box.height);
+        this.halfRightHitBox = new MovingBoxHitBox(this.box, this.box.width / 2, 0, this.box.width / 2, this.box.height);
+        this.halfUpHitBox = new MovingBoxHitBox(this.box, 0, 0, this.box.width, this.box.height / 2);
+        this.halfDownHitBox = new MovingBoxHitBox(this.box, 0, this.box.height / 2, this.box.width, this.box.height / 2);
+    }
+}

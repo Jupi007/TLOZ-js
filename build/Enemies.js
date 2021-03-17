@@ -1,4 +1,4 @@
-import { MovingBoxHitBox, MovingBox } from "./Libraries/Boxes.js";
+import { MovingBox, MovingBoxHalfHitBoxes } from "./Libraries/Boxes.js";
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
@@ -75,19 +75,7 @@ export class SimpleMovingEnemy extends Enemy {
         this.width = width;
         this.height = height;
         this.state = new StateObserver(EnemyState.ChangeDirection);
-        // HalfHitBoxs are used by the passBetweenHelper() function
-        // | ** | -- |
-        // | ** | -- |
-        this.halfLeftHitBox = new MovingBoxHitBox(this, 0, 0, this.width / 2, this.height);
-        // | -- | ** |
-        // | -- | ** |
-        this.halfRightHitBox = new MovingBoxHitBox(this, this.width / 2, 0, this.width / 2, this.height);
-        // | ** | ** |
-        // | -- | -- |
-        this.halfUpHitBox = new MovingBoxHitBox(this, 0, 0, this.width, this.height / 2);
-        // | -- | -- |
-        // | ** | ** |
-        this.halfDownHitBox = new MovingBoxHitBox(this, 0, this.height / 2, this.width, this.height / 2);
+        this.halfHitBoxes = new MovingBoxHalfHitBoxes(this);
         this.requirePassBetweenBoxHelper = true;
     }
     aiThinking() {
