@@ -29,7 +29,7 @@ export class Passage extends SimpleBox {
     }
 }
 export class Scene {
-    constructor(game, world, c, r, music, defaultBrick) {
+    constructor(game, world, c, r, music, defaultBrick, backgroundColor) {
         this.cells = [];
         this.Game = game;
         this.World = world;
@@ -44,12 +44,19 @@ export class Scene {
         this.c = c;
         this.r = r;
         this.music = music;
+        this.backgroundColor = backgroundColor;
         for (let c = 0; c < this.nbCol; c++) {
             this.cells[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
                 this.cells[c][r] = new Cell(this.cellSize * c, this.cellSize * r, this.cellSize, defaultBrick);
             }
         }
+    }
+    get width() {
+        return this.cellSize * this.nbCol;
+    }
+    get height() {
+        return this.cellSize * this.nbRow;
     }
     get hasEnemies() {
         return this.enemies.length > 0;
@@ -70,6 +77,9 @@ export class Scene {
     drawImage(sprite, x, y, width, height) {
         this.Game.Viewport.drawImage(sprite, x + this.x, y + this.y, width, height);
     }
+    fillRect(x, y, width, height, color) {
+        this.Game.Viewport.fillRect(x + this.x, y + this.y, width, height, color);
+    }
     upperEdgeCollision() {
         this.Game.Viewport.slideScene(Direction.Up);
     }
@@ -84,7 +94,7 @@ export class Scene {
     }
 }
 export class World {
-    constructor(game, nbCol, nbRow, defaultMusic, defaultBrick) {
+    constructor(game, nbCol, nbRow, defaultMusic, defaultBrick, defaultBackgroundColor) {
         this.scenes = [];
         this.Game = game;
         this.nbCol = nbCol;
@@ -92,7 +102,7 @@ export class World {
         for (let c = 0; c < this.nbCol; c++) {
             this.scenes[c] = [];
             for (let r = 0; r < this.nbRow; r++) {
-                this.scenes[c][r] = new Scene(this.Game, this, c, r, defaultMusic, defaultBrick);
+                this.scenes[c][r] = new Scene(this.Game, this, c, r, defaultMusic, defaultBrick, defaultBackgroundColor);
             }
         }
     }
@@ -113,20 +123,21 @@ export class Map {
         this.spawnCellColl = 7;
         this.spawnCellRow = 5.5;
         this.worlds = [];
-        this.worlds[0] = new World(this.Game, 3, 3, AudioLoader.load("./sounds/music/overworld.mp3", true), this.Game.BrickCollection.get("default"));
+        this.worlds[0] = new World(this.Game, 3, 3, AudioLoader.load("./sounds/music/overworld.mp3", true), this.Game.BrickCollection.get("default"), '#ffd4aa');
         this.worlds[0].scenes[0][0].loadBricks([
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
-            ["white-wall", "white-wall-br", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey",],
-            ["white-wall", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "default-grey",],
-            ["white-wall", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
-            ["white-wall", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "default-grey"],
-            ["white-wall", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
-            ["white-wall", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "grave", "default-grey", "default-grey", "default-grey"],
-            ["white-wall", "white-wall-tr", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
+            ["white-wall", "white-wall-br", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default",],
+            ["white-wall", "default", "default", "grave", "default", "default", "grave", "default", "default", "grave", "default", "default", "grave", "default", "default", "default",],
+            ["white-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
+            ["white-wall", "default", "default", "grave", "default", "default", "grave", "default", "default", "grave", "default", "default", "grave", "default", "default", "default"],
+            ["white-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
+            ["white-wall", "default", "default", "grave", "default", "default", "grave", "default", "default", "default", "default", "default", "grave", "default", "default", "default"],
+            ["white-wall", "white-wall-tr", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
             ["white-wall", "white-wall", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "stairs", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "stairs", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"]
         ]);
+        this.worlds[0].scenes[0][0].backgroundColor = '#747474';
         this.worlds[0].scenes[0][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.worlds[0].scenes[0][0].enemies = [
             new BlueOctorok(this.Game, 2 * 64, 2 * 64, 4, Random.getOneInt(2) ? Direction.Right : Direction.Down),
@@ -136,16 +147,17 @@ export class Map {
         this.worlds[0].scenes[1][0].loadBricks([
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
-            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey",],
-            ["default-grey", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "default-grey",],
-            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
-            ["default-grey", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "default-grey"],
-            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
-            ["default-grey", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "default-grey"],
-            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default",],
+            ["default", "default", "default", "white-tree", "default", "default", "white-tree", "default", "default", "white-tree", "default", "default", "white-tree", "default", "default", "default",],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
+            ["default", "default", "default", "white-tree", "default", "default", "white-tree", "default", "default", "white-tree", "default", "default", "white-tree", "default", "default", "default"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
+            ["default", "default", "default", "white-tree", "default", "default", "white-tree", "default", "default", "white-tree", "default", "default", "white-tree", "default", "default", "default"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default"],
             ["white-wall", "white-wall", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"]
         ]);
+        this.worlds[0].scenes[1][0].backgroundColor = '#747474';
         this.worlds[0].scenes[1][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.worlds[0].scenes[1][0].enemies = [
             new BlueMoblin(this.Game, 5 * 64, 8 * 64, 4, Direction.Up),
@@ -155,16 +167,17 @@ export class Map {
         this.worlds[0].scenes[2][0].loadBricks([
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
-            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall-bl", "white-wall", "white-wall"],
-            ["default-grey", "default-grey", "default-grey", "monument-tl", "monument-tr", "default-grey", "default-grey", "white-tree", "default-grey", "default-grey", "monument-tl", "monument-tr", "default-grey", "default-grey", "white-wall", "white-wall"],
-            ["default-grey", "default-grey", "default-grey", "monument-bl", "monument-br", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "monument-bl", "monument-br", "default-grey", "default-grey", "white-wall", "white-wall"],
-            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall", "white-wall"],
-            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "grave", "default-grey", "grave", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall", "white-wall"],
-            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall", "white-wall"],
-            ["default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "default-grey", "white-wall-tl", "white-wall", "white-wall"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "white-wall-bl", "white-wall", "white-wall"],
+            ["default", "default", "default", "monument-tl", "monument-tr", "default", "default", "white-tree", "default", "default", "monument-tl", "monument-tr", "default", "default", "white-wall", "white-wall"],
+            ["default", "default", "default", "monument-bl", "monument-br", "default", "default", "default", "default", "default", "monument-bl", "monument-br", "default", "default", "white-wall", "white-wall"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "white-wall", "white-wall"],
+            ["default", "default", "default", "default", "default", "default", "grave", "default", "grave", "default", "default", "default", "default", "default", "white-wall", "white-wall"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "white-wall", "white-wall"],
+            ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "white-wall-tl", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall-t", "white-wall", "white-wall", "white-wall"],
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"]
         ]);
+        this.worlds[0].scenes[2][0].backgroundColor = '#747474';
         this.worlds[0].scenes[2][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
         this.worlds[0].scenes[2][0].enemies = [
             new BlueOctorok(this.Game, 5 * 64, 4 * 64, 4, Direction.Down),
@@ -283,35 +296,35 @@ export class Map {
             new Moblin(this.Game, 10 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
             new Moblin(this.Game, 12 * 64, 7 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
         ];
-        this.worlds[1] = new World(this.Game, 1, 2, AudioLoader.load("./sounds/music/death_mountain.mp3", true), this.Game.BrickCollection.get("default-dark"));
+        this.worlds[1] = new World(this.Game, 1, 2, AudioLoader.load("./sounds/music/death_mountain.mp3", true), this.Game.BrickCollection.get("default"), '#0f0e0b');
         this.worlds[1].scenes[0][0].loadBricks([
-            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
+            ["red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "fire", "default", "default", "default", "default", "default", "default", "default", "default", "fire", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "default", "default", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall"],
         ]);
         this.worlds[1].scenes[0][0].permanentItems = [
             new SwordItem(this.Game, 8 * 64 - 14, 5 * 64),
         ];
         this.worlds[1].scenes[0][1].loadBricks([
-            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "fire", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "default-dark", "wall-dark"],
-            ["wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "default-dark", "default-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark", "wall-dark"],
+            ["red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "default", "default", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "fire", "default", "default", "default", "default", "default", "default", "default", "default", "fire", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
+            ["red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "default", "default", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall"],
         ]);
         this.worlds[1].scenes[0][1].enemies = [
             new Moblin(this.Game, 1 * 64, 1 * 64, 3, Direction.Down),

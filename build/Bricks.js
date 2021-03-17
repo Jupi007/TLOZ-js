@@ -30,12 +30,6 @@ export class BrickCollection {
             case "default":
                 return new Bricks.Default(this.Game);
                 break;
-            case "default-grey":
-                return new Bricks.DefaultGrey(this.Game);
-                break;
-            case "default-dark":
-                return new Bricks.DefaultDark(this.Game);
-                break;
             case "stairs":
                 return new Bricks.Stairs(this.Game);
                 break;
@@ -51,8 +45,8 @@ export class BrickCollection {
             case "wall":
                 return new Bricks.Wall(this.Game);
                 break;
-            case "wall-dark":
-                return new Bricks.WallDark(this.Game);
+            case "red-wall":
+                return new Bricks.RedWall(this.Game);
                 break;
             case "single-wall":
                 return new Bricks.SingleWall(this.Game);
@@ -183,14 +177,14 @@ export var Bricks;
         }
     }
     Bricks.Wall = Wall;
-    class WallDark extends Brick {
+    class RedWall extends Brick {
         constructor(game) {
             super(game);
-            this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-dark.png");
+            this.sprite = SpriteLoader.load("./sprites/png/bricks/red-wall.png");
             this.hasCollisions = true;
         }
     }
-    Bricks.WallDark = WallDark;
+    Bricks.RedWall = RedWall;
     class SingleWall extends Brick {
         constructor(game) {
             super(game);

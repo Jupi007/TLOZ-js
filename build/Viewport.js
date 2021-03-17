@@ -48,10 +48,12 @@ export class Viewport {
     draw() {
         if (this.Game.state.is(GameState.Run) && this.Game.state.isFirstFrame)
             this.music.play();
+        this.currentScene.fillRect(0, 0, this.currentScene.width, this.currentScene.height, this.currentScene.backgroundColor);
         this.loopCells((cell, col, row) => {
             this.currentScene.drawImage(cell.brick.sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
         });
         if (this.nextScene !== null) {
+            this.nextScene.fillRect(0, 0, this.nextScene.width, this.nextScene.height, this.nextScene.backgroundColor);
             this.loopCells((cell, col, row) => {
                 this.nextScene.drawImage(cell.brick.sprite, this.cellSize * col, this.cellSize * row, this.cellSize, this.cellSize);
             }, this.nextScene);
@@ -244,5 +246,8 @@ export class Viewport {
     }
     drawImage(sprite, x, y, width, height) {
         this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
+    }
+    fillRect(x, y, width, height, color) {
+        this.Game.fillRect(x + this.x, y + this.y, width, height, color);
     }
 }
