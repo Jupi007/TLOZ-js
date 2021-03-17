@@ -146,8 +146,8 @@ export class SimpleMovingEnemy extends Enemy {
                     }
                 }
                 if (this.state.currentFrame > 50) {
-                    if (Random.getOneInt(50)) this.state.setNextState(EnemyState.Attack);
-                    if (Random.getOneInt(50)) this.state.setNextState(EnemyState.ChangeDirection);
+                    if (Random.getOneInt(25)) this.changeDirection();
+                    else if (Random.getOneInt(25)) this.state.setNextState(EnemyState.Attack);
                 }
                 break;
             case EnemyState.ChangeDirection:
