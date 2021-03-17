@@ -1,4 +1,5 @@
 import { Direction } from "./Direction.js";
+import { MathPlus } from "./MathPlus.js";
 
 export interface Canvas {
     x: number;
@@ -27,17 +28,17 @@ export abstract class SimpleBox {
     }
 
     public get x(): number {
-        return this._x
+        return this._x;
     }
     public set x(x: number) {
-        this._x = Math.round(x)
+        this._x = MathPlus.round(x, 7);
     }
 
     public get y(): number {
-        return this._y
+        return this._y;
     }
     public set y(y: number) {
-        this._y = Math.round(y);
+        this._y = MathPlus.round(y, 7);
     }
 }
 

@@ -1,3 +1,4 @@
+import { MathPlus } from "./MathPlus.js";
 export class SimpleBox {
     get width() {
         return this._width;
@@ -15,13 +16,13 @@ export class SimpleBox {
         return this._x;
     }
     set x(x) {
-        this._x = Math.round(x);
+        this._x = MathPlus.round(x, 7);
     }
     get y() {
         return this._y;
     }
     set y(y) {
-        this._y = Math.round(y);
+        this._y = MathPlus.round(y, 7);
     }
 }
 export class MovingBox extends SimpleBox {
