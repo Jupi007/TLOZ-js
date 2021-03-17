@@ -47,6 +47,9 @@ export class BrickCollection {
             case "default":
                 return new Bricks.Default(this.Game);
                 break;
+            case "default-dungeon":
+                return new Bricks.DefaultDungeon(this.Game);
+                break;
             case "stairs":
                 return new Bricks.Stairs(this.Game);
                 break;
@@ -62,6 +65,9 @@ export class BrickCollection {
 
             case "wall":
                 return new Bricks.Wall(this.Game);
+                break;
+            case "wall-dungeon":
+                return new Bricks.WallDungeon(this.Game);
                 break;
             case "red-wall":
                 return new Bricks.RedWall(this.Game);
@@ -148,19 +154,11 @@ export namespace Bricks {
         }
     }
 
-    export class DefaultGrey extends Brick {
+    export class DefaultDungeon extends Brick {
         constructor(game: Game) {
             super(game);
 
-            this.sprite = SpriteLoader.load("./sprites/png/bricks/default-grey.png");
-        }
-    }
-
-    export class DefaultDark extends Brick {
-        constructor(game: Game) {
-            super(game);
-
-            this.sprite = SpriteLoader.load("./sprites/png/bricks/default-dark.png");
+            this.sprite = SpriteLoader.load("./sprites/png/bricks/default-dungeon.png");
         }
     }
 
@@ -204,6 +202,15 @@ export namespace Bricks {
             super(game);
 
             this.sprite = SpriteLoader.load("./sprites/png/bricks/wall.png");
+            this.hasCollisions = true;
+        }
+    }
+
+    export class WallDungeon extends Brick {
+        constructor(game: Game) {
+            super(game);
+
+            this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-dungeon.png");
             this.hasCollisions = true;
         }
     }

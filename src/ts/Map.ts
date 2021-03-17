@@ -7,7 +7,7 @@ import { Random } from "./Libraries/Random.js";
 
 import { Enemy, Octorok, BlueOctorok, Moblin, BlueMoblin, Tektite, BlueTektite } from "./Enemies.js";
 import { Brick } from "./Bricks.js";
-import { Item, Sword as SwordItem } from "./Items.js";
+import { Heart, HeartReceptacle, Item, Sword as SwordItem } from "./Items.js";
 
 export class Cell extends SimpleBox {
     brick: Brick;
@@ -347,7 +347,7 @@ export class Map {
 
         this.worlds[0].scenes[2][0].loadBricks([
             ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
-            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
+            ["white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "passage", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall", "white-wall"],
             ["default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "white-wall-bl", "white-wall", "white-wall"],
             ["default", "default", "default", "monument-tl", "monument-tr", "default", "default", "white-tree", "default", "default", "monument-tl", "monument-tr", "default", "default", "white-wall", "white-wall"],
             ["default", "default", "default", "monument-bl", "monument-br", "default", "default", "default", "default", "default", "monument-bl", "monument-br", "default", "default", "white-wall", "white-wall"],
@@ -362,6 +362,18 @@ export class Map {
         this.worlds[0].scenes[2][0].backgroundColor = '#747474';
 
         this.worlds[0].scenes[2][0].music = AudioLoader.load("./sounds/music/death_mountain.mp3", true);
+
+        this.worlds[0].scenes[2][0].passages = [
+            new Passage(
+                this.Game,
+                this.worlds[0].scenes[2][0],
+                7,
+                1,
+                2,
+                1,
+                1
+            ),
+        ];
 
         this.worlds[0].scenes[2][0].enemies = [
             new BlueOctorok(
@@ -691,6 +703,163 @@ export class Map {
         this.worlds[1].scenes[0][1].bottomEdgeCollision = function() {
             this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
         };
+
+        this.worlds[2] = new World(
+            this.Game,
+            2,
+            2,
+            AudioLoader.load("./sounds/music/dungeon.mp3", true),
+            this.Game.BrickCollection.get("default-dungeon"),
+            '#078382'
+        );
+
+
+
+        this.worlds[2].scenes[0][0].loadBricks([
+            ["wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon"],
+        ]);
+
+        this.worlds[2].scenes[0][0].enemies = [
+            new BlueOctorok(
+                this.Game,
+                2 * 64,
+                2 * 64,
+                4,
+                Random.getOneInt(2) ? Direction.Right : Direction.Down
+            ),
+            new BlueOctorok(
+                this.Game,
+                5 * 64,
+                5 * 64,
+                4,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+            new BlueOctorok(
+                this.Game,
+                13 * 64,
+                3 * 64,
+                4,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+            new BlueOctorok(
+                this.Game,
+                8 * 64,
+                6 * 64,
+                4,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+        ];
+
+        this.worlds[2].scenes[1][0].loadBricks([
+            ["wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon"],
+        ]);
+
+        this.worlds[2].scenes[1][0].permanentItems = [
+            new HeartReceptacle(
+                this.Game,
+                8 * 64 - 13,
+                5 * 64
+            ),
+        ];
+
+        this.worlds[2].scenes[0][1].loadBricks([
+            ["wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon"],
+        ]);
+
+        this.worlds[2].scenes[0][1].enemies = [
+            new BlueTektite(
+                this.Game,
+                2 * 64,
+                2 * 64
+            ),
+            new BlueTektite(
+                this.Game,
+                5 * 64,
+                5 * 64
+            ),
+            new BlueTektite(
+                this.Game,
+                13 * 64,
+                3 * 64
+            ),
+            new BlueTektite(
+                this.Game,
+                8 * 64,
+                6 * 64
+            ),
+        ];
+
+        this.worlds[2].scenes[1][1].loadBricks([
+            ["wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon"],
+            ["wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "default-dungeon", "default-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon", "wall-dungeon"],
+        ]);
+
+        this.worlds[2].scenes[1][1].bottomEdgeCollision = function() {
+            this.Game.Viewport.changeWorld(false, 0, 2, 0, 7, 1);
+        };
+
+        this.worlds[2].scenes[1][1].enemies = [
+            new BlueMoblin(
+                this.Game,
+                2 * 64,
+                2 * 64,
+                4,
+                Random.getOneInt(2) ? Direction.Right : Direction.Down
+            ),
+            new BlueMoblin(
+                this.Game,
+                5 * 64,
+                5 * 64,
+                4,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+            new BlueMoblin(
+                this.Game,
+                13 * 64,
+                3 * 64,
+                4,
+                Random.getOneInt(2) ? Direction.Up : Direction.Down
+            ),
+        ];
     }
 
     getSpawnWorld(): World {
