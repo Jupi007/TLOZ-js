@@ -219,6 +219,8 @@ export class Viewport {
         this.currentScene.permanentItems = this.Game.ItemManager.permanentItems;
         this.currentWorld = this.nextWorld;
         this.currentScene = this.nextScene;
+        this.nextWorld = null;
+        this.nextScene = null;
         this.Game.EnemyManager.loopEnemies((enemy) => {
             if (enemy.state.is(EnemyState.Killed)) {
                 this.Game.EnemyManager.removeEnemy(enemy);
