@@ -1,7 +1,6 @@
 import { Game, GameState } from "./Game.js";
 
 import { Direction } from "./Libraries/Direction.js";
-import { StateObserver } from "./Libraries/Observers.js";
 import { Collisions } from "./Libraries/Collisions.js";
 
 import { Passage, Scene, World, Map } from "./Map.js";
@@ -114,7 +113,7 @@ export class Viewport {
     }
 
     collisions(): void {
-        this.Game.Player.passBetweenBoxesHelper();
+        Collisions.passBetweenBoxesHelper(this.Game, this.Game.Player);
 
         this.loopCollision((cell, col, row) => {
             Collisions.movingBox(this.Game.Player.hitBox, cell);

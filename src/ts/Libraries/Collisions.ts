@@ -1,3 +1,5 @@
+import { Game } from "../Game.js";
+
 import { SimpleBox, MovingBox, MovingBoxHitBox, Canvas } from "./Boxes.js";
 import { Direction } from "./Direction.js";
 
@@ -162,6 +164,56 @@ export namespace Collisions {
             }
 
             return true;
+        }
+
+        return false;
+    }
+
+    export function passBetweenBoxesHelper(Game: Game, box: any): boolean { // TODO: create specific object
+        let halfLeftCollision = false;
+        let halfRightCollision = false;
+        let halfUpCollision = false;
+        let halfDownCollision = false;
+
+        Game.Viewport.loopCollision((cell, col, row) => {
+            if (Collisions.simpleMovingBox(box.halfLeftHitBox, cell)) {
+                halfLeftCollision = true;
+            }
+            if (Collisions.simpleMovingBox(box.halfRightHitBox, cell)) {
+                halfRightCollision = true;
+            }
+            if (Collisions.simpleMovingBox(box.halfUpHitBox, cell)) {
+                halfUpCollision = true;
+            }
+            if (Collisions.simpleMovingBox(box.halfDownHitBox, cell)) {
+                halfDownCollision = true;
+            }
+        });
+
+
+        if (box.direction === Direction.Up || box.direction === Direction.Down) {
+            if (halfLeftCollision && !halfRightCollision) {
+                box.dx = box.speed * Game.dt;
+
+                return true;
+            }
+            else if (!halfLeftCollision && halfRightCollision) {
+                box.dx = -box.speed * Game.dt;
+
+                return true;
+            }
+        }
+        else if (box.direction === Direction.Left || box.direction === Direction.Right) {
+            if (halfUpCollision && !halfDownCollision) {
+                box.dy = box.speed * Game.dt;
+
+                return true;
+            }
+            else if (!halfUpCollision && halfDownCollision) {
+                box.dy = -box.speed * Game.dt;
+
+                return true;
+            }
         }
 
         return false;

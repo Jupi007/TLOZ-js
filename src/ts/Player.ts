@@ -103,56 +103,48 @@ export class Player extends MovingBox {
 
         // HalfHitBoxs are used by the passBetweenHelper() function
 
-        // | -- | -- |
-        // | -- | -- |
         // | ** | -- |
         // | ** | -- |
 
         this.halfLeftHitBox = new MovingBoxHitBox(
-            this,
+            this.hitBox,
             0,
-            this.height / 2,
-            this.width / 2,
-            this.height / 2
+            0,
+            this.hitBox.width / 2,
+            this.hitBox.height
         );
 
-        // | -- | -- |
-        // | -- | -- |
         // | -- | ** |
         // | -- | ** |
 
         this.halfRightHitBox = new MovingBoxHitBox(
-            this,
-            this.width / 2,
-            this.height / 2,
-            this.width / 2,
-            this.height / 2
+            this.hitBox,
+            this.hitBox.width / 2,
+            0,
+            this.hitBox.width / 2,
+            this.hitBox.height
         );
 
-        // | -- | -- |
-        // | -- | -- |
         // | ** | ** |
         // | -- | -- |
 
         this.halfUpHitBox = new MovingBoxHitBox(
-            this,
+            this.hitBox,
             0,
-            this.height / 2,
-            this.width,
-            this.height / 4
+            0,
+            this.hitBox.width,
+            this.hitBox.height / 2
         );
 
-        // | -- | -- |
-        // | -- | -- |
         // | -- | -- |
         // | ** | ** |
 
         this.halfDownHitBox = new MovingBoxHitBox(
-            this,
+            this.hitBox,
             0,
-            (this.height / 4) * 3,
-            this.width,
-            this.height / 4
+            this.hitBox.height / 2,
+            this.hitBox.width,
+            this.hitBox.height / 2
         );
 
         this.sprites[Direction.Up] = [];
@@ -273,45 +265,6 @@ export class Player extends MovingBox {
 
         this.dx = 0;
         this.dy = 0;
-    }
-
-    // Helper to pass between two boxes
-    passBetweenBoxesHelper(): void {
-        let halfLeftCollision = false;
-        let halfRightCollision = false;
-        let halfUpCollision = false;
-        let halfDownCollision = false;
-
-        this.Game.Viewport.loopCollision((cell, col, row) => {
-            if (Collisions.simpleMovingBox(this.halfLeftHitBox, cell)) {
-                halfLeftCollision = true;
-            }
-            if (Collisions.simpleMovingBox(this.halfRightHitBox, cell)) {
-                halfRightCollision = true;
-            }
-            if (Collisions.simpleMovingBox(this.halfUpHitBox, cell)) {
-                halfUpCollision = true;
-            }
-            if (Collisions.simpleMovingBox(this.halfDownHitBox, cell)) {
-                halfDownCollision = true;
-            }
-        });
-
-        if (this.direction === Direction.Up || this.direction === Direction.Down) {
-            if (halfLeftCollision && !halfRightCollision) {
-                this.dx = this.speed * this.Game.dt;
-            }
-            else if (!halfLeftCollision && halfRightCollision) {
-                this.dx = -this.speed * this.Game.dt;
-            }
-        } else if (this.direction === Direction.Left || this.direction === Direction.Right) {
-            if (halfUpCollision && !halfDownCollision) {
-                this.dy = this.speed * this.Game.dt;
-            }
-            else if (!halfUpCollision && halfDownCollision) {
-                this.dy = -this.speed * this.Game.dt;
-            }
-        }
     }
 
     collisions(): void {}

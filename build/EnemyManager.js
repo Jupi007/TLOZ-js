@@ -34,7 +34,7 @@ export class EnemyManager {
             if (enemy.hasPlayerCollision && Collisions.movingBoxs(this.Game.Player.hitBox, enemy) && !enemy.state.is(EnemyState.Killed)) {
                 enemy.playerCollision();
             }
-            let helper = enemy.passBetweenBoxesHelper();
+            let helper = enemy.requirePassBetweenBoxHelper ? Collisions.passBetweenBoxesHelper(this.Game, enemy) : false;
             if (enemy.hasBricksCollisions) {
                 this.Game.Viewport.loopCollision((cell, col, row) => {
                     if (Collisions.movingBox(enemy, cell)) {

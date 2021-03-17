@@ -69,14 +69,14 @@ export abstract class MovingBox extends SimpleBox {
 }
 
 export class MovingBoxHitBox {
-    private _Box: MovingBox;
+    private _Box: MovingBox|MovingBoxHitBox;
 
     private _hitX: number;
     private _hitY: number;
     private _hitWidth: number;
     private _hitHeight: number;
 
-    constructor(box: MovingBox, x: number, y: number, width: number, height: number) {
+    constructor(box: MovingBox|MovingBoxHitBox, x: number, y: number, width: number, height: number) {
         this._Box = box;
         this._hitX = x;
         this._hitY = y;

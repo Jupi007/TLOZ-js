@@ -22,6 +22,7 @@ export class Enemy extends MovingBox {
         this.hasPlayerCollision = true;
         this.hasViewportCollision = true;
         this.hasBricksCollisions = true;
+        this.requirePassBetweenBoxHelper = false;
         this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
         this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
         this.isInvincibleObserver = new StateObserver(false);
@@ -43,7 +44,6 @@ export class Enemy extends MovingBox {
     }
     viewportCollision() { }
     bricksCollision() { }
-    passBetweenBoxesHelper() { return false; }
     customCollision() { }
     takeDamage(damage) {
         if (this.isInvincibleObserver.is(true) || this.state.is(EnemyState.Killed))
@@ -88,6 +88,7 @@ export class SimpleMovingEnemy extends Enemy {
         // | -- | -- |
         // | ** | ** |
         this.halfDownHitBox = new MovingBoxHitBox(this, 0, this.height / 2, this.width, this.height / 2);
+        this.requirePassBetweenBoxHelper = true;
     }
     aiThinking() {
         switch (this.state.get()) {
@@ -135,48 +136,6 @@ export class SimpleMovingEnemy extends Enemy {
             default:
                 break;
         }
-    }
-    // Helper to pass between two boxes
-    passBetweenBoxesHelper() {
-        let halfLeftCollision = false;
-        let halfRightCollision = false;
-        let halfUpCollision = false;
-        let halfDownCollision = false;
-        this.Game.Viewport.loopCollision((cell, col, row) => {
-            if (Collisions.simpleMovingBox(this.halfLeftHitBox, cell)) {
-                halfLeftCollision = true;
-            }
-            if (Collisions.simpleMovingBox(this.halfRightHitBox, cell)) {
-                halfRightCollision = true;
-            }
-            if (Collisions.simpleMovingBox(this.halfUpHitBox, cell)) {
-                halfUpCollision = true;
-            }
-            if (Collisions.simpleMovingBox(this.halfDownHitBox, cell)) {
-                halfDownCollision = true;
-            }
-        });
-        if (this.direction === Direction.Up || this.direction === Direction.Down) {
-            if (halfLeftCollision && !halfRightCollision) {
-                this.dx = this.speed * this.Game.dt;
-                return true;
-            }
-            else if (!halfLeftCollision && halfRightCollision) {
-                this.dx = -this.speed * this.Game.dt;
-                return true;
-            }
-        }
-        else if (this.direction === Direction.Left || this.direction === Direction.Right) {
-            if (halfUpCollision && !halfDownCollision) {
-                this.dy = this.speed * this.Game.dt;
-                return true;
-            }
-            else if (!halfUpCollision && halfDownCollision) {
-                this.dy = -this.speed * this.Game.dt;
-                return true;
-            }
-        }
-        return false;
     }
     viewportCollision() {
         this.changeDirection();

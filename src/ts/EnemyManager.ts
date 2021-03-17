@@ -49,7 +49,7 @@ export class EnemyManager {
                 enemy.playerCollision();
             }
 
-            let helper = enemy.passBetweenBoxesHelper();
+            let helper = enemy.requirePassBetweenBoxHelper ? Collisions.passBetweenBoxesHelper(this.Game, enemy) : false;
 
             if (enemy.hasBricksCollisions) {
                 this.Game.Viewport.loopCollision((cell, col, row) => {
