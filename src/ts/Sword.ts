@@ -151,7 +151,7 @@ export class Sword extends SimpleBox {
                 this.Game,
                 this.x,
                 this.y,
-                this.Game.Player.speed * 2,
+                this.Game.Player.speed * 3,
                 this.direction,
                 this.damage
             ));

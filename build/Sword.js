@@ -101,7 +101,7 @@ export class Sword extends SimpleBox {
             && this.Game.Player.isFullLife) {
             this.flyingSound.play();
             this.isFlying = true;
-            this.Game.ProjectileManager.addProjectile(new SwordProjectile(this.Game, this.x, this.y, this.Game.Player.speed * 2, this.direction, this.damage));
+            this.Game.ProjectileManager.addProjectile(new SwordProjectile(this.Game, this.x, this.y, this.Game.Player.speed * 3, this.direction, this.damage));
         }
     }
 }
