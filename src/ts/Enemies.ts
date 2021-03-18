@@ -1,6 +1,6 @@
 import { Game } from "./Game.js";
 
-import { MovingBox, MovingBoxHalfHitBoxes } from "./Libraries/Boxes.js";
+import { MovingBox, MovingBoxHalfHitBoxes, MovingBoxHitBox } from "./Libraries/Boxes.js";
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
@@ -37,6 +37,8 @@ export class Enemy extends MovingBox {
     dieSound: HTMLAudioElement;
     hitSound: HTMLAudioElement;
 
+    hitBox: MovingBox|MovingBoxHitBox;
+
     constructor() {
         super();
 
@@ -54,6 +56,8 @@ export class Enemy extends MovingBox {
 
         this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
         this.hitSound = AudioLoader.load("./sounds/effect/Enemy_Hit.wav");
+
+        this.hitBox = this;
     }
 
     aiThinking(): void { }

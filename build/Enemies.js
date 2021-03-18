@@ -30,6 +30,7 @@ export class Enemy extends MovingBox {
         this.invincibleAnimation = new AnimationObserver(7, 2);
         this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
         this.hitSound = AudioLoader.load("./sounds/effect/Enemy_Hit.wav");
+        this.hitBox = this;
     }
     aiThinking() { }
     move() {

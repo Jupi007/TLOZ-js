@@ -176,20 +176,21 @@ export namespace Collisions {
         let halfDownCollision = false;
 
         Game.Viewport.loopCollision((cell, col, row) => {
-            if (Collisions.simpleMovingBox(box.halfHitBoxes.halfLeftHitBox, cell)) {
-                halfLeftCollision = true;
-            }
-            if (Collisions.simpleMovingBox(box.halfHitBoxes.halfRightHitBox, cell)) {
-                halfRightCollision = true;
-            }
-            if (Collisions.simpleMovingBox(box.halfHitBoxes.halfUpHitBox, cell)) {
-                halfUpCollision = true;
-            }
-            if (Collisions.simpleMovingBox(box.halfHitBoxes.halfDownHitBox, cell)) {
-                halfDownCollision = true;
+            if (Collisions.simpleMovingBox(box.hitBox, cell)) {
+                if (Collisions.simpleMovingBox(box.halfHitBoxes.halfLeftHitBox, cell)) {
+                    halfLeftCollision = true;
+                }
+                if (Collisions.simpleMovingBox(box.halfHitBoxes.halfRightHitBox, cell)) {
+                    halfRightCollision = true;
+                }
+                if (Collisions.simpleMovingBox(box.halfHitBoxes.halfUpHitBox, cell)) {
+                    halfUpCollision = true;
+                }
+                if (Collisions.simpleMovingBox(box.halfHitBoxes.halfDownHitBox, cell)) {
+                    halfDownCollision = true;
+                }
             }
         });
-
 
         if (box.direction === Direction.Up || box.direction === Direction.Down) {
             if (halfLeftCollision && !halfRightCollision) {
