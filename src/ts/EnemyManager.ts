@@ -102,10 +102,11 @@ export class EnemyManager {
 
             if (enemy.isInvincibleObserver.is(true)) {
                 enemy.invincibleAnimation.update(this.Game.dt);
-                if (enemy.invincibleAnimation.currentAnimationStep === 2) return;
+                if (enemy.invincibleAnimation.currentAnimationStep === 1) enemy.draw();
             }
-
-            enemy.draw();
+            else {
+                enemy.draw();
+            }
 
             if (this.Game.state.is(GameState.Run)) enemy.spritesAnimation.update(this.Game.dt);
         });
