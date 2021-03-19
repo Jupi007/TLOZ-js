@@ -134,28 +134,30 @@ export class Viewport {
         this.loopCollision((cell: Cell) => {
             Collisions.movingBox(this.Game.Player.hitBox, cell);
         });
-
-        this.currentScene.passages.forEach((passage: Passage) => {
-            if (Collisions.simpleMovingBox(this.Game.Player.hitBox, passage)) {
-                if (!this.justReachOutPassage) {
-                    this.changeWorld(true, passage.targetWorldIndex, passage.targetSceneC, passage.targetSceneR);
+        
+        if (!this.Game.Player.isKnockBackObserver.is(true)) {
+            this.currentScene.passages.forEach((passage: Passage) => {
+                if (Collisions.simpleMovingBox(this.Game.Player.hitBox, passage)) {
+                    if (!this.justReachOutPassage) {
+                        this.changeWorld(true, passage.targetWorldIndex, passage.targetSceneC, passage.targetSceneR);
+                    }
+                } else if (this.justReachOutPassage) {
+                    this.justReachOutPassage = false;
                 }
-            } else if (this.justReachOutPassage) {
-                this.justReachOutPassage = false;
-            }
-        });
+            });
 
-        if (Collisions.movingBoxLine(this.Game.Player, 0, Direction.Up)) {
-            this.currentScene.upperEdgeCollision();
-        }
-        else if (Collisions.movingBoxLine(this.Game.Player, this.Game.Viewport.height, Direction.Down)) {
-            this.currentScene.bottomEdgeCollision();
-        }
-        else if (Collisions.movingBoxLine(this.Game.Player, 0, Direction.Left)) {
-            this.currentScene.leftEdgeCollision();
-        }
-        else if (Collisions.movingBoxLine(this.Game.Player, this.Game.Viewport.width, Direction.Right)) {
-            this.currentScene.rightEdgeCollision();
+            if (Collisions.movingBoxLine(this.Game.Player, 0, Direction.Up)) {
+                this.currentScene.upperEdgeCollision();
+            }
+            else if (Collisions.movingBoxLine(this.Game.Player, this.Game.Viewport.height, Direction.Down)) {
+                this.currentScene.bottomEdgeCollision();
+            }
+            else if (Collisions.movingBoxLine(this.Game.Player, 0, Direction.Left)) {
+                this.currentScene.leftEdgeCollision();
+            }
+            else if (Collisions.movingBoxLine(this.Game.Player, this.Game.Viewport.width, Direction.Right)) {
+                this.currentScene.rightEdgeCollision();
+            }
         }
     }
 
