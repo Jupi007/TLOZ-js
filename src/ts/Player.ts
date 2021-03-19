@@ -42,7 +42,6 @@ export class Player extends MovingBox {
     killedSprites: HTMLImageElement[] = [];
     winSprite: HTMLImageElement;
 
-    hitBox: MovingBoxHitBox;
     halfHitBoxes: MovingBoxHalfHitBoxes;
 
     hurtSound: HTMLAudioElement;
@@ -242,7 +241,7 @@ export class Player extends MovingBox {
                     break;
             }
 
-            Collisions.movingBoxCanvas(this.hitbox, this.Game.Viewport);
+            Collisions.movingBoxCanvas(this.hitBox, this.Game.Viewport);
             return;
         }
 

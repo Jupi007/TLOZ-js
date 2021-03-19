@@ -46,12 +46,12 @@ export abstract class MovingBox extends SimpleBox {
     private _dx = 0;
     private _dy = 0;
     private _direction: Direction;
-    private _hitbox: MovingBox | MovingBoxHitBox;
+    private _hitBox: MovingBox | MovingBoxHitBox;
 
     constructor() {
         super();
 
-        this.hitbox = this;
+        this.hitBox = this;
     }
 
     public get dx() {
@@ -75,11 +75,11 @@ export abstract class MovingBox extends SimpleBox {
         this._direction = value;
     }
 
-    public get hitbox(): MovingBox | MovingBoxHitBox {
-        return this._hitbox;
+    public get hitBox(): MovingBox | MovingBoxHitBox {
+        return this._hitBox;
     }
-    public set hitbox(value: MovingBox | MovingBoxHitBox) {
-        this._hitbox = value;
+    public set hitBox(value: MovingBox | MovingBoxHitBox) {
+        this._hitBox = value;
     }
 }
 

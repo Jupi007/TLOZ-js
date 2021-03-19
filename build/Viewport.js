@@ -60,8 +60,8 @@ export class Viewport {
         }
     }
     collisions() {
-        Collisions.passBetweenBoxesHelper(this.Game, this.Game.Player);
-        this.loopCollision((cell, col, row) => {
+        Collisions.passBetweenBoxesHelper(this.Game.Player);
+        this.loopCollision((cell) => {
             Collisions.movingBox(this.Game.Player.hitBox, cell);
         });
         this.currentScene.passages.forEach((passage) => {

@@ -6,6 +6,7 @@ import { Collisions } from "./Libraries/Collisions.js";
 
 import { Sword as SwordProjectile } from "./Projectiles.js";
 import { SimpleBox } from "./Libraries/Boxes.js";
+import { Enemy } from "./Enemies.js";
 
 export class Sword extends SimpleBox {
     Game: Game;
@@ -122,8 +123,8 @@ export class Sword extends SimpleBox {
         if (!this.isEnabled) return;
 
         if (this.Game.Player.isAttackObserver.get()) {
-            this.Game.EnemyManager.loopEnemies((enemy) => {
-                if (Collisions.simpleMovingBox(enemy.hitbox, this)) {
+            this.Game.EnemyManager.loopEnemies((enemy: Enemy) => {
+                if (Collisions.simpleMovingBox(enemy.hitBox, this)) {
                     enemy.takeDamage(this.damage);
                 }
             });

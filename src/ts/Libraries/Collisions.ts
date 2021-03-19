@@ -1,6 +1,7 @@
 import { Game } from "../Game.js";
+import { Cell } from "../Map.js";
 
-import { SimpleBox, MovingBox, MovingBoxHitBox, Canvas } from "./Boxes.js";
+import { SimpleBox, MovingBox, MovingBoxHitBox, Canvas, MovingBoxHalfHitBoxes } from "./Boxes.js";
 import { Direction } from "./Direction.js";
 
 export namespace Collisions {
@@ -169,13 +170,29 @@ export namespace Collisions {
         return false;
     }
 
-    export function passBetweenBoxesHelper(Game: Game, box: any): boolean { // TODO: create specific object
+    interface  GameMovingEntity {
+        Game: Game;
+
+        x: number;
+        y: number;
+
+        dx: number;
+        dy: number;
+
+        speed: number;
+        direction: Direction;
+
+        hitBox: MovingBox | MovingBoxHitBox;
+        halfHitBoxes: MovingBoxHalfHitBoxes;
+    }
+
+    export function passBetweenBoxesHelper(box: GameMovingEntity): boolean { // TODO: create specific object
         let halfLeftCollision = false;
         let halfRightCollision = false;
         let halfUpCollision = false;
         let halfDownCollision = false;
 
-        Game.Viewport.loopCollision((cell, col, row) => {
+        box.Game.Viewport.loopCollision((cell: Cell) => {
             if (Collisions.simpleMovingBox(box.hitBox, cell)) {
                 if (Collisions.simpleMovingBox(box.halfHitBoxes.halfLeftHitBox, cell)) {
                     halfLeftCollision = true;
@@ -194,24 +211,24 @@ export namespace Collisions {
 
         if (box.direction === Direction.Up || box.direction === Direction.Down) {
             if (halfLeftCollision && !halfRightCollision) {
-                box.dx = box.speed * Game.dt;
+                box.dx = box.speed * box.Game.dt;
 
                 return true;
             }
             else if (!halfLeftCollision && halfRightCollision) {
-                box.dx = -box.speed * Game.dt;
+                box.dx = -box.speed * box.Game.dt;
 
                 return true;
             }
         }
         else if (box.direction === Direction.Left || box.direction === Direction.Right) {
             if (halfUpCollision && !halfDownCollision) {
-                box.dy = box.speed * Game.dt;
+                box.dy = box.speed * box.Game.dt;
 
                 return true;
             }
             else if (!halfUpCollision && halfDownCollision) {
-                box.dy = -box.speed * Game.dt;
+                box.dy = -box.speed * box.Game.dt;
 
                 return true;
             }

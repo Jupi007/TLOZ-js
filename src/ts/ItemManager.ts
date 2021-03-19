@@ -18,9 +18,9 @@ export class ItemManager {
     }
 
     collisions(): void {
-        this.loopItems((item) => {
+        this.loopItems((item: Item) => {
             if (
-                Collisions.movingBoxs(this.Game.Player.hitbox, item.hitbox) ||
+                Collisions.simpleMovingBox(this.Game.Player, item) ||
                 (this.Game.Player.isAttackObserver.is(true) && Collisions.simpleBox(this.Game.Sword, item))
             ) {
                 item.collisionCallback();
@@ -31,7 +31,7 @@ export class ItemManager {
     }
 
     draw(): void {
-        this.loopItems((item) => {
+        this.loopItems((item: Item) => {
             this.Game.Viewport.currentScene.drawImage(
                 item.sprite,
                 item.x,

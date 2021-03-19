@@ -3,8 +3,8 @@ import { Game, GameState } from "./Game.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
 
-import { Passage, Scene, World, Map } from "./Map.js";
-import { EnemyState } from "./Enemies.js";
+import { Passage, Scene, World, Cell } from "./Map.js";
+import { Enemy, EnemyState } from "./Enemies.js";
 import { EnemyManager } from "./EnemyManager.js";
 
 export class Viewport {
@@ -79,7 +79,7 @@ export class Viewport {
     }
 
     loopCollision(callback: Function): void {
-        this.loopCells((cell, col, row) => {
+        this.loopCells((cell: Cell, col: number, row: number) => {
             if (cell.brick.hasCollisions) {
                 callback(cell, col, row);
             }
@@ -97,7 +97,7 @@ export class Viewport {
             this.currentScene.backgroundColor,
         );
 
-        this.loopCells((cell, col, row) => {
+        this.loopCells((cell: Cell, col: number, row: number) => {
             this.currentScene.drawImage(
                 cell.brick.sprite,
                 this.cellSize * col,
@@ -116,7 +116,7 @@ export class Viewport {
                 this.nextScene.backgroundColor,
             );
             
-            this.loopCells((cell, col, row) => {
+            this.loopCells((cell: Cell, col: number, row: number) => {
                 this.nextScene.drawImage(
                     cell.brick.sprite,
                     this.cellSize * col,
@@ -129,9 +129,9 @@ export class Viewport {
     }
 
     collisions(): void {
-        Collisions.passBetweenBoxesHelper(this.Game, this.Game.Player);
+        Collisions.passBetweenBoxesHelper(this.Game.Player);
 
-        this.loopCollision((cell, col, row) => {
+        this.loopCollision((cell: Cell) => {
             Collisions.movingBox(this.Game.Player.hitBox, cell);
         });
 
@@ -272,7 +272,7 @@ export class Viewport {
             this.currentScene = this.nextScene;
             this.nextScene = null;
 
-            this.Game.EnemyManager.loopEnemies((enemy) => {
+            this.Game.EnemyManager.loopEnemies((enemy: Enemy) => {
                 if (enemy.state.is(EnemyState.Killed)) {
                     this.Game.EnemyManager.removeEnemy(enemy);
                 }
@@ -338,7 +338,7 @@ export class Viewport {
         this.nextWorld = null;
         this.nextScene = null;
 
-        this.Game.EnemyManager.loopEnemies((enemy) => {
+        this.Game.EnemyManager.loopEnemies((enemy: Enemy) => {
             if (enemy.state.is(EnemyState.Killed)) {
                 this.Game.EnemyManager.removeEnemy(enemy);
             }

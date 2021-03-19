@@ -45,6 +45,7 @@ export class Enemy extends MovingBox {
     viewportCollision() { }
     bricksCollision() { }
     customCollision() { }
+    moveHelper() { return false; }
     takeDamage(damage) {
         if (this.isInvincibleObserver.is(true) || this.state.is(EnemyState.Killed))
             return;
@@ -75,7 +76,7 @@ export class SimpleMovingEnemy extends Enemy {
         this.width = width;
         this.height = height;
         this.state = new StateObserver(EnemyState.ChangeDirection);
-        this.halfHitBoxes = new MovingBoxHalfHitBoxes(this.hitbox);
+        this.halfHitBoxes = new MovingBoxHalfHitBoxes(this.hitBox);
         this.requirePassBetweenBoxHelper = true;
     }
     aiThinking() {
@@ -130,6 +131,9 @@ export class SimpleMovingEnemy extends Enemy {
     }
     bricksCollision() {
         this.changeDirection();
+    }
+    moveHelper() {
+        return Collisions.passBetweenBoxesHelper(this);
     }
     changeDirection() {
         this.state.setNextState(EnemyState.ChangeDirection);
@@ -301,16 +305,16 @@ export class Tektite extends Enemy {
         }
     }
     customCollision() {
-        if (Collisions.movingBoxLine(this.hitbox, 0, Direction.Up)) {
+        if (Collisions.movingBoxLine(this.hitBox, 0, Direction.Up)) {
             this.dy = this.dy / 2;
         }
-        if (Collisions.movingBoxLine(this.hitbox, this.Game.Viewport.height, Direction.Down)) {
+        if (Collisions.movingBoxLine(this.hitBox, this.Game.Viewport.height, Direction.Down)) {
             this.state.setNextState(EnemyState.Wait);
         }
-        if (Collisions.simpleMovingBoxLine(this.hitbox, 0, Direction.Left)) {
+        if (Collisions.simpleMovingBoxLine(this.hitBox, 0, Direction.Left)) {
             this.dx = -this.dx;
         }
-        if (Collisions.simpleMovingBoxLine(this.hitbox, this.Game.Viewport.width, Direction.Right)) {
+        if (Collisions.simpleMovingBoxLine(this.hitBox, this.Game.Viewport.width, Direction.Right)) {
             this.dx = -this.dx;
         }
     }

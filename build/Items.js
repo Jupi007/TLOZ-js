@@ -4,6 +4,7 @@ export class Item extends SimpleBox {
     constructor() {
         super();
     }
+    collisionCallback() { }
 }
 export class Heart extends Item {
     constructor(game, x, y) {

@@ -38,43 +38,43 @@ export class EnemyManager {
     }
 
     aiThinking(): void {
-        this.loopEnemies((enemy) => {
+        this.loopEnemies((enemy: Enemy) => {
             enemy.aiThinking();
         });
     }
 
     collisions(): void {
-        this.loopEnemies((enemy) => {
+        this.loopEnemies((enemy: Enemy) => {
             if (enemy.hasPlayerCollision && Collisions.movingBoxs(this.Game.Player.hitBox, enemy.hitBox) && !enemy.state.is(EnemyState.Killed)) {
                 enemy.playerCollision();
             }
 
-            let helper = enemy.requirePassBetweenBoxHelper ? Collisions.passBetweenBoxesHelper(this.Game, enemy) : false;
+            let moveHelper = enemy.moveHelper();
 
             if (enemy.hasBricksCollisions) {
                 this.Game.Viewport.loopCollision((cell, col, row) => {
                     if (Collisions.movingBox(enemy.hitBox, cell)) {
-                        if (!helper) enemy.bricksCollision();
+                        if (!moveHelper) enemy.bricksCollision();
                     }
                 });
             }
 
             enemy.customCollision();
 
-            if (enemy.hasViewportCollision && Collisions.movingBoxCanvas(enemy.hitbox, this.Game.Viewport)) {
+            if (enemy.hasViewportCollision && Collisions.movingBoxCanvas(enemy.hitBox, this.Game.Viewport)) {
                 enemy.viewportCollision();
             }
         });
     }
 
     move(): void {
-        this.loopEnemies((enemy) => {
+        this.loopEnemies((enemy: Enemy) => {
             enemy.move();
         });
     }
 
     draw(): void {
-        this.loopEnemies((enemy) => {
+        this.loopEnemies((enemy: Enemy) => {
             if (enemy.state.is(EnemyState.Killed)) {
                 if (enemy.state.currentFrame <= 10) {
                     this.Game.Viewport.currentScene.drawImage(
@@ -113,7 +113,7 @@ export class EnemyManager {
     }
 
     updateObservers(): void {
-        this.loopEnemies((enemy) => {
+        this.loopEnemies((enemy: Enemy) => {
             enemy.state.update(this.Game.dt);
             enemy.isInvincibleObserver.update(this.Game.dt);
 

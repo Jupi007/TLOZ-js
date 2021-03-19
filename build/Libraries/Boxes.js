@@ -30,7 +30,7 @@ export class MovingBox extends SimpleBox {
         super();
         this._dx = 0;
         this._dy = 0;
-        this.hitbox = this;
+        this.hitBox = this;
     }
     get dx() {
         return this._dx;
@@ -50,11 +50,11 @@ export class MovingBox extends SimpleBox {
     set direction(value) {
         this._direction = value;
     }
-    get hitbox() {
-        return this._hitbox;
+    get hitBox() {
+        return this._hitBox;
     }
-    set hitbox(value) {
-        this._hitbox = value;
+    set hitBox(value) {
+        this._hitBox = value;
     }
 }
 export class MovingBoxHitBox {

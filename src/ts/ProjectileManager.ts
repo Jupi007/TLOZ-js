@@ -22,12 +22,12 @@ export class ProjectileManager {
     }
 
     collisions(): void {
-        this.loopProjectiles((projectile) => {
+        this.loopProjectiles((projectile: Projectile) => {
             if (projectile.state.is(ProjectileState.ShieldBlocked)) return;
 
             if (projectile.hasEnemiesCollision) {
                 this.Game.EnemyManager.loopEnemies((enemy) => {
-                    if (Collisions.movingBoxs(enemy, projectile.hitbox)) {
+                    if (Collisions.movingBoxs(enemy, projectile.hitBox)) {
                         if (projectile.enemiesCollisionCallback !== null) projectile.enemiesCollisionCallback(enemy);
                         this.deleteProjectile(projectile);
                     }
@@ -35,7 +35,7 @@ export class ProjectileManager {
             }
 
             if (projectile.hasPlayerCollision) {
-                if (Collisions.movingBoxs(this.Game.Player.hitBox, projectile.hitbox)) {
+                if (Collisions.movingBoxs(this.Game.Player.hitBox, projectile.hitBox)) {
                     if (
                         projectile.canBeShieldBlocked &&
                         this.Game.Player.isMovingObserver.is(false) &&
@@ -52,14 +52,14 @@ export class ProjectileManager {
                 }
             }
 
-            if (Collisions.movingBoxCanvas(projectile.hitbox, this.Game.Viewport)) {
+            if (Collisions.movingBoxCanvas(projectile.hitBox, this.Game.Viewport)) {
                 this.deleteProjectile(projectile);
             }
         });
     }
 
     move(): void {
-        this.loopProjectiles((projectile) => {
+        this.loopProjectiles((projectile: Projectile) => {
             switch (projectile.state.get()) {
                 case ProjectileState.Moving:
                     projectile.x += projectile.dx * this.Game.dt;
@@ -81,7 +81,7 @@ export class ProjectileManager {
     }
 
     draw(): void {
-        this.loopProjectiles((projectile) => {
+        this.loopProjectiles((projectile: Projectile) => {
             this.Game.Viewport.currentScene.drawImage(
                 projectile.sprites[projectile.direction],
                 projectile.x,
@@ -93,7 +93,7 @@ export class ProjectileManager {
     }
 
     updateObservers(): void {
-        this.loopProjectiles((projectile) => {
+        this.loopProjectiles((projectile: Projectile) => {
             projectile.state.update(this.Game.dt);
 
             if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
@@ -112,7 +112,7 @@ export class ProjectileManager {
     }
 
     deleteAllProjectiles(): void {
-        this.loopProjectiles((projectile) => {
+        this.loopProjectiles((projectile: Projectile) => {
             if (projectile.deleteCallback !== null) projectile.deleteCallback();
         });
 

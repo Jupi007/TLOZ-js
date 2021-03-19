@@ -148,12 +148,12 @@ export var Collisions;
         return false;
     }
     Collisions.movingBoxLine = movingBoxLine;
-    function passBetweenBoxesHelper(Game, box) {
+    function passBetweenBoxesHelper(box) {
         let halfLeftCollision = false;
         let halfRightCollision = false;
         let halfUpCollision = false;
         let halfDownCollision = false;
-        Game.Viewport.loopCollision((cell, col, row) => {
+        box.Game.Viewport.loopCollision((cell) => {
             if (Collisions.simpleMovingBox(box.hitBox, cell)) {
                 if (Collisions.simpleMovingBox(box.halfHitBoxes.halfLeftHitBox, cell)) {
                     halfLeftCollision = true;
@@ -171,21 +171,21 @@ export var Collisions;
         });
         if (box.direction === Direction.Up || box.direction === Direction.Down) {
             if (halfLeftCollision && !halfRightCollision) {
-                box.dx = box.speed * Game.dt;
+                box.dx = box.speed * box.Game.dt;
                 return true;
             }
             else if (!halfLeftCollision && halfRightCollision) {
-                box.dx = -box.speed * Game.dt;
+                box.dx = -box.speed * box.Game.dt;
                 return true;
             }
         }
         else if (box.direction === Direction.Left || box.direction === Direction.Right) {
             if (halfUpCollision && !halfDownCollision) {
-                box.dy = box.speed * Game.dt;
+                box.dy = box.speed * box.Game.dt;
                 return true;
             }
             else if (!halfUpCollision && halfDownCollision) {
-                box.dy = -box.speed * Game.dt;
+                box.dy = -box.speed * box.Game.dt;
                 return true;
             }
         }

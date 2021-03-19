@@ -12,6 +12,8 @@ export class Item extends SimpleBox {
     constructor() {
         super();
     }
+
+    collisionCallback(): void {}
 }
 
 export class Heart extends Item {

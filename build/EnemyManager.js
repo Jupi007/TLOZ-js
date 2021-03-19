@@ -34,17 +34,17 @@ export class EnemyManager {
             if (enemy.hasPlayerCollision && Collisions.movingBoxs(this.Game.Player.hitBox, enemy.hitBox) && !enemy.state.is(EnemyState.Killed)) {
                 enemy.playerCollision();
             }
-            let helper = enemy.requirePassBetweenBoxHelper ? Collisions.passBetweenBoxesHelper(this.Game, enemy) : false;
+            let moveHelper = enemy.moveHelper();
             if (enemy.hasBricksCollisions) {
                 this.Game.Viewport.loopCollision((cell, col, row) => {
                     if (Collisions.movingBox(enemy.hitBox, cell)) {
-                        if (!helper)
+                        if (!moveHelper)
                             enemy.bricksCollision();
                     }
                 });
             }
             enemy.customCollision();
-            if (enemy.hasViewportCollision && Collisions.movingBoxCanvas(enemy.hitbox, this.Game.Viewport)) {
+            if (enemy.hasViewportCollision && Collisions.movingBoxCanvas(enemy.hitBox, this.Game.Viewport)) {
                 enemy.viewportCollision();
             }
         });

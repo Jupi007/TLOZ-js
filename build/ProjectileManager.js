@@ -14,7 +14,7 @@ export class ProjectileManager {
                 return;
             if (projectile.hasEnemiesCollision) {
                 this.Game.EnemyManager.loopEnemies((enemy) => {
-                    if (Collisions.movingBoxs(enemy, projectile.hitbox)) {
+                    if (Collisions.movingBoxs(enemy, projectile.hitBox)) {
                         if (projectile.enemiesCollisionCallback !== null)
                             projectile.enemiesCollisionCallback(enemy);
                         this.deleteProjectile(projectile);
@@ -22,7 +22,7 @@ export class ProjectileManager {
                 });
             }
             if (projectile.hasPlayerCollision) {
-                if (Collisions.movingBoxs(this.Game.Player.hitBox, projectile.hitbox)) {
+                if (Collisions.movingBoxs(this.Game.Player.hitBox, projectile.hitBox)) {
                     if (projectile.canBeShieldBlocked &&
                         this.Game.Player.isMovingObserver.is(false) &&
                         this.Game.Player.isAttackObserver.is(false) &&
@@ -36,7 +36,7 @@ export class ProjectileManager {
                     this.deleteProjectile(projectile);
                 }
             }
-            if (Collisions.movingBoxCanvas(projectile.hitbox, this.Game.Viewport)) {
+            if (Collisions.movingBoxCanvas(projectile.hitBox, this.Game.Viewport)) {
                 this.deleteProjectile(projectile);
             }
         });
