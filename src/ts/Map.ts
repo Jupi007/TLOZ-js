@@ -7,7 +7,7 @@ import { Random } from "./Libraries/Random.js";
 
 import { Enemy, Octorok, BlueOctorok, Moblin, BlueMoblin, Tektite, BlueTektite } from "./Enemies.js";
 import { Brick } from "./Bricks.js";
-import { Heart, HeartReceptacle, Item, Sword as SwordItem } from "./Items.js";
+import { HeartReceptacle, Item, Sword as SwordItem } from "./Items.js";
 
 export class Cell extends SimpleBox {
     brick: Brick;

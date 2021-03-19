@@ -83,7 +83,7 @@ export class Sword extends SimpleBox {
             return;
         if (this.Game.Player.isAttackObserver.get()) {
             this.Game.EnemyManager.loopEnemies((enemy) => {
-                if (Collisions.simpleMovingBox(enemy, this)) {
+                if (Collisions.simpleMovingBox(enemy.hitbox, this)) {
                     enemy.takeDamage(this.damage);
                 }
             });

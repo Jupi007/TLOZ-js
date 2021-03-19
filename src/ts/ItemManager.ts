@@ -20,7 +20,7 @@ export class ItemManager {
     collisions(): void {
         this.loopItems((item) => {
             if (
-                Collisions.movingBoxs(this.Game.Player, item) ||
+                Collisions.movingBoxs(this.Game.Player.hitbox, item.hitbox) ||
                 (this.Game.Player.isAttackObserver.is(true) && Collisions.simpleBox(this.Game.Sword, item))
             ) {
                 item.collisionCallback();

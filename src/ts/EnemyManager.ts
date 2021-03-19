@@ -45,7 +45,7 @@ export class EnemyManager {
 
     collisions(): void {
         this.loopEnemies((enemy) => {
-            if (enemy.hasPlayerCollision && Collisions.movingBoxs(this.Game.Player.hitBox, enemy) && !enemy.state.is(EnemyState.Killed)) {
+            if (enemy.hasPlayerCollision && Collisions.movingBoxs(this.Game.Player.hitBox, enemy.hitBox) && !enemy.state.is(EnemyState.Killed)) {
                 enemy.playerCollision();
             }
 
@@ -53,7 +53,7 @@ export class EnemyManager {
 
             if (enemy.hasBricksCollisions) {
                 this.Game.Viewport.loopCollision((cell, col, row) => {
-                    if (Collisions.movingBox(enemy, cell)) {
+                    if (Collisions.movingBox(enemy.hitBox, cell)) {
                         if (!helper) enemy.bricksCollision();
                     }
                 });
@@ -61,7 +61,7 @@ export class EnemyManager {
 
             enemy.customCollision();
 
-            if (enemy.hasViewportCollision && Collisions.movingBoxCanvas(enemy, this.Game.Viewport)) {
+            if (enemy.hasViewportCollision && Collisions.movingBoxCanvas(enemy.hitbox, this.Game.Viewport)) {
                 enemy.viewportCollision();
             }
         });

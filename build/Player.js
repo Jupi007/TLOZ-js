@@ -135,7 +135,7 @@ export class Player extends MovingBox {
                     this.dx = this.knockBackSpeed * this.Game.dt;
                     break;
             }
-            Collisions.movingBoxCanvas(this, this.Game.Viewport);
+            Collisions.movingBoxCanvas(this.hitbox, this.Game.Viewport);
             return;
         }
         if (this.Game.Sword.isEnabled)

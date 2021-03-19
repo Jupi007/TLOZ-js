@@ -1,6 +1,6 @@
 import { Game } from "./Game.js";
 
-import { MovingBox, MovingBoxHalfHitBoxes, MovingBoxHitBox } from "./Libraries/Boxes.js";
+import { MovingBox, MovingBoxHalfHitBoxes } from "./Libraries/Boxes.js";
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
@@ -37,8 +37,6 @@ export class Enemy extends MovingBox {
     dieSound: HTMLAudioElement;
     hitSound: HTMLAudioElement;
 
-    hitBox: MovingBox|MovingBoxHitBox;
-
     constructor() {
         super();
 
@@ -56,8 +54,6 @@ export class Enemy extends MovingBox {
 
         this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
         this.hitSound = AudioLoader.load("./sounds/effect/Enemy_Hit.wav");
-
-        this.hitBox = this;
     }
 
     aiThinking(): void { }
@@ -125,7 +121,7 @@ export class SimpleMovingEnemy extends Enemy {
 
         this.state = new StateObserver(EnemyState.ChangeDirection);
 
-        this.halfHitBoxes = new MovingBoxHalfHitBoxes(this);
+        this.halfHitBoxes = new MovingBoxHalfHitBoxes(this.hitbox);
 
         this.requirePassBetweenBoxHelper = true;
     }
@@ -445,16 +441,16 @@ export class Tektite extends Enemy {
     }
 
     customCollision(): void {
-        if (Collisions.movingBoxLine(this, 0, Direction.Up)) {
+        if (Collisions.movingBoxLine(this.hitbox, 0, Direction.Up)) {
             this.dy = this.dy / 2;
         }
-        if (Collisions.movingBoxLine(this, this.Game.Viewport.height, Direction.Down)) {
+        if (Collisions.movingBoxLine(this.hitbox, this.Game.Viewport.height, Direction.Down)) {
             this.state.setNextState(EnemyState.Wait);
         }
-        if (Collisions.simpleMovingBoxLine(this, 0, Direction.Left)) {
+        if (Collisions.simpleMovingBoxLine(this.hitbox, 0, Direction.Left)) {
             this.dx = -this.dx;
         }
-        if (Collisions.simpleMovingBoxLine(this, this.Game.Viewport.width, Direction.Right)) {
+        if (Collisions.simpleMovingBoxLine(this.hitbox, this.Game.Viewport.width, Direction.Right)) {
             this.dx = -this.dx;
         }
     }

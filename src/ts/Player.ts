@@ -242,7 +242,7 @@ export class Player extends MovingBox {
                     break;
             }
 
-            Collisions.movingBoxCanvas(this, this.Game.Viewport);
+            Collisions.movingBoxCanvas(this.hitbox, this.Game.Viewport);
             return;
         }
 

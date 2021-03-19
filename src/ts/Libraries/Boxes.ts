@@ -46,6 +46,13 @@ export abstract class MovingBox extends SimpleBox {
     private _dx = 0;
     private _dy = 0;
     private _direction: Direction;
+    private _hitbox: MovingBox | MovingBoxHitBox;
+
+    constructor() {
+        super();
+
+        this.hitbox = this;
+    }
 
     public get dx() {
         return this._dx;
@@ -66,6 +73,13 @@ export abstract class MovingBox extends SimpleBox {
     }
     public set direction(value: Direction) {
         this._direction = value;
+    }
+
+    public get hitbox(): MovingBox | MovingBoxHitBox {
+        return this._hitbox;
+    }
+    public set hitbox(value: MovingBox | MovingBoxHitBox) {
+        this._hitbox = value;
     }
 }
 

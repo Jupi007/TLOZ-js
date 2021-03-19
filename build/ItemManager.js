@@ -7,7 +7,7 @@ export class ItemManager {
     }
     collisions() {
         this.loopItems((item) => {
-            if (Collisions.movingBoxs(this.Game.Player, item) ||
+            if (Collisions.movingBoxs(this.Game.Player.hitbox, item.hitbox) ||
                 (this.Game.Player.isAttackObserver.is(true) && Collisions.simpleBox(this.Game.Sword, item))) {
                 item.collisionCallback();
                 item.collisionSound.play();
