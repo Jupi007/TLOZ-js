@@ -135,7 +135,7 @@ export class Viewport {
             Collisions.movingBox(this.Game.Player.hitBox, cell);
         });
         
-        if (!this.Game.Player.isKnockBackObserver.is(true)) {
+        if (!this.Game.Player.knockBackObserver.is(true)) {
             this.currentScene.passages.forEach((passage: Passage) => {
                 if (Collisions.simpleMovingBox(this.Game.Player.hitBox, passage)) {
                     if (!this.justReachOutPassage) {
@@ -223,7 +223,7 @@ export class Viewport {
 
         this.Game.Player.dx = 0;
         this.Game.Player.dy = 0;
-        this.Game.Player.isAttackObserver.setNextState(false);
+        this.Game.Player.attackObserver.setNextState(false);
 
         this.Game.useCustomLoop(() => this.slideSceneLoop());
     }

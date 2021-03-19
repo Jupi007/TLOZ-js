@@ -28,7 +28,7 @@ export class Enemy extends MovingBox {
 
     killedSprites: HTMLImageElement[] = [];
 
-    isInvincibleObserver: StateObserver;
+    invincibleObserver: StateObserver;
     invincibleDuration: number;
     invincibleAnimation: AnimationObserver;
 
@@ -48,7 +48,7 @@ export class Enemy extends MovingBox {
         this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
         this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
 
-        this.isInvincibleObserver = new StateObserver(false);
+        this.invincibleObserver = new StateObserver(false);
         this.invincibleDuration = 25;
         this.invincibleAnimation = new AnimationObserver(7, 2);
 
@@ -75,7 +75,7 @@ export class Enemy extends MovingBox {
     moveHelper(): boolean { return false; }
 
     takeDamage(damage): void {
-        if (this.isInvincibleObserver.is(true) || this.state.is(EnemyState.Killed)) return;
+        if (this.invincibleObserver.is(true) || this.state.is(EnemyState.Killed)) return;
 
         this.hp -= damage;
 
@@ -90,7 +90,7 @@ export class Enemy extends MovingBox {
     }
 
     getInvicibility(): void {
-        this.isInvincibleObserver.setNextState(true);
+        this.invincibleObserver.setNextState(true);
     }
 
     dropItem(): boolean {
@@ -130,7 +130,7 @@ export class SimpleMovingEnemy extends Enemy {
     aiThinking(): void {
         switch (this.state.get()) {
             case EnemyState.Moving:
-                if (this.isInvincibleObserver.is(false)) {
+                if (this.invincibleObserver.is(false)) {
                     switch (this.direction) {
                         case Direction.Down:
                             this.dy = this.speed * this.Game.dt;
@@ -279,7 +279,7 @@ export class BlueOctorok extends Octorok {
     dropItem(): boolean {
         if (super.dropItem()) return true;
 
-        if (Random.getOneInt(3) && !this.Game.Player.isInvincibleObserver.is(true)) {
+        if (Random.getOneInt(3) && !this.Game.Player.invincibleObserver.is(true)) {
             this.Game.ItemManager.addItem(new Clock(
                 this.Game,
                 this.x + (this.width / 2) - (32 / 2),
@@ -374,7 +374,7 @@ export class BlueMoblin extends Moblin {
     dropItem(): boolean {
         if (super.dropItem()) return true;
 
-        if (Random.getOneInt(3) && !this.Game.Player.isInvincibleObserver.is(true)) {
+        if (Random.getOneInt(3) && !this.Game.Player.invincibleObserver.is(true)) {
             this.Game.ItemManager.addItem(new Clock(
                 this.Game,
                 this.x + (this.width / 2) - (32 / 2),
@@ -505,7 +505,7 @@ export class BlueTektite extends Tektite {
     dropItem(): boolean {
         if (super.dropItem()) return true;
 
-        if (Random.getOneInt(3) && !this.Game.Player.isInvincibleObserver.is(true)) {
+        if (Random.getOneInt(3) && !this.Game.Player.invincibleObserver.is(true)) {
             this.Game.ItemManager.addItem(new Clock(
                 this.Game,
                 this.x + (this.width / 2) - (32 / 2),

@@ -31,7 +31,7 @@ export class GameOverScreen extends AbstractScreen {
                 this.Game.Hud.draw();
                 this.Game.Player.drawGameOver();
 
-                if (this.Game.Player.isDiedObserver.currentFrame > 145) this.state.setNextState(GameOverScreenState.HideGame);
+                if (this.Game.Player.diedObserver.currentFrame > 145) this.state.setNextState(GameOverScreenState.HideGame);
                 break;
 
             case GameOverScreenState.HideGame:

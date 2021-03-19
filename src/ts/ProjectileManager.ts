@@ -38,8 +38,8 @@ export class ProjectileManager {
                 if (Collisions.movingBoxs(this.Game.Player.hitBox, projectile.hitBox)) {
                     if (
                         projectile.canBeShieldBlocked &&
-                        this.Game.Player.isMovingObserver.is(false) &&
-                        this.Game.Player.isAttackObserver.is(false) &&
+                        this.Game.Player.movingObserver.is(false) &&
+                        this.Game.Player.attackObserver.is(false) &&
                         Direction.areOpposite(this.Game.Player.direction, projectile.direction)
                     ) {
                         this.shieldSound.play();

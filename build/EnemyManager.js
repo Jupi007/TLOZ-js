@@ -68,7 +68,7 @@ export class EnemyManager {
                 }
                 return;
             }
-            if (enemy.isInvincibleObserver.is(true)) {
+            if (enemy.invincibleObserver.is(true)) {
                 enemy.invincibleAnimation.update(this.Game.dt);
                 if (enemy.invincibleAnimation.currentAnimationStep === 1)
                     enemy.draw();
@@ -83,9 +83,9 @@ export class EnemyManager {
     updateObservers() {
         this.loopEnemies((enemy) => {
             enemy.state.update(this.Game.dt);
-            enemy.isInvincibleObserver.update(this.Game.dt);
-            if (enemy.isInvincibleObserver.get() && enemy.isInvincibleObserver.currentFrame > enemy.invincibleDuration) {
-                enemy.isInvincibleObserver.setNextState(false);
+            enemy.invincibleObserver.update(this.Game.dt);
+            if (enemy.invincibleObserver.get() && enemy.invincibleObserver.currentFrame > enemy.invincibleDuration) {
+                enemy.invincibleObserver.setNextState(false);
             }
         });
     }

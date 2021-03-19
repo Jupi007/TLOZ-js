@@ -71,7 +71,7 @@ export class Sword extends SimpleBox {
     draw() {
         if (!this.isEnabled)
             return;
-        if (this.Game.Player.isAttackObserver.get()) {
+        if (this.Game.Player.attackObserver.get()) {
             this.Game.Viewport.drawImage(this.sprites[this.direction], this.x, this.y, this.width, this.height);
         }
     }
@@ -81,7 +81,7 @@ export class Sword extends SimpleBox {
     collisions() {
         if (!this.isEnabled)
             return;
-        if (this.Game.Player.isAttackObserver.get()) {
+        if (this.Game.Player.attackObserver.get()) {
             this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (Collisions.simpleMovingBox(enemy.hitBox, this)) {
                     enemy.takeDamage(this.damage);
@@ -92,12 +92,12 @@ export class Sword extends SimpleBox {
     listenEvents() {
         if (!this.isEnabled)
             return;
-        if (this.Game.Player.isAttackObserver.get() && this.Game.Player.isAttackObserver.isFirstFrame) {
+        if (this.Game.Player.attackObserver.get() && this.Game.Player.attackObserver.isFirstFrame) {
             this.slashSound.play();
         }
         if (!this.isFlying
-            && this.Game.Player.isAttackObserver.getLastFrame()
-            && !this.Game.Player.isAttackObserver.get()
+            && this.Game.Player.attackObserver.getLastFrame()
+            && !this.Game.Player.attackObserver.get()
             && this.Game.Player.isFullLife) {
             this.flyingSound.play();
             this.isFlying = true;
