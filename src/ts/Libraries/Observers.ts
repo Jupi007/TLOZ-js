@@ -27,6 +27,14 @@ export class StateObserver extends AbstractObserver {
         this.nextState = null;
     }
 
+    set(state: any): void {
+        this.lastState = this.state;
+        this.state = state;
+        this.nextState = null;
+        this.currentFrame = 0;
+        this.isFirstFrame = true;
+    }
+
     setNextState(state: any): void {
         this.nextState = state;
     }
@@ -35,11 +43,7 @@ export class StateObserver extends AbstractObserver {
         this.lastFrameState = this.state;
 
         if (this.nextState !== null) {
-            this.lastState = this.state;
-            this.state = this.nextState;
-            this.nextState = null;
-            this.currentFrame = 0;
-            this.isFirstFrame = true;
+            this.set(this.nextState);
         }
         else {
             this.isFirstFrame = false;

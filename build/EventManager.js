@@ -1,4 +1,5 @@
 import { GameState } from "./Game.js";
+import { InventoryState } from "./Inventory.js";
 export class EventManager {
     constructor(game) {
         this.isRightPressed = false;
@@ -42,9 +43,30 @@ export class EventManager {
                     this.isAttackPressed = true;
                 }
                 break;
+            case "i":
+            case "I":
+                if (!keydown)
+                    return;
+                if (this.Game.state.isIn(GameState.Run) && this.Game.Panes.isAnimationFinished) {
+                    this.Game.state.setNextState(GameState.Inventory);
+                    this.Game.Inventory.state.set(InventoryState.ShowAnimation);
+                }
+                else if (this.Game.state.isIn(GameState.Inventory)) {
+                    if (this.Game.Inventory.state.is(InventoryState.Visible)) {
+                        this.Game.Inventory.state.setNextState(InventoryState.HideAnimation);
+                    }
+                    else {
+                        this.Game.Inventory.state.set(this.Game.Inventory.state.is(InventoryState.ShowAnimation)
+                            ? InventoryState.HideAnimation
+                            : InventoryState.ShowAnimation);
+                    }
+                }
+                break;
             case "p":
             case "P":
-                if (keydown && this.Game.state.isIn(GameState.Run, GameState.Stopped)) {
+                if (!keydown)
+                    return;
+                if (this.Game.state.isIn(GameState.Run, GameState.Stopped)) {
                     this.Game.state.setNextState(this.Game.state.is(GameState.Run)
                         ? GameState.Stopped
                         : GameState.Run);

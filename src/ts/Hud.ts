@@ -35,9 +35,9 @@ export class Hud {
     }
 
     draw(): void {
-        this.Game.fillRect(
-            this.x,
-            this.y,
+        this.fillRect(
+            0,
+            0,
             this.width,
             this.height,
             '#000'
@@ -50,7 +50,7 @@ export class Hud {
 
     drawHearts(): void {
         for (let i = 1; i <= this.Game.Player.maxHp / 2; i++) {
-            this.Game.drawImage(
+            this.drawImage(
                 this.emptyHeartSprite,
                 24 * i + 8 * i,
                 this.height / 2 - 12,
@@ -60,7 +60,7 @@ export class Hud {
         }
 
         for (let i = 1; i <= this.Game.Player.hp / 2; i++) {
-            this.Game.drawImage(
+            this.drawImage(
                 this.fullHeartSprite,
                 24 * i + 8 * i,
                 this.height / 2 - 12,
@@ -70,7 +70,7 @@ export class Hud {
         }
 
         if (this.Game.Player.hp % 2 === 1) {
-            this.Game.drawImage(
+            this.drawImage(
                 this.halfHeartSprite,
                 24 * (this.Game.Player.hp / 2 + 1) + 8 * (this.Game.Player.hp / 2 - 1),
                 this.height / 2 - 12,
@@ -96,7 +96,7 @@ export class Hud {
                 bgColor = '#d11c0d';
             }
 
-            this.Game.fillRect(
+            this.fillRect(
                 x + cellWidth * scene.c + 2 * scene.c,
                 cellHeight * scene.r + 2 * scene.r,
                 cellWidth,
@@ -107,7 +107,7 @@ export class Hud {
 
         if (this.Game.state.isIn(GameState.Run)) {
             if (this.currentSceneAnimation.currentAnimationStep === 1) {
-                this.Game.fillRect(
+                this.fillRect(
                     x + cellWidth * this.Game.Viewport.currentScene.c + 2 * this.Game.Viewport.currentScene.c,
                     cellHeight * this.Game.Viewport.currentScene.r + 2 * this.Game.Viewport.currentScene.r,
                     cellWidth,
@@ -121,15 +121,59 @@ export class Hud {
     }
 
     drawScore(): void {
-        this.Game.fillText(
+        this.fillText(
             ' SCORE: ' + this.Game.Player.score + '/' + this.Game.Player.targetScore,
             //'FPS:' + ((1/this.Game.dt)*60).toFixed(0),
-            this.width - (this.height / 2) + this.x,
-            this.y + this.height / 2,
+            this.width - (this.height / 2),
+            this.height / 2,
             '#fff',
             '16px',
             'right',
             'middle'
         );
+    }
+
+    drawImage(
+        sprite: HTMLImageElement,
+        x: number,
+        y: number,
+        width: number,
+        height: number
+    ) {
+        this.Game.drawImage(
+            sprite,
+            x + this.x,
+            y + this.y,
+            width,
+            height
+        );
+    }
+
+    fillRect(
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        color: string
+    ) {
+        this.Game.fillRect(
+            x + this.x,
+            y + this.y,
+            width,
+            height,
+            color
+        );
+    }
+
+    fillText(
+        text: string,
+        x: number,
+        y: number,
+        color: string,
+        fontSize: string = '16px',
+        textAlign: CanvasTextAlign = 'left',
+        textBaseline: CanvasTextBaseline = 'alphabetic',
+    ) {
+        this.Game.fillText(text, x + this.x, y + this.y, color, fontSize, textAlign, textBaseline);
     }
 }

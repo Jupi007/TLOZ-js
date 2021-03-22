@@ -2,6 +2,7 @@ import { StateObserver } from "./Libraries/Observers.js";
 import { BrickCollection } from "./Bricks.js";
 import { Map } from "./Map.js";
 import { Viewport } from "./Viewport.js";
+import { Inventory } from "./Inventory.js";
 import { Player } from "./Player.js";
 import { Sword } from "./Sword.js";
 import { EnemyManager } from "./EnemyManager.js";
@@ -18,10 +19,11 @@ export var GameState;
 (function (GameState) {
     GameState[GameState["Splash"] = 0] = "Splash";
     GameState[GameState["Run"] = 1] = "Run";
-    GameState[GameState["Stopped"] = 2] = "Stopped";
-    GameState[GameState["CustomLoop"] = 3] = "CustomLoop";
-    GameState[GameState["GameOver"] = 4] = "GameOver";
-    GameState[GameState["Win"] = 5] = "Win";
+    GameState[GameState["Inventory"] = 2] = "Inventory";
+    GameState[GameState["Stopped"] = 3] = "Stopped";
+    GameState[GameState["CustomLoop"] = 4] = "CustomLoop";
+    GameState[GameState["GameOver"] = 5] = "GameOver";
+    GameState[GameState["Win"] = 6] = "Win";
 })(GameState || (GameState = {}));
 ;
 export class Game {
@@ -50,6 +52,7 @@ export class Game {
         this.Hud.width = this.Viewport.width;
         this.Canvas.width = this.Viewport.width;
         this.Canvas.height = this.Viewport.height + this.Hud.height;
+        this.Inventory = new Inventory(this);
         this.Player.x = this.Viewport.cellSize * this.Map.spawnCellColl;
         this.Player.y = this.Viewport.cellSize * this.Map.spawnCellRow;
         this.Map.loopWorlds((world) => {
@@ -90,6 +93,9 @@ export class Game {
             case GameState.Run:
                 this.runLoop();
                 break;
+            case GameState.Inventory:
+                this.inventoryLoop();
+                break;
             case GameState.Stopped:
                 this.stoppedLoop();
                 break;
@@ -103,7 +109,6 @@ export class Game {
                 this.customLoop();
                 break;
             default:
-                this.runLoop();
                 break;
         }
         this.state.update(this.dt);
@@ -131,6 +136,10 @@ export class Game {
         this.EnemyManager.updateObservers();
         this.ProjectileManager.updateObservers();
         this.EventManager.newFrame();
+    }
+    inventoryLoop() {
+        this.Inventory.move();
+        this.Inventory.draw();
     }
     stoppedLoop() {
         this.drawGame();

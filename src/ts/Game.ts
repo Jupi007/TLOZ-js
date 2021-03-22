@@ -3,6 +3,7 @@ import { StateObserver } from "./Libraries/Observers.js";
 import { BrickCollection } from "./Bricks.js";
 import { Map } from "./Map.js";
 import { Viewport } from "./Viewport.js";
+import { Inventory } from "./Inventory.js";
 import { Player } from "./Player.js";
 import { Sword } from "./Sword.js";
 import { EnemyManager } from "./EnemyManager.js";
@@ -16,7 +17,7 @@ import { GameOverScreen } from "./Screens/GameOverScreen.js";
 import { WinScreen } from "./Screens/WinScreen.js";
 import { StoppedScreen } from "./Screens/StoppedScreen.js";
 
-export enum GameState { Splash, Run, Stopped, CustomLoop, GameOver, Win };
+export enum GameState { Splash, Run, Inventory, Stopped, CustomLoop, GameOver, Win };
 
 export class Game {
     Canvas: HTMLCanvasElement;
@@ -40,6 +41,7 @@ export class Game {
     GameOverScreen: GameOverScreen;
     WinScreen: WinScreen;
     StoppedScreen: StoppedScreen;
+    Inventory: Inventory;
 
     state: StateObserver;
 
@@ -74,6 +76,8 @@ export class Game {
 
         this.Canvas.width = this.Viewport.width;
         this.Canvas.height = this.Viewport.height + this.Hud.height;
+
+        this.Inventory = new Inventory(this);
 
         this.Player.x = this.Viewport.cellSize * this.Map.spawnCellColl;
         this.Player.y = this.Viewport.cellSize * this.Map.spawnCellRow;
@@ -126,6 +130,9 @@ export class Game {
             case GameState.Run:
                 this.runLoop();
                 break;
+            case GameState.Inventory:
+                this.inventoryLoop();
+                break;
             case GameState.Stopped:
                 this.stoppedLoop();
                 break;
@@ -140,7 +147,6 @@ export class Game {
                 break;
 
             default:
-                this.runLoop();
                 break;
         }
 
@@ -176,6 +182,11 @@ export class Game {
         this.ProjectileManager.updateObservers();
 
         this.EventManager.newFrame();
+    }
+
+    inventoryLoop(): void {
+        this.Inventory.move();
+        this.Inventory.draw();
     }
 
     stoppedLoop(): void {
