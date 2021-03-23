@@ -20,6 +20,7 @@ export class Sword extends SimpleBox {
         this.isFlying = false;
         this.isEnabled = false;
         this.damage = 1;
+        this.hasHit = false;
     }
     get direction() {
         return this.Game.Player.direction;
@@ -85,6 +86,7 @@ export class Sword extends SimpleBox {
             this.Game.EnemyManager.loopEnemies((enemy) => {
                 if (Collisions.simpleMovingBox(enemy.hitBox, this)) {
                     enemy.takeDamage(this.damage);
+                    this.hasHit = true;
                 }
             });
         }
@@ -94,10 +96,12 @@ export class Sword extends SimpleBox {
             return;
         if (this.Game.Player.attackObserver.get() && this.Game.Player.attackObserver.isFirstFrame) {
             this.slashSound.play();
+            this.hasHit = false;
         }
         if (!this.isFlying
             && this.Game.Player.attackObserver.getLastFrame()
             && !this.Game.Player.attackObserver.get()
+            && !this.hasHit
             && this.Game.Player.isFullLife) {
             this.flyingSound.play();
             this.isFlying = true;

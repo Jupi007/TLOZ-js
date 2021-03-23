@@ -3,6 +3,7 @@ import { Game } from "./Game.js";
 import { AudioLoader, SpriteLoader } from "./Libraries/Loaders.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
+import { StateObserver } from "./Libraries/Observers.js";
 
 import { Sword as SwordProjectile } from "./Projectiles.js";
 import { SimpleBox } from "./Libraries/Boxes.js";
@@ -26,6 +27,8 @@ export class Sword extends SimpleBox {
 
     damage: number;
 
+    hasHit: boolean;
+
     constructor(game: Game) {
         super();
 
@@ -47,6 +50,8 @@ export class Sword extends SimpleBox {
         this.isEnabled = false;
 
         this.damage = 1;
+
+        this.hasHit = false;
     }
 
     get direction(): number {
@@ -126,6 +131,7 @@ export class Sword extends SimpleBox {
             this.Game.EnemyManager.loopEnemies((enemy: Enemy) => {
                 if (Collisions.simpleMovingBox(enemy.hitBox, this)) {
                     enemy.takeDamage(this.damage);
+                    this.hasHit = true;
                 }
             });
         }
@@ -136,12 +142,14 @@ export class Sword extends SimpleBox {
 
         if (this.Game.Player.attackObserver.get() && this.Game.Player.attackObserver.isFirstFrame) {
             this.slashSound.play();
+            this.hasHit = false;
         }
 
         if (
             !this.isFlying
             && this.Game.Player.attackObserver.getLastFrame()
             && !this.Game.Player.attackObserver.get()
+            && !this.hasHit
             && this.Game.Player.isFullLife
         ) {
             this.flyingSound.play();
