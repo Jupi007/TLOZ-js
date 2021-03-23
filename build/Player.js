@@ -57,7 +57,7 @@ export class Player extends MovingBox {
         this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
         this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
         this.spritesAnimation = new AnimationObserver(6, 2);
-        this.invincibleAnimation = new AnimationObserver(7, 2);
+        this.invincibleAnimation = new AnimationObserver(5, 2);
         this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
         this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
         this.lowHealthSound = AudioLoader.load("./sounds/effect/Low_Health.wav", true);
