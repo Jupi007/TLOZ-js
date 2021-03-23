@@ -3,7 +3,7 @@
 "The Legend of Zelda I" like game in javascript using Canvas2D.
 I frequently add new features!
 
-![Preview of TLOZ-js](screenshot.png)
+![Preview of TLOZ-js](.github/screenshots/screenshot.png)
 
 Demo here: [https://jupi007.github.io/TLOZ-js/game.html](https://jupi007.github.io/TLOZ-js/game.html)
 
