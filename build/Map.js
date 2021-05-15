@@ -278,7 +278,7 @@ export class Map {
             ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall"]
         ]);
         this.worlds[0].scenes[1][2].passages = [
-            new Passage(this.Game, this.worlds[0].scenes[1][2], 3, 1, 1, 0, 1),
+            new Passage(this.Game, this.worlds[0].scenes[1][2], 3, 1, 1, 0, 0),
         ];
         this.worlds[0].scenes[2][2].loadBricks([
             ["wall", "wall", "tree", "default", "tree", "default", "tree", "default", "default", "tree", "default", "tree", "default", "tree", "default", "tree"],
@@ -299,7 +299,7 @@ export class Map {
             new Moblin(this.Game, 10 * 64, 5 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
             new Moblin(this.Game, 12 * 64, 7 * 64, 3, Random.getOneInt(2) ? Direction.Up : Direction.Down),
         ];
-        this.worlds[1] = new World(this.Game, 1, 2, AudioLoader.load("./sounds/music/death_mountain.mp3", true), this.Game.BrickCollection.get("default"), '#0f0e0b');
+        this.worlds[1] = new World(this.Game, 1, 1, AudioLoader.load("./sounds/music/death_mountain.mp3", true), this.Game.BrickCollection.get("default"), '#0f0e0b');
         this.worlds[1].scenes[0][0].loadBricks([
             ["red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall"],
             ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
@@ -316,24 +316,7 @@ export class Map {
         this.worlds[1].scenes[0][0].permanentItems = [
             new SwordItem(this.Game, 8 * 64 - 14, 5 * 64),
         ];
-        this.worlds[1].scenes[0][1].loadBricks([
-            ["red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "default", "default", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall"],
-            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
-            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
-            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
-            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
-            ["red-wall", "default", "default", "fire", "default", "default", "default", "default", "default", "default", "default", "default", "fire", "default", "default", "red-wall"],
-            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
-            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
-            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
-            ["red-wall", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "default", "red-wall"],
-            ["red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "default", "default", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall", "red-wall"],
-        ]);
-        this.worlds[1].scenes[0][1].enemies = [
-            new Moblin(this.Game, 1 * 64, 1 * 64, 3, Direction.Down),
-            new Moblin(this.Game, 14 * 64, 1 * 64, 3, Direction.Down),
-        ];
-        this.worlds[1].scenes[0][1].bottomEdgeCollision = function () {
+        this.worlds[1].scenes[0][0].bottomEdgeCollision = function () {
             this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
         };
         this.worlds[2] = new World(this.Game, 2, 2, AudioLoader.load("./sounds/music/dungeon.mp3", true), this.Game.BrickCollection.get("default-dungeon"), '#078382');
