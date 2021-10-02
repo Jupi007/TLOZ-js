@@ -274,11 +274,7 @@ export class Viewport {
             this.currentScene = this.nextScene;
             this.nextScene = null;
 
-            this.Game.EnemyManager.loopEnemies((enemy: Enemy) => {
-                if (enemy.state.is(EnemyState.Killed)) {
-                    this.Game.EnemyManager.removeEnemy(enemy);
-                }
-            })
+            this.Game.EnemyManager.removeKilled(true);
             this.Game.EnemyManager = new EnemyManager(this.Game);
             this.Game.ProjectileManager.deleteAllProjectiles();
             this.Game.ItemManager.deleteAllItems();
@@ -340,11 +336,7 @@ export class Viewport {
         this.nextWorld = null;
         this.nextScene = null;
 
-        this.Game.EnemyManager.loopEnemies((enemy: Enemy) => {
-            if (enemy.state.is(EnemyState.Killed)) {
-                this.Game.EnemyManager.removeEnemy(enemy);
-            }
-        });
+        this.Game.EnemyManager.removeKilled(true);
 
         this.Game.EnemyManager = new EnemyManager(this.Game);
         this.Game.ProjectileManager.deleteAllProjectiles();

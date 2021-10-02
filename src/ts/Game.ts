@@ -177,6 +177,8 @@ export class Game {
 
         this.drawGame();
 
+        this.EnemyManager.removeKilled();
+
         this.Player.updateObservers();
         this.EnemyManager.updateObservers();
         this.ProjectileManager.updateObservers();

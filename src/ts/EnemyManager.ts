@@ -23,20 +23,6 @@ export class EnemyManager {
         });
     }
 
-    removeEnemy(enemy: Enemy): void {
-        const enemyIndex = this.enemies.indexOf(enemy);
-
-        if (enemyIndex > -1) {
-            this.enemies.splice(enemyIndex, 1);
-        }
-
-        if (this.Game.EnemyManager.enemies.length <= 0) {
-            this.Game.Player.increaseScore();
-        }
-
-        enemy.dropItem();
-    }
-
     aiThinking(): void {
         this.loopEnemies((enemy: Enemy) => {
             enemy.aiThinking();
@@ -95,7 +81,7 @@ export class EnemyManager {
                     );
                 }
                 else {
-                    this.Game.EnemyManager.removeEnemy(enemy);
+                    enemy.isKilledAnimationFinished = true;
                 }
                 return;
             }
@@ -109,6 +95,24 @@ export class EnemyManager {
             }
 
             if (this.Game.state.is(GameState.Run)) enemy.spritesAnimation.update(this.Game.dt);
+        });
+    }
+
+    removeKilled(forceRemoving: boolean = false): void {
+        this.loopEnemies((enemy: Enemy) => {
+            if (enemy.isKilledAnimationFinished || (forceRemoving && enemy.state.is(EnemyState.Killed))) {
+                const enemyIndex = this.enemies.indexOf(enemy);
+
+                if (enemyIndex > -1) {
+                    this.enemies.splice(enemyIndex, 1);
+                }
+
+                if (this.Game.EnemyManager.enemies.length <= 0) {
+                    this.Game.Player.increaseScore();
+                }
+
+                enemy.dropItem();
+            }
         });
     }
 

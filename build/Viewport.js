@@ -1,7 +1,6 @@
 import { GameState } from "./Game.js";
 import { Direction } from "./Libraries/Direction.js";
 import { Collisions } from "./Libraries/Collisions.js";
-import { EnemyState } from "./Enemies.js";
 import { EnemyManager } from "./EnemyManager.js";
 export class Viewport {
     constructor(game) {
@@ -174,11 +173,7 @@ export class Viewport {
             this.currentScene.permanentItems = this.Game.ItemManager.permanentItems;
             this.currentScene = this.nextScene;
             this.nextScene = null;
-            this.Game.EnemyManager.loopEnemies((enemy) => {
-                if (enemy.state.is(EnemyState.Killed)) {
-                    this.Game.EnemyManager.removeEnemy(enemy);
-                }
-            });
+            this.Game.EnemyManager.removeKilled(true);
             this.Game.EnemyManager = new EnemyManager(this.Game);
             this.Game.ProjectileManager.deleteAllProjectiles();
             this.Game.ItemManager.deleteAllItems();
@@ -225,11 +220,7 @@ export class Viewport {
         this.currentScene = this.nextScene;
         this.nextWorld = null;
         this.nextScene = null;
-        this.Game.EnemyManager.loopEnemies((enemy) => {
-            if (enemy.state.is(EnemyState.Killed)) {
-                this.Game.EnemyManager.removeEnemy(enemy);
-            }
-        });
+        this.Game.EnemyManager.removeKilled(true);
         this.Game.EnemyManager = new EnemyManager(this.Game);
         this.Game.ProjectileManager.deleteAllProjectiles();
         this.Game.ItemManager.deleteAllItems();

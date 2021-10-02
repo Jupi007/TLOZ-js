@@ -19,6 +19,8 @@ export class Enemy extends MovingBox {
     speed: number;
     damage: number;
 
+    isKilledAnimationFinished: boolean;
+
     hasPlayerCollision: boolean;
     hasViewportCollision: boolean;
     hasBricksCollisions: boolean;
@@ -44,6 +46,8 @@ export class Enemy extends MovingBox {
         this.hasViewportCollision = true;
         this.hasBricksCollisions = true;
         this.requirePassBetweenBoxHelper = false;
+
+        this.isKilledAnimationFinished = false;
 
         this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
         this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
