@@ -206,7 +206,7 @@ export class Player extends MovingBox {
             this.lowHealthSound.play();
         }
     }
-    recoverHealth(hp) {
+    recoverHealth(hp = this.maxHp) {
         this.hp += hp;
         if (this.hp > this.maxHp)
             this.hp = this.maxHp;

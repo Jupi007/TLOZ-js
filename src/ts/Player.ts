@@ -325,7 +325,7 @@ export class Player extends MovingBox {
         }
     }
 
-    recoverHealth(hp): void {
+    recoverHealth(hp: number = this.maxHp): void {
         this.hp += hp;
 
         if (this.hp > this.maxHp) this.hp = this.maxHp;

@@ -66,6 +66,6 @@ export class HeartReceptacle extends Item {
     collisionCallback() {
         this.Game.Player.getImportantItem(this);
         this.Game.Player.maxHp += 2;
-        this.Game.Player.hp = this.Game.Player.maxHp;
+        this.Game.Player.recoverHealth();
     }
 }
