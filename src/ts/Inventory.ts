@@ -72,24 +72,10 @@ export class Inventory {
     this.fillRect(0, 0, this.width, this.height, "#000");
 
     this.fillText(
-      "Inventory",
-      this.width / 2,
-      this.height / 3,
-      "#fff",
-      "24px",
-      "center",
-      "middle"
-    );
+      { text: "Inventory", x: this.width / 2, y: this.height / 3, color: "#fff", fontSize: "24px", textAlign: "center", textBaseline: "middle" });
 
     this.fillText(
-      "Q",
-      this.width / 2 - 10,
-      (this.height / 3) * 2,
-      "#fff",
-      "24px",
-      "right",
-      "middle"
-    );
+      { text: "Q", x: this.width / 2 - 10, y: (this.height / 3) * 2, color: "#fff", fontSize: "24px", textAlign: "right", textBaseline: "middle" });
 
     if (this.Game.Sword.isEnabled) {
       this.drawImage(
@@ -126,23 +112,31 @@ export class Inventory {
     this.Game.fillRect(x, y + this.y, width, height, color);
   }
 
-  fillText(
-    text: string,
-    x: number,
-    y: number,
-    color: string,
-    fontSize: string = "16px",
-    textAlign: CanvasTextAlign = "left",
-    textBaseline: CanvasTextBaseline = "alphabetic"
-  ) {
-    this.Game.fillText(
+  fillText({
+    text,
+    x,
+    y,
+    color,
+    fontSize = "16px",
+    textAlign = "left",
+    textBaseline = "alphabetic"
+  }: {
+    text: string;
+    x: number;
+    y: number;
+    color: string;
+    fontSize?: string;
+    textAlign?: CanvasTextAlign;
+    textBaseline?: CanvasTextBaseline;
+  }): void {
+    this.Game.fillText({
       text,
       x,
-      y + this.y,
+      y: y + this.y,
       color,
       fontSize,
       textAlign,
       textBaseline
-    );
+    });
   }
 }

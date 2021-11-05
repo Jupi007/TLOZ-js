@@ -124,16 +124,15 @@ export class Hud {
   }
 
   drawScore(): void {
-    this.fillText(
-      " SCORE: " + this.Game.Player.score + "/" + this.Game.Player.targetScore,
-      //'FPS:' + ((1/this.Game.dt)*60).toFixed(0),
-      this.width - this.height / 2,
-      this.height / 2,
-      "#fff",
-      "16px",
-      "right",
-      "middle"
-    );
+    this.fillText({
+      text: " SCORE: " + this.Game.Player.score + "/" + this.Game.Player.targetScore,
+      // text: 'FPS:' + ((1/this.Game.dt)*60).toFixed(0),
+      x: this.width - this.height / 2,
+      y: this.height / 2,
+      color: "#fff",
+      textAlign: "right",
+      textBaseline: "middle"
+    });
   }
 
   drawImage(
@@ -150,23 +149,31 @@ export class Hud {
     this.Game.fillRect(x + this.x, y + this.y, width, height, color);
   }
 
-  fillText(
-    text: string,
-    x: number,
-    y: number,
-    color: string,
-    fontSize: string = "16px",
-    textAlign: CanvasTextAlign = "left",
-    textBaseline: CanvasTextBaseline = "alphabetic"
-  ) {
-    this.Game.fillText(
+  fillText({
+    text,
+    x,
+    y,
+    color,
+    fontSize = "16px",
+    textAlign = "left",
+    textBaseline = "alphabetic"
+  }: {
+    text: string;
+    x: number;
+    y: number;
+    color: string;
+    fontSize?: string;
+    textAlign?: CanvasTextAlign;
+    textBaseline?: CanvasTextBaseline;
+  }): void {
+    this.Game.fillText({
       text,
-      x + this.x,
-      y + this.y,
+      x: x + this.x,
+      y: y + this.y,
       color,
       fontSize,
       textAlign,
       textBaseline
-    );
+    });
   }
 }

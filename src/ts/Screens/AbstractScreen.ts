@@ -41,27 +41,27 @@ export class AbstractScreen {
       this.backgroundColor
     );
 
-    this.Game.fillText(
-      this.title,
-      this.Game.Canvas.width / 2,
-      this.Game.Canvas.height / 3,
-      "#fff",
-      "24px",
-      "center",
-      "middle"
-    );
+    this.Game.fillText({
+      text: this.title,
+      x: this.Game.Canvas.width / 2,
+      y: this.Game.Canvas.height / 3,
+      color: "#fff",
+      fontSize: "24px",
+      textAlign: "center",
+      textBaseline: "middle"
+    });
 
     if (this.state.currentFrame > this.showMessageAfter) {
       if (this.messageAnimation.currentAnimationStep === 1) {
-        this.Game.fillText(
-          this.message,
-          this.Game.Canvas.width / 2,
-          (this.Game.Canvas.height / 3) * 2,
-          "#fff",
-          "16px",
-          "center",
-          "middle"
-        );
+        this.Game.fillText({
+          text: this.message,
+          x: this.Game.Canvas.width / 2,
+          y: this.Game.Canvas.height / 3 * 2,
+          color: "#fff",
+          fontSize: "16px",
+          textAlign: "center",
+          textBaseline: "middle"
+        });
       }
       this.messageAnimation.update(this.Game.dt);
     }

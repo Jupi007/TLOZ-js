@@ -261,15 +261,23 @@ export class Game {
     this.ctx.closePath();
   }
 
-  fillText(
-    text: string,
-    x: number,
-    y: number,
-    color: string,
-    fontSize: string = "16px",
-    textAlign: CanvasTextAlign = "left",
-    textBaseline: CanvasTextBaseline = "alphabetic"
-  ) {
+  fillText({
+    text,
+    x,
+    y,
+    color,
+    fontSize = "16px",
+    textAlign = "left",
+    textBaseline = "alphabetic"
+  }: {
+    text: string;
+    x: number;
+    y: number;
+    color: string;
+    fontSize?: string;
+    textAlign?: CanvasTextAlign;
+    textBaseline?: CanvasTextBaseline;
+  }): void {
     this.ctx.beginPath();
     this.ctx.font = fontSize + " NES-font";
     this.ctx.fillStyle = color;
