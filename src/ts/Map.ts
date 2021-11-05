@@ -174,8 +174,26 @@ export class Scene {
     this.Game.Viewport.drawImage(sprite, x + this.x, y + this.y, width, height);
   }
 
-  fillRect(x: number, y: number, width: number, height: number, color: string) {
-    this.Game.Viewport.fillRect(x + this.x, y + this.y, width, height, color);
+  fillRect({
+    x,
+    y,
+    width,
+    height,
+    color
+  }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  }): void {
+    this.Game.Viewport.fillRect({
+      x: x + this.x,
+      y: y + this.y,
+      width,
+      height,
+      color
+    });
   }
 
   upperEdgeCollision(): void {

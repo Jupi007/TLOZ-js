@@ -22,41 +22,41 @@ export class Panes {
   }
 
   drawOpen(): void {
-    this.Game.fillRect(
-      -this.position,
-      0,
-      this.Game.Canvas.width / 2,
-      this.Game.Canvas.height,
-      "#000"
-    );
+    this.Game.fillRect({
+      x: -this.position,
+      y: 0,
+      width: this.Game.Canvas.width / 2,
+      height: this.Game.Canvas.height,
+      color: "#000"
+    });
 
-    this.Game.fillRect(
-      this.Game.Canvas.width / 2 + this.position,
-      0,
-      this.Game.Canvas.width / 2,
-      this.Game.Canvas.height,
-      "#000"
-    );
+    this.Game.fillRect({
+      x: this.Game.Canvas.width / 2 + this.position,
+      y: 0,
+      width: this.Game.Canvas.width / 2,
+      height: this.Game.Canvas.height,
+      color: "#000"
+    });
 
     this.position += this.speed * this.Game.dt;
   }
 
   drawClose(): void {
-    this.Game.fillRect(
-      -(this.Game.Canvas.width / 2) + this.position,
-      0,
-      this.Game.Canvas.width / 2,
-      this.Game.Canvas.height,
-      "#000"
-    );
+    this.Game.fillRect({
+      x: -(this.Game.Canvas.width / 2) + this.position,
+      y: 0,
+      width: this.Game.Canvas.width / 2,
+      height: this.Game.Canvas.height,
+      color: "#000"
+    });
 
-    this.Game.fillRect(
-      this.Game.Canvas.width - this.position,
-      0,
-      this.Game.Canvas.width / 2,
-      this.Game.Canvas.height,
-      "#000"
-    );
+    this.Game.fillRect({
+      x: this.Game.Canvas.width - this.position,
+      y: 0,
+      width: this.Game.Canvas.width / 2,
+      height: this.Game.Canvas.height,
+      color: "#000"
+    });
 
     this.position += this.speed * this.Game.dt;
   }

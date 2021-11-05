@@ -254,7 +254,19 @@ export class Game {
     this.ctx.closePath();
   }
 
-  fillRect(x: number, y: number, width: number, height: number, color: string) {
+  fillRect({
+    x,
+    y,
+    width,
+    height,
+    color
+  }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  }): void {
     this.ctx.beginPath();
     this.ctx.fillStyle = color;
     this.ctx.fillRect(x, y, width, height);

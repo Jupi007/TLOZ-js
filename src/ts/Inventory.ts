@@ -69,10 +69,23 @@ export class Inventory {
     )
       this.Game.drawGame();
 
-    this.fillRect(0, 0, this.width, this.height, "#000");
+    this.fillRect({
+      x: 0,
+      y: 0,
+      width: this.width,
+      height: this.height,
+      color: "#000"
+    });
 
-    this.fillText(
-      { text: "Inventory", x: this.width / 2, y: this.height / 3, color: "#fff", fontSize: "24px", textAlign: "center", textBaseline: "middle" });
+    this.fillText({
+      text: "Inventory",
+      x: this.width / 2,
+      y: this.height / 3,
+      color: "#fff",
+      fontSize: "24px",
+      textAlign: "center",
+      textBaseline: "middle"
+    });
 
     this.fillText(
       { text: "Q", x: this.width / 2 - 10, y: (this.height / 3) * 2, color: "#fff", fontSize: "24px", textAlign: "right", textBaseline: "middle" });
@@ -86,13 +99,13 @@ export class Inventory {
         this.Game.Sword.swordWidth
       );
     } else {
-      this.fillRect(
-        this.width / 2 + 10,
-        (this.height / 3) * 2 - this.Game.Sword.swordWidth / 2,
-        this.Game.Sword.swordHeight,
-        this.Game.Sword.swordWidth,
-        "grey"
-      );
+      this.fillRect({
+        x: this.width / 2 + 10,
+        y: (this.height / 3) * 2 - this.Game.Sword.swordWidth / 2,
+        width: this.Game.Sword.swordHeight,
+        height: this.Game.Sword.swordWidth,
+        color: "grey"
+      });
     }
 
     this.state.update(this.Game.dt);
@@ -108,8 +121,26 @@ export class Inventory {
     this.Game.drawImage(sprite, x, y + this.y, width, height);
   }
 
-  fillRect(x: number, y: number, width: number, height: number, color: string) {
-    this.Game.fillRect(x, y + this.y, width, height, color);
+  fillRect({
+    x,
+    y,
+    width,
+    height,
+    color
+  }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  }): void {
+    this.Game.fillRect({
+      x,
+      y: y + this.y,
+      width,
+      height,
+      color
+    });
   }
 
   fillText({

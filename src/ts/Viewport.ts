@@ -89,13 +89,13 @@ export class Viewport {
     if (this.Game.state.is(GameState.Run) && this.Game.state.isFirstFrame)
       this.music.play();
 
-    this.currentScene.fillRect(
-      0,
-      0,
-      this.currentScene.width,
-      this.currentScene.height,
-      this.currentScene.backgroundColor
-    );
+    this.currentScene.fillRect({
+      x: 0,
+      y: 0,
+      width: this.currentScene.width,
+      height: this.currentScene.height,
+      color: this.currentScene.backgroundColor
+    });
 
     this.loopCells((cell: Cell, col: number, row: number) => {
       this.currentScene.drawImage(
@@ -108,13 +108,13 @@ export class Viewport {
     });
 
     if (this.nextScene !== null) {
-      this.nextScene.fillRect(
-        0,
-        0,
-        this.nextScene.width,
-        this.nextScene.height,
-        this.nextScene.backgroundColor
-      );
+      this.nextScene.fillRect({
+        x: 0,
+        y: 0,
+        width: this.nextScene.width,
+        height: this.nextScene.height,
+        color: this.nextScene.backgroundColor
+      });
 
       this.loopCells((cell: Cell, col: number, row: number) => {
         this.nextScene.drawImage(
@@ -396,7 +396,25 @@ export class Viewport {
     this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
   }
 
-  fillRect(x: number, y: number, width: number, height: number, color: string) {
-    this.Game.fillRect(x + this.x, y + this.y, width, height, color);
+  fillRect({
+    x,
+    y,
+    width,
+    height,
+    color
+  }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  }): void {
+    this.Game.fillRect({
+      x: x + this.x,
+      y: y + this.y,
+      width,
+      height,
+      color
+    });
   }
 }

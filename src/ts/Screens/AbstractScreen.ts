@@ -33,13 +33,13 @@ export class AbstractScreen {
   }
 
   draw(): void {
-    this.Game.fillRect(
-      0,
-      0,
-      this.Game.Canvas.width,
-      this.Game.Canvas.height,
-      this.backgroundColor
-    );
+    this.Game.fillRect({
+      x: 0,
+      y: 0,
+      width: this.Game.Canvas.width,
+      height: this.Game.Canvas.height,
+      color: this.backgroundColor
+    });
 
     this.Game.fillText({
       text: this.title,

@@ -34,7 +34,13 @@ export class Hud {
   }
 
   draw(): void {
-    this.fillRect(0, 0, this.width, this.height, "#000");
+    this.fillRect({
+      x: 0,
+      y: 0,
+      width: this.width,
+      height: this.height,
+      color: "#000"
+    });
 
     this.drawHearts();
     this.drawMap();
@@ -80,12 +86,7 @@ export class Hud {
     let cellWidth =
       (cellHeight * this.Game.Viewport.width) / this.Game.Viewport.height;
 
-    let x =
-      (this.width -
-        cellWidth * this.Game.Viewport.currentWorld.nbCol +
-        this.Game.Viewport.currentWorld.nbCol -
-        1) /
-      2;
+    let x = (this.width - cellWidth * this.Game.Viewport.currentWorld.nbCol + this.Game.Viewport.currentWorld.nbCol - 1) / 2;
 
     this.Game.Viewport.currentWorld.loopScenes((scene) => {
       let bgColor = "#00a230";
@@ -96,27 +97,24 @@ export class Hud {
         bgColor = "#d11c0d";
       }
 
-      this.fillRect(
-        x + cellWidth * scene.c + 2 * scene.c,
-        cellHeight * scene.r + 2 * scene.r,
-        cellWidth,
-        cellHeight,
-        bgColor
-      );
+      this.fillRect({
+        x: x + cellWidth * scene.c + 2 * scene.c,
+        y: cellHeight * scene.r + 2 * scene.r,
+        width: cellWidth,
+        height: cellHeight,
+        color: bgColor
+      });
     });
 
     if (this.Game.state.isIn(GameState.Run)) {
       if (this.currentSceneAnimation.currentAnimationStep === 1) {
-        this.fillRect(
-          x +
-          cellWidth * this.Game.Viewport.currentScene.c +
-          2 * this.Game.Viewport.currentScene.c,
-          cellHeight * this.Game.Viewport.currentScene.r +
-          2 * this.Game.Viewport.currentScene.r,
-          cellWidth,
-          cellHeight,
-          "rgba(0, 0, 0, 0.3)"
-        );
+        this.fillRect({
+          x: x + cellWidth * this.Game.Viewport.currentScene.c + 2 * this.Game.Viewport.currentScene.c,
+          y: cellHeight * this.Game.Viewport.currentScene.r + 2 * this.Game.Viewport.currentScene.r,
+          width: cellWidth,
+          height: cellHeight,
+          color: "rgba(0, 0, 0, 0.3)"
+        });
       }
 
       this.currentSceneAnimation.update(this.Game.dt);
@@ -145,8 +143,26 @@ export class Hud {
     this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
   }
 
-  fillRect(x: number, y: number, width: number, height: number, color: string) {
-    this.Game.fillRect(x + this.x, y + this.y, width, height, color);
+  fillRect({
+    x,
+    y,
+    width,
+    height,
+    color
+  }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  }): void {
+    this.Game.fillRect({
+      x: x + this.x,
+      y: y + this.y,
+      width,
+      height,
+      color
+    });
   }
 
   fillText({
