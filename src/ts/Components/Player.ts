@@ -1,15 +1,15 @@
-import { Game, GameState } from "./Game";
-import { Item } from "./Items";
+import { Game, GameState } from "../Game";
+import { Item } from "../Items/Item";
 
 import {
   MovingBox,
   MovingBoxHitBox,
   MovingBoxHalfHitBoxes
-} from "./Libraries/Boxes";
-import { AudioLoader, SpriteLoader } from "./Libraries/Loaders";
-import { Direction } from "./Libraries/Direction";
-import { Collisions } from "./Libraries/Collisions";
-import { StateObserver, AnimationObserver } from "./Libraries/Observers";
+} from "../Libraries/Boxes";
+import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
+import { Direction } from "../Libraries/Direction";
+import { Collisions } from "../Libraries/Collisions";
+import { StateObserver, AnimationObserver } from "../Libraries/Observers";
 
 export class Player extends MovingBox {
   Game: Game;

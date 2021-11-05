@@ -1,5 +1,5 @@
 import { Game } from "../Game";
-import { Brick } from "../Bricks";
+import { Brick } from "../Bricks/Brick";
 import { Scene } from "./Scene";
 
 

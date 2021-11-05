@@ -1,12 +1,12 @@
-import { Game } from "./Game";
+import { Game } from "../Game";
 
-import { AudioLoader, SpriteLoader } from "./Libraries/Loaders";
-import { Direction } from "./Libraries/Direction";
-import { Collisions } from "./Libraries/Collisions";
+import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
+import { Direction } from "../Libraries/Direction";
+import { Collisions } from "../Libraries/Collisions";
 
-import { Sword as SwordProjectile } from "./Projectiles";
-import { SimpleBox } from "./Libraries/Boxes";
-import { Enemy } from "./Enemies";
+import { Sword as SwordProjectile } from "../Projectiles/Sword";
+import { SimpleBox } from "../Libraries/Boxes";
+import { Enemy } from "../Enemies/Enemy";
 
 export class Sword extends SimpleBox {
   Game: Game;

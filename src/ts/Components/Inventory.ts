@@ -1,7 +1,7 @@
-import { Game, GameState } from "./Game";
-import { Direction } from "./Libraries/Direction";
+import { Game, GameState } from "../Game";
+import { Direction } from "../Libraries/Direction";
 
-import { StateObserver } from "./Libraries/Observers";
+import { StateObserver } from "../Libraries/Observers";
 
 export enum InventoryState {
   Visible,

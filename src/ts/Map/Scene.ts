@@ -1,8 +1,8 @@
 import { Game } from "../Game";
 import { Direction } from "../Libraries/Direction";
-import { Enemy } from "../Enemies";
-import { Brick } from "../Bricks";
-import { Item } from "../Items";
+import { Enemy } from "../Enemies/Enemy";
+import { Brick } from "../Bricks/Brick";
+import { Item } from "../Items/Item";
 import { Cell } from "./Cell";
 import { Passage } from "./Passage";
 import { World } from "./World";

@@ -1,36 +1,8 @@
-import { Game } from "./Game";
-import { SpriteLoader } from "./Libraries/Loaders";
-import { AnimationObserver } from "./Libraries/Observers";
-
-export class Brick {
-  Game: Game;
-
-  private _sprite: HTMLImageElement;
-  hasCollisions: boolean;
-
-  constructor(game: Game) {
-    this.Game = game;
-
-    this.hasCollisions = false;
-  }
-
-  public get sprite(): HTMLImageElement {
-    return this._sprite;
-  }
-
-  public set sprite(value: HTMLImageElement) {
-    this._sprite = value;
-  }
-}
-
-export class AnimatedBrick extends Brick {
-  sprites: HTMLImageElement[] = [];
-  spritesAnimation: AnimationObserver;
-
-  constructor(game: Game) {
-    super(game);
-  }
-}
+import { AnimatedBrick } from "./AnimatedBrick";
+import { Brick } from "./Brick";
+import { Game } from "../Game";
+import { SpriteLoader } from "../Libraries/Loaders";
+import { AnimationObserver } from "../Libraries/Observers";
 
 export class BrickCollection {
   Game: Game;

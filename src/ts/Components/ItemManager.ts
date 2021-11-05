@@ -1,8 +1,8 @@
-import { Game } from "./Game";
+import { Game } from "../Game";
 
-import { Collisions } from "./Libraries/Collisions";
+import { Collisions } from "../Libraries/Collisions";
 
-import { Item } from "./Items";
+import { Item } from "../Items/Item";
 
 export class ItemManager {
   Game: Game;

@@ -1,5 +1,5 @@
 import { SimpleBox } from "../Libraries/Boxes";
-import { Brick } from "../Bricks";
+import { Brick } from "../Bricks/Brick";
 
 
 export class Cell extends SimpleBox {

@@ -1,8 +1,8 @@
-import { Game, GameState } from "./Game";
+import { Game, GameState } from "../Game";
 
-import { Collisions } from "./Libraries/Collisions";
+import { Collisions } from "../Libraries/Collisions";
 
-import { Enemy, EnemyState } from "./Enemies";
+import { Enemy, EnemyState } from "../Enemies/Enemy";
 
 export class EnemyManager {
   Game: Game;

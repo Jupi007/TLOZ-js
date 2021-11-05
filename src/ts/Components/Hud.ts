@@ -1,7 +1,7 @@
-import { Game, GameState } from "./Game";
+import { Game, GameState } from "../Game";
 
-import { AnimationObserver } from "./Libraries/Observers";
-import { SpriteLoader } from "./Libraries/Loaders";
+import { AnimationObserver } from "../Libraries/Observers";
+import { SpriteLoader } from "../Libraries/Loaders";
 
 export class Hud {
   Game: Game;

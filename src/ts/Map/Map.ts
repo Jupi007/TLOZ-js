@@ -4,16 +4,15 @@ import { AudioLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { Random } from "../Libraries/Random";
 
-import {
-  Octorok,
-  BlueOctorok,
-  Moblin,
-  BlueMoblin,
-  Tektite,
-  BlueTektite
-} from "../Enemies";
+import { BlueTektite } from "../Enemies/BlueTektite";
+import { Tektite } from "../Enemies/Tektite";
+import { BlueMoblin } from "../Enemies/BlueMoblin";
+import { Moblin } from "../Enemies/Moblin";
+import { BlueOctorok } from "../Enemies/BlueOctorok";
+import { Octorok } from "../Enemies/Octorok";
 
-import { HeartReceptacle, Sword as SwordItem } from "../Items";
+import { HeartReceptacle } from "../Items/HeartReceptacle";
+import { Sword as SwordItem } from "../Items/Sword";
 import { Passage } from "./Passage";
 import { Scene } from "./Scene";
 import { World } from "./World";
