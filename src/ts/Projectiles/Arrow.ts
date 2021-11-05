@@ -1,7 +1,7 @@
 import { Game } from "../Game";
 import { SpriteLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
-import { Projectile } from "./Projectiles";
+import { Projectile } from "./Projectile";
 
 
 export class Arrow extends Projectile {

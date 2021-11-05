@@ -4,7 +4,7 @@ import { AudioLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { Collisions } from "../Libraries/Collisions";
 
-import { Projectile, ProjectileState } from "../Projectiles/Projectiles";
+import { Projectile, ProjectileState } from "../Projectiles/Projectile";
 
 export class ProjectileManager {
   Game: Game;

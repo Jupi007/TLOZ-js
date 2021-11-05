@@ -1,6 +1,6 @@
 import { Game } from "../Game";
 import { Direction } from "../Libraries/Direction";
-import { Projectile } from "./Projectiles";
+import { Projectile } from "./Projectile";
 
 
 export class Sword extends Projectile {
