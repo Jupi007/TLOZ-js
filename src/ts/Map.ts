@@ -269,7 +269,7 @@ export class Map {
       this.Game,
       3,
       3,
-      AudioLoader.load("/sounds/music/overworld.mp3", true),
+      AudioLoader.load("./sounds/music/overworld.mp3", true),
       this.Game.BrickCollection.get("default"),
       "#ffd4aa"
     );
@@ -478,7 +478,7 @@ export class Map {
     this.worlds[0].scenes[0][0].backgroundColor = "#747474";
 
     this.worlds[0].scenes[0][0].music = AudioLoader.load(
-      "/sounds/music/death_mountain.mp3",
+      "./sounds/music/death_mountain.mp3",
       true
     );
 
@@ -710,7 +710,7 @@ export class Map {
     this.worlds[0].scenes[1][0].backgroundColor = "#747474";
 
     this.worlds[0].scenes[1][0].music = AudioLoader.load(
-      "/sounds/music/death_mountain.mp3",
+      "./sounds/music/death_mountain.mp3",
       true
     );
 
@@ -930,7 +930,7 @@ export class Map {
     this.worlds[0].scenes[2][0].backgroundColor = "#747474";
 
     this.worlds[0].scenes[2][0].music = AudioLoader.load(
-      "/sounds/music/death_mountain.mp3",
+      "./sounds/music/death_mountain.mp3",
       true
     );
 
@@ -2279,7 +2279,7 @@ export class Map {
       this.Game,
       1,
       1,
-      AudioLoader.load("/sounds/music/death_mountain.mp3", true),
+      AudioLoader.load("./sounds/music/death_mountain.mp3", true),
       this.Game.BrickCollection.get("default"),
       "#0f0e0b"
     );
@@ -2497,7 +2497,7 @@ export class Map {
       this.Game,
       2,
       2,
-      AudioLoader.load("/sounds/music/dungeon.mp3", true),
+      AudioLoader.load("./sounds/music/dungeon.mp3", true),
       this.Game.BrickCollection.get("default-dungeon"),
       "#078382"
     );

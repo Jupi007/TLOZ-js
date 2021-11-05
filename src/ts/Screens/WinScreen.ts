@@ -26,10 +26,10 @@ export class WinScreen extends AbstractScreen {
       150
     );
 
-    this.music = AudioLoader.load("/sounds/music/ending.mp3", true);
+    this.music = AudioLoader.load("./sounds/music/ending.mp3", true);
 
-    this.killedSprites[1] = SpriteLoader.load("/sprites/png/killed1.png");
-    this.killedSprites[2] = SpriteLoader.load("/sprites/png/killed2.png");
+    this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
+    this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
   }
 
   draw(): void {

@@ -142,7 +142,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/passage.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/passage.png");
     }
   }
 
@@ -150,7 +150,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/default.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/default.png");
     }
   }
 
@@ -159,7 +159,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/default-dungeon.png"
+        "./sprites/png/bricks/default-dungeon.png"
       );
     }
   }
@@ -168,7 +168,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/stairs.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/stairs.png");
     }
   }
 
@@ -176,7 +176,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/tree.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/tree.png");
       this.hasCollisions = true;
     }
   }
@@ -185,7 +185,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/white-tree.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/white-tree.png");
       this.hasCollisions = true;
     }
   }
@@ -194,7 +194,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/grave.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/grave.png");
       this.hasCollisions = true;
     }
   }
@@ -203,7 +203,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/wall.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/wall.png");
       this.hasCollisions = true;
     }
   }
@@ -212,7 +212,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/wall-dungeon.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-dungeon.png");
       this.hasCollisions = true;
     }
   }
@@ -221,7 +221,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/red-wall.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/red-wall.png");
       this.hasCollisions = true;
     }
   }
@@ -230,7 +230,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/single-wall.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/single-wall.png");
       this.hasCollisions = true;
     }
   }
@@ -240,7 +240,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/single-red-wall.png"
+        "./sprites/png/bricks/single-red-wall.png"
       );
       this.hasCollisions = true;
     }
@@ -250,7 +250,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/wall-top.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-top.png");
       this.hasCollisions = true;
     }
   }
@@ -260,7 +260,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/wall-top-right.png"
+        "./sprites/png/bricks/wall-top-right.png"
       );
       this.hasCollisions = true;
     }
@@ -270,7 +270,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/wall-top-left.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-top-left.png");
       this.hasCollisions = true;
     }
   }
@@ -280,7 +280,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/wall-bottom-right.png"
+        "./sprites/png/bricks/wall-bottom-right.png"
       );
       this.hasCollisions = true;
     }
@@ -291,7 +291,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/wall-bottom-left.png"
+        "./sprites/png/bricks/wall-bottom-left.png"
       );
       this.hasCollisions = true;
     }
@@ -301,7 +301,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("/sprites/png/bricks/white-wall.png");
+      this.sprite = SpriteLoader.load("./sprites/png/bricks/white-wall.png");
       this.hasCollisions = true;
     }
   }
@@ -311,7 +311,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/white-wall-top.png"
+        "./sprites/png/bricks/white-wall-top.png"
       );
       this.hasCollisions = true;
     }
@@ -322,7 +322,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/white-wall-top-right.png"
+        "./sprites/png/bricks/white-wall-top-right.png"
       );
       this.hasCollisions = true;
     }
@@ -333,7 +333,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/white-wall-top-left.png"
+        "./sprites/png/bricks/white-wall-top-left.png"
       );
       this.hasCollisions = true;
     }
@@ -344,7 +344,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/white-wall-bottom-right.png"
+        "./sprites/png/bricks/white-wall-bottom-right.png"
       );
       this.hasCollisions = true;
     }
@@ -355,7 +355,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/white-wall-bottom-left.png"
+        "./sprites/png/bricks/white-wall-bottom-left.png"
       );
       this.hasCollisions = true;
     }
@@ -366,7 +366,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/monument-top-right.png"
+        "./sprites/png/bricks/monument-top-right.png"
       );
       this.hasCollisions = true;
     }
@@ -377,7 +377,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/monument-top-left.png"
+        "./sprites/png/bricks/monument-top-left.png"
       );
       this.hasCollisions = true;
     }
@@ -388,7 +388,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/monument-bottom-right.png"
+        "./sprites/png/bricks/monument-bottom-right.png"
       );
       this.hasCollisions = true;
     }
@@ -399,7 +399,7 @@ export namespace Bricks {
       super(game);
 
       this.sprite = SpriteLoader.load(
-        "/sprites/png/bricks/monument-bottom-left.png"
+        "./sprites/png/bricks/monument-bottom-left.png"
       );
       this.hasCollisions = true;
     }
@@ -411,8 +411,8 @@ export namespace Bricks {
 
       this.hasCollisions = true;
 
-      this.sprites[1] = SpriteLoader.load("/sprites/png/bricks/fire1.png");
-      this.sprites[2] = SpriteLoader.load("/sprites/png/bricks/fire2.png");
+      this.sprites[1] = SpriteLoader.load("./sprites/png/bricks/fire1.png");
+      this.sprites[2] = SpriteLoader.load("./sprites/png/bricks/fire2.png");
 
       this.spritesAnimation = new AnimationObserver(10, 2);
     }

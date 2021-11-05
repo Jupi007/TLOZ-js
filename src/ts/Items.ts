@@ -28,8 +28,8 @@ export class Heart extends Item {
     this.width = 24;
     this.height = 24;
 
-    this.sprite = SpriteLoader.load("/sprites/png/full-heart.png");
-    this.collisionSound = AudioLoader.load("/sounds/effect/Get_Heart.wav");
+    this.sprite = SpriteLoader.load("./sprites/png/full-heart.png");
+    this.collisionSound = AudioLoader.load("./sounds/effect/Get_Heart.wav");
   }
 
   collisionCallback(): void {
@@ -49,8 +49,8 @@ export class Clock extends Item {
     this.width = 32;
     this.height = 32;
 
-    this.sprite = SpriteLoader.load("/sprites/png/clock.png");
-    this.collisionSound = AudioLoader.load("/sounds/effect/Get_Item.wav");
+    this.sprite = SpriteLoader.load("./sprites/png/clock.png");
+    this.collisionSound = AudioLoader.load("./sounds/effect/Get_Item.wav");
   }
 
   collisionCallback(): void {
@@ -70,8 +70,8 @@ export class Sword extends Item {
     this.width = 28;
     this.height = 64;
 
-    this.sprite = SpriteLoader.load("/sprites/png/sword-up.png");
-    this.collisionSound = AudioLoader.load("/sounds/effect/Fanfare.wav");
+    this.sprite = SpriteLoader.load("./sprites/png/sword-up.png");
+    this.collisionSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
   }
 
   collisionCallback(): void {
@@ -92,8 +92,8 @@ export class HeartReceptacle extends Item {
     this.width = 26;
     this.height = 26;
 
-    this.sprite = SpriteLoader.load("/sprites/png/heart-receptacle.png");
-    this.collisionSound = AudioLoader.load("/sounds/effect/Fanfare.wav");
+    this.sprite = SpriteLoader.load("./sprites/png/heart-receptacle.png");
+    this.collisionSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
   }
 
   collisionCallback(): void {

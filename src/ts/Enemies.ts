@@ -55,15 +55,15 @@ export class Enemy extends MovingBox {
 
     this.isKilledAnimationFinished = false;
 
-    this.killedSprites[1] = SpriteLoader.load("/sprites/png/killed1.png");
-    this.killedSprites[2] = SpriteLoader.load("/sprites/png/killed2.png");
+    this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
+    this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
 
     this.invincibleObserver = new StateObserver(false);
     this.invincibleDuration = 25;
     this.invincibleAnimation = new AnimationObserver(7, 2);
 
-    this.dieSound = AudioLoader.load("/sounds/effect/Enemy_Die.wav");
-    this.hitSound = AudioLoader.load("/sounds/effect/Enemy_Hit.wav");
+    this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
+    this.hitSound = AudioLoader.load("./sounds/effect/Enemy_Hit.wav");
   }
 
   aiThinking(): void { }
@@ -245,34 +245,34 @@ export class Octorok extends SimpleMovingEnemy {
 
     this.sprites[Direction.Up] = [];
     this.sprites[Direction.Up][1] = SpriteLoader.load(
-      "/sprites/png/octorok-up1.png"
+      "./sprites/png/octorok-up1.png"
     );
     this.sprites[Direction.Up][2] = SpriteLoader.load(
-      "/sprites/png/octorok-up2.png"
+      "./sprites/png/octorok-up2.png"
     );
 
     this.sprites[Direction.Down] = [];
     this.sprites[Direction.Down][1] = SpriteLoader.load(
-      "/sprites/png/octorok-down1.png"
+      "./sprites/png/octorok-down1.png"
     );
     this.sprites[Direction.Down][2] = SpriteLoader.load(
-      "/sprites/png/octorok-down2.png"
+      "./sprites/png/octorok-down2.png"
     );
 
     this.sprites[Direction.Right] = [];
     this.sprites[Direction.Right][1] = SpriteLoader.load(
-      "/sprites/png/octorok-right1.png"
+      "./sprites/png/octorok-right1.png"
     );
     this.sprites[Direction.Right][2] = SpriteLoader.load(
-      "/sprites/png/octorok-right2.png"
+      "./sprites/png/octorok-right2.png"
     );
 
     this.sprites[Direction.Left] = [];
     this.sprites[Direction.Left][1] = SpriteLoader.load(
-      "/sprites/png/octorok-left1.png"
+      "./sprites/png/octorok-left1.png"
     );
     this.sprites[Direction.Left][2] = SpriteLoader.load(
-      "/sprites/png/octorok-left2.png"
+      "./sprites/png/octorok-left2.png"
     );
 
     this.spritesAnimation = new AnimationObserver(20 / speed, 2);
@@ -307,34 +307,34 @@ export class BlueOctorok extends Octorok {
 
     this.sprites[Direction.Up] = [];
     this.sprites[Direction.Up][1] = SpriteLoader.load(
-      "/sprites/png/blue-octorok-up1.png"
+      "./sprites/png/blue-octorok-up1.png"
     );
     this.sprites[Direction.Up][2] = SpriteLoader.load(
-      "/sprites/png/blue-octorok-up2.png"
+      "./sprites/png/blue-octorok-up2.png"
     );
 
     this.sprites[Direction.Down] = [];
     this.sprites[Direction.Down][1] = SpriteLoader.load(
-      "/sprites/png/blue-octorok-down1.png"
+      "./sprites/png/blue-octorok-down1.png"
     );
     this.sprites[Direction.Down][2] = SpriteLoader.load(
-      "/sprites/png/blue-octorok-down2.png"
+      "./sprites/png/blue-octorok-down2.png"
     );
 
     this.sprites[Direction.Right] = [];
     this.sprites[Direction.Right][1] = SpriteLoader.load(
-      "/sprites/png/blue-octorok-right1.png"
+      "./sprites/png/blue-octorok-right1.png"
     );
     this.sprites[Direction.Right][2] = SpriteLoader.load(
-      "/sprites/png/blue-octorok-right2.png"
+      "./sprites/png/blue-octorok-right2.png"
     );
 
     this.sprites[Direction.Left] = [];
     this.sprites[Direction.Left][1] = SpriteLoader.load(
-      "/sprites/png/blue-octorok-left1.png"
+      "./sprites/png/blue-octorok-left1.png"
     );
     this.sprites[Direction.Left][2] = SpriteLoader.load(
-      "/sprites/png/blue-octorok-left2.png"
+      "./sprites/png/blue-octorok-left2.png"
     );
   }
 
@@ -388,34 +388,34 @@ export class Moblin extends SimpleMovingEnemy {
 
     this.sprites[Direction.Up] = [];
     this.sprites[Direction.Up][1] = SpriteLoader.load(
-      "/sprites/png/moblin-up1.png"
+      "./sprites/png/moblin-up1.png"
     );
     this.sprites[Direction.Up][2] = SpriteLoader.load(
-      "/sprites/png/moblin-up2.png"
+      "./sprites/png/moblin-up2.png"
     );
 
     this.sprites[Direction.Down] = [];
     this.sprites[Direction.Down][1] = SpriteLoader.load(
-      "/sprites/png/moblin-down1.png"
+      "./sprites/png/moblin-down1.png"
     );
     this.sprites[Direction.Down][2] = SpriteLoader.load(
-      "/sprites/png/moblin-down2.png"
+      "./sprites/png/moblin-down2.png"
     );
 
     this.sprites[Direction.Right] = [];
     this.sprites[Direction.Right][1] = SpriteLoader.load(
-      "/sprites/png/moblin-right1.png"
+      "./sprites/png/moblin-right1.png"
     );
     this.sprites[Direction.Right][2] = SpriteLoader.load(
-      "/sprites/png/moblin-right2.png"
+      "./sprites/png/moblin-right2.png"
     );
 
     this.sprites[Direction.Left] = [];
     this.sprites[Direction.Left][1] = SpriteLoader.load(
-      "/sprites/png/moblin-left1.png"
+      "./sprites/png/moblin-left1.png"
     );
     this.sprites[Direction.Left][2] = SpriteLoader.load(
-      "/sprites/png/moblin-left2.png"
+      "./sprites/png/moblin-left2.png"
     );
 
     this.spritesAnimation = new AnimationObserver(25 / speed, 2);
@@ -450,34 +450,34 @@ export class BlueMoblin extends Moblin {
 
     this.sprites[Direction.Up] = [];
     this.sprites[Direction.Up][1] = SpriteLoader.load(
-      "/sprites/png/blue-moblin-up1.png"
+      "./sprites/png/blue-moblin-up1.png"
     );
     this.sprites[Direction.Up][2] = SpriteLoader.load(
-      "/sprites/png/blue-moblin-up2.png"
+      "./sprites/png/blue-moblin-up2.png"
     );
 
     this.sprites[Direction.Down] = [];
     this.sprites[Direction.Down][1] = SpriteLoader.load(
-      "/sprites/png/blue-moblin-down1.png"
+      "./sprites/png/blue-moblin-down1.png"
     );
     this.sprites[Direction.Down][2] = SpriteLoader.load(
-      "/sprites/png/blue-moblin-down2.png"
+      "./sprites/png/blue-moblin-down2.png"
     );
 
     this.sprites[Direction.Right] = [];
     this.sprites[Direction.Right][1] = SpriteLoader.load(
-      "/sprites/png/blue-moblin-right1.png"
+      "./sprites/png/blue-moblin-right1.png"
     );
     this.sprites[Direction.Right][2] = SpriteLoader.load(
-      "/sprites/png/blue-moblin-right2.png"
+      "./sprites/png/blue-moblin-right2.png"
     );
 
     this.sprites[Direction.Left] = [];
     this.sprites[Direction.Left][1] = SpriteLoader.load(
-      "/sprites/png/blue-moblin-left1.png"
+      "./sprites/png/blue-moblin-left1.png"
     );
     this.sprites[Direction.Left][2] = SpriteLoader.load(
-      "/sprites/png/blue-moblin-left2.png"
+      "./sprites/png/blue-moblin-left2.png"
     );
   }
 
@@ -528,8 +528,8 @@ export class Tektite extends Enemy {
     this.hasBricksCollisions = false;
 
     this.sprites = [];
-    this.sprites[1] = SpriteLoader.load("/sprites/png/tektite1.png");
-    this.sprites[2] = SpriteLoader.load("/sprites/png/tektite2.png");
+    this.sprites[1] = SpriteLoader.load("./sprites/png/tektite1.png");
+    this.sprites[2] = SpriteLoader.load("./sprites/png/tektite2.png");
 
     this.spritesAnimation = new AnimationObserver(20, 2);
 
@@ -629,8 +629,8 @@ export class BlueTektite extends Tektite {
     this.damage = 2;
 
     this.sprites = [];
-    this.sprites[1] = SpriteLoader.load("/sprites/png/blue-tektite1.png");
-    this.sprites[2] = SpriteLoader.load("/sprites/png/blue-tektite2.png");
+    this.sprites[1] = SpriteLoader.load("./sprites/png/blue-tektite1.png");
+    this.sprites[2] = SpriteLoader.load("./sprites/png/blue-tektite2.png");
   }
 
   dropItem(): boolean {

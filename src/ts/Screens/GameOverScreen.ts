@@ -24,7 +24,7 @@ export class GameOverScreen extends AbstractScreen {
       150
     );
 
-    this.music = AudioLoader.load("/sounds/music/game_over.mp3", true);
+    this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
   }
 
   draw(): void {

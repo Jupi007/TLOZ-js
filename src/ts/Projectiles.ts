@@ -61,7 +61,7 @@ export class Projectile extends MovingBox {
     enemy.takeDamage(this.damage);
   }
 
-  deleteCallback(): void {}
+  deleteCallback(): void { }
 }
 
 export class Fireball extends Projectile {
@@ -87,7 +87,7 @@ export class Fireball extends Projectile {
 
     this.damage = damage;
 
-    this.sprite = SpriteLoader.load("/sprites/png/fireball.png");
+    this.sprite = SpriteLoader.load("./sprites/png/fireball.png");
 
     this.sprites[Direction.Up] = this.sprite;
     this.sprites[Direction.Down] = this.sprite;
@@ -123,16 +123,16 @@ export class Arrow extends Projectile {
     this.damage = damage;
 
     this.sprites[Direction.Up] = SpriteLoader.load(
-      "/sprites/png/arrow-up.png"
+      "./sprites/png/arrow-up.png"
     );
     this.sprites[Direction.Down] = SpriteLoader.load(
-      "/sprites/png/arrow-down.png"
+      "./sprites/png/arrow-down.png"
     );
     this.sprites[Direction.Right] = SpriteLoader.load(
-      "/sprites/png/arrow-right.png"
+      "./sprites/png/arrow-right.png"
     );
     this.sprites[Direction.Left] = SpriteLoader.load(
-      "/sprites/png/arrow-left.png"
+      "./sprites/png/arrow-left.png"
     );
 
     this.hasPlayerCollision = true;

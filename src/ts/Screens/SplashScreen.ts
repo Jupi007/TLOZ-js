@@ -22,7 +22,7 @@ export class SplashScreen extends AbstractScreen {
       150
     );
 
-    this.music = AudioLoader.load("/sounds/music/intro.mp3", true);
+    this.music = AudioLoader.load("./sounds/music/intro.mp3", true);
   }
 
   draw(): void {

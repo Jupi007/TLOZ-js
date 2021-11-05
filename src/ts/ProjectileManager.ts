@@ -18,7 +18,7 @@ export class ProjectileManager {
 
     this.projectiles = [];
 
-    this.shieldSound = AudioLoader.load("/sounds/effect/Shield.wav");
+    this.shieldSound = AudioLoader.load("./sounds/effect/Shield.wav");
   }
 
   collisions(): void {

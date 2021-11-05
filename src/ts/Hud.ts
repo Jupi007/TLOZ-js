@@ -26,9 +26,9 @@ export class Hud {
 
     this.height = 64;
 
-    this.emptyHeartSprite = SpriteLoader.load("/sprites/png/empty-heart.png");
-    this.halfHeartSprite = SpriteLoader.load("/sprites/png/half-heart.png");
-    this.fullHeartSprite = SpriteLoader.load("/sprites/png/full-heart.png");
+    this.emptyHeartSprite = SpriteLoader.load("./sprites/png/empty-heart.png");
+    this.halfHeartSprite = SpriteLoader.load("./sprites/png/half-heart.png");
+    this.fullHeartSprite = SpriteLoader.load("./sprites/png/full-heart.png");
 
     this.currentSceneAnimation = new AnimationObserver(25, 2);
   }
@@ -109,10 +109,10 @@ export class Hud {
       if (this.currentSceneAnimation.currentAnimationStep === 1) {
         this.fillRect(
           x +
-            cellWidth * this.Game.Viewport.currentScene.c +
-            2 * this.Game.Viewport.currentScene.c,
+          cellWidth * this.Game.Viewport.currentScene.c +
+          2 * this.Game.Viewport.currentScene.c,
           cellHeight * this.Game.Viewport.currentScene.r +
-            2 * this.Game.Viewport.currentScene.r,
+          2 * this.Game.Viewport.currentScene.r,
           cellWidth,
           cellHeight,
           "rgba(0, 0, 0, 0.3)"

@@ -38,20 +38,20 @@ export class Sword extends SimpleBox {
     this.swordHandleWidth = 16;
 
     this.sprites[Direction.Up] = SpriteLoader.load(
-      "/sprites/png/sword-up.png"
+      "./sprites/png/sword-up.png"
     );
     this.sprites[Direction.Right] = SpriteLoader.load(
-      "/sprites/png/sword-right.png"
+      "./sprites/png/sword-right.png"
     );
     this.sprites[Direction.Down] = SpriteLoader.load(
-      "/sprites/png/sword-down.png"
+      "./sprites/png/sword-down.png"
     );
     this.sprites[Direction.Left] = SpriteLoader.load(
-      "/sprites/png/sword-left.png"
+      "./sprites/png/sword-left.png"
     );
 
-    this.slashSound = AudioLoader.load("/sounds/effect/Sword_Slash.wav");
-    this.flyingSound = AudioLoader.load("/sounds/effect/Sword_Shoot.wav");
+    this.slashSound = AudioLoader.load("./sounds/effect/Sword_Slash.wav");
+    this.flyingSound = AudioLoader.load("./sounds/effect/Sword_Shoot.wav");
 
     this.isFlying = false;
     this.isEnabled = false;

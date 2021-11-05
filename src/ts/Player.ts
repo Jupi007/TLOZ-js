@@ -105,63 +105,63 @@ export class Player extends MovingBox {
 
     this.sprites[Direction.Up] = [];
     this.sprites[Direction.Up][1] = SpriteLoader.load(
-      "/sprites/png/link-up1.png"
+      "./sprites/png/link-up1.png"
     );
     this.sprites[Direction.Up][2] = SpriteLoader.load(
-      "/sprites/png/link-up2.png"
+      "./sprites/png/link-up2.png"
     );
     this.attackSprites[Direction.Up] = SpriteLoader.load(
-      "/sprites/png/link-up-attack.png"
+      "./sprites/png/link-up-attack.png"
     );
 
     this.sprites[Direction.Right] = [];
     this.sprites[Direction.Right][1] = SpriteLoader.load(
-      "/sprites/png/link-right1.png"
+      "./sprites/png/link-right1.png"
     );
     this.sprites[Direction.Right][2] = SpriteLoader.load(
-      "/sprites/png/link-right2.png"
+      "./sprites/png/link-right2.png"
     );
     this.attackSprites[Direction.Right] = SpriteLoader.load(
-      "/sprites/png/link-right-attack.png"
+      "./sprites/png/link-right-attack.png"
     );
 
     this.sprites[Direction.Down] = [];
     this.sprites[Direction.Down][1] = SpriteLoader.load(
-      "/sprites/png/link-down1.png"
+      "./sprites/png/link-down1.png"
     );
     this.sprites[Direction.Down][2] = SpriteLoader.load(
-      "/sprites/png/link-down2.png"
+      "./sprites/png/link-down2.png"
     );
     this.attackSprites[Direction.Down] = SpriteLoader.load(
-      "/sprites/png/link-down-attack.png"
+      "./sprites/png/link-down-attack.png"
     );
 
     this.sprites[Direction.Left] = [];
     this.sprites[Direction.Left][1] = SpriteLoader.load(
-      "/sprites/png/link-left1.png"
+      "./sprites/png/link-left1.png"
     );
     this.sprites[Direction.Left][2] = SpriteLoader.load(
-      "/sprites/png/link-left2.png"
+      "./sprites/png/link-left2.png"
     );
     this.attackSprites[Direction.Left] = SpriteLoader.load(
-      "/sprites/png/link-left-attack.png"
+      "./sprites/png/link-left-attack.png"
     );
 
-    this.winSprite = SpriteLoader.load("/sprites/png/link-win.png");
+    this.winSprite = SpriteLoader.load("./sprites/png/link-win.png");
 
-    this.killedSprites[1] = SpriteLoader.load("/sprites/png/killed1.png");
-    this.killedSprites[2] = SpriteLoader.load("/sprites/png/killed2.png");
+    this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
+    this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
 
     this.spritesAnimation = new AnimationObserver(6, 2);
     this.invincibleAnimation = new AnimationObserver(5, 2);
 
-    this.hurtSound = AudioLoader.load("/sounds/effect/Link_Hurt.wav");
-    this.dieSound = AudioLoader.load("/sounds/effect/Link_Die.wav");
+    this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
+    this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
     this.lowHealthSound = AudioLoader.load(
-      "/sounds/effect/Low_Health.wav",
+      "./sounds/effect/Low_Health.wav",
       true
     );
-    this.fanfareSound = AudioLoader.load("/sounds/effect/Fanfare.wav");
+    this.fanfareSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
   }
 
   get isFullLife(): boolean {
