@@ -20,7 +20,12 @@ import { HeartReceptacle, Item, Sword as SwordItem } from "./Items";
 export class Cell extends SimpleBox {
   brick: Brick;
 
-  constructor(x: number, y: number, size: number, brick: Brick) {
+  constructor({ x, y, size, brick }: {
+    x: number;
+    y: number;
+    size: number;
+    brick: Brick;
+  }) {
     super();
 
     this.x = x;
@@ -126,12 +131,12 @@ export class Scene {
     for (let c = 0; c < this.nbCol; c++) {
       this.cells[c] = [];
       for (let r = 0; r < this.nbRow; r++) {
-        this.cells[c][r] = new Cell(
-          this.cellSize * c,
-          this.cellSize * r,
-          this.cellSize,
-          defaultBrick
-        );
+        this.cells[c][r] = new Cell({
+          x: this.cellSize * c,
+          y: this.cellSize * r,
+          size: this.cellSize,
+          brick: defaultBrick
+        });
       }
     }
   }
