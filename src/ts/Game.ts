@@ -241,26 +241,20 @@ export class Game {
     this.Hud.draw();
   }
 
-  drawImage(
-    sprite: HTMLImageElement,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
+  drawImage({ sprite, x, y, width, height }: {
+    sprite: HTMLImageElement;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }): void {
     this.ctx.beginPath();
     this.ctx.imageSmoothingEnabled = false;
     this.ctx.drawImage(sprite, x, y, width, height);
     this.ctx.closePath();
   }
 
-  fillRect({
-    x,
-    y,
-    width,
-    height,
-    color
-  }: {
+  fillRect({ x, y, width, height, color }: {
     x: number;
     y: number;
     width: number;
@@ -274,10 +268,7 @@ export class Game {
   }
 
   fillText({
-    text,
-    x,
-    y,
-    color,
+    text, x, y, color,
     fontSize = "16px",
     textAlign = "left",
     textBaseline = "alphabetic"

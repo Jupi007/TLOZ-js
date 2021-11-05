@@ -49,33 +49,33 @@ export class Hud {
 
   drawHearts(): void {
     for (let i = 1; i <= this.Game.Player.maxHp / 2; i++) {
-      this.drawImage(
-        this.emptyHeartSprite,
-        24 * i + 8 * i,
-        this.height / 2 - 12,
-        24,
-        24
-      );
+      this.drawImage({
+        sprite: this.emptyHeartSprite,
+        x: 24 * i + 8 * i,
+        y: this.height / 2 - 12,
+        width: 24,
+        height: 24
+      });
     }
 
     for (let i = 1; i <= this.Game.Player.hp / 2; i++) {
-      this.drawImage(
-        this.fullHeartSprite,
-        24 * i + 8 * i,
-        this.height / 2 - 12,
-        24,
-        24
-      );
+      this.drawImage({
+        sprite: this.fullHeartSprite,
+        x: 24 * i + 8 * i,
+        y: this.height / 2 - 12,
+        width: 24,
+        height: 24
+      });
     }
 
     if (this.Game.Player.hp % 2 === 1) {
-      this.drawImage(
-        this.halfHeartSprite,
-        24 * (this.Game.Player.hp / 2 + 1) + 8 * (this.Game.Player.hp / 2 - 1),
-        this.height / 2 - 12,
-        24,
-        24
-      );
+      this.drawImage({
+        sprite: this.halfHeartSprite,
+        x: 24 * (this.Game.Player.hp / 2 + 1) + 8 * (this.Game.Player.hp / 2 - 1),
+        y: this.height / 2 - 12,
+        width: 24,
+        height: 24
+      });
     }
   }
 
@@ -133,43 +133,28 @@ export class Hud {
     });
   }
 
-  drawImage(
-    sprite: HTMLImageElement,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
-    this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
+  drawImage({ sprite, x, y, width, height }: {
+    sprite: HTMLImageElement;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }): void {
+    this.Game.drawImage({ sprite, x: x + this.x, y: y + this.y, width, height });
   }
 
-  fillRect({
-    x,
-    y,
-    width,
-    height,
-    color
-  }: {
+  fillRect({ x, y, width, height, color }: {
     x: number;
     y: number;
     width: number;
     height: number;
     color: string;
   }): void {
-    this.Game.fillRect({
-      x: x + this.x,
-      y: y + this.y,
-      width,
-      height,
-      color
-    });
+    this.Game.fillRect({ x: x + this.x, y: y + this.y, width, height, color });
   }
 
   fillText({
-    text,
-    x,
-    y,
-    color,
+    text, x, y, color,
     fontSize = "16px",
     textAlign = "left",
     textBaseline = "alphabetic"
@@ -182,14 +167,6 @@ export class Hud {
     textAlign?: CanvasTextAlign;
     textBaseline?: CanvasTextBaseline;
   }): void {
-    this.Game.fillText({
-      text,
-      x: x + this.x,
-      y: y + this.y,
-      color,
-      fontSize,
-      textAlign,
-      textBaseline
-    });
+    this.Game.fillText({ text, x: x + this.x, y: y + this.y, color, fontSize, textAlign, textBaseline });
   }
 }

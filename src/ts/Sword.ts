@@ -118,24 +118,24 @@ export class Sword extends SimpleBox {
     if (!this.isEnabled) return;
 
     if (this.Game.Player.attackObserver.get()) {
-      this.Game.Viewport.drawImage(
-        this.sprites[this.direction],
-        this.x,
-        this.y,
-        this.width,
-        this.height
-      );
+      this.Game.Viewport.drawImage({
+        sprite: this.sprites[this.direction],
+        x: this.x,
+        y: this.y,
+        width: this.width,
+        height: this.height
+      });
     }
   }
 
   drawWin(): void {
-    this.Game.Viewport.drawImage(
-      this.sprites[Direction.Up],
-      this.Game.Player.x,
-      this.Game.Player.y - this.swordWidth,
-      this.swordHeight,
-      this.swordWidth
-    );
+    this.Game.Viewport.drawImage({
+      sprite: this.sprites[Direction.Up],
+      x: this.Game.Player.x,
+      y: this.Game.Player.y - this.swordWidth,
+      width: this.swordHeight,
+      height: this.swordWidth
+    });
   }
 
   collisions(): void {

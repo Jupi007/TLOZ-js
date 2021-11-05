@@ -181,13 +181,13 @@ export class Player extends MovingBox {
         sprite = new Image();
     }
 
-    this.Game.Viewport.drawImage(
+    this.Game.Viewport.drawImage({
       sprite,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height
+    });
 
     if (
       this.movingObserver.is(true) &&
@@ -198,13 +198,13 @@ export class Player extends MovingBox {
   }
 
   drawWin(): void {
-    this.Game.Viewport.drawImage(
-      this.winSprite,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
+    this.Game.Viewport.drawImage({
+      sprite: this.winSprite,
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height
+    });
   }
 
   drawGameOver(): void {
@@ -226,22 +226,23 @@ export class Player extends MovingBox {
 
       this.draw();
       this.diedAnimation.update(this.Game.dt);
-    } else if (this.diedObserver.currentFrame <= 135) {
-      this.Game.Viewport.currentScene.drawImage(
-        this.killedSprites[1],
-        this.x,
-        this.y,
-        this.width,
-        this.height
-      );
     } else if (this.diedObserver.currentFrame <= 145) {
-      this.Game.Viewport.currentScene.drawImage(
-        this.killedSprites[2],
-        this.x,
-        this.y,
-        this.width,
-        this.height
-      );
+      let sprite: HTMLImageElement;
+
+      if (this.diedObserver.currentFrame <= 135) {
+        sprite = this.killedSprites[1];
+      }
+      else {
+        sprite = this.killedSprites[2];
+      }
+
+      this.Game.Viewport.currentScene.drawImage({
+        sprite,
+        x: this.x,
+        y: this.y,
+        width: this.width,
+        height: this.height
+      });
     }
     this.diedObserver.update(this.Game.dt);
   }
@@ -395,20 +396,20 @@ export class Player extends MovingBox {
   }
 
   getImportantItemDraw() {
-    this.Game.Viewport.drawImage(
-      this.winSprite,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
-    this.Game.Viewport.drawImage(
-      this.obtainedItem.sprite,
-      this.x,
-      this.y - this.obtainedItem.height,
-      this.obtainedItem.width,
-      this.obtainedItem.height
-    );
+    this.Game.Viewport.drawImage({
+      sprite: this.winSprite,
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height
+    });
+    this.Game.Viewport.drawImage({
+      sprite: this.obtainedItem.sprite,
+      x: this.x,
+      y: this.y - this.obtainedItem.height,
+      width: this.obtainedItem.width,
+      height: this.obtainedItem.height
+    });
 
     if (this.Game.state.currentFrame > 120) {
       this.Game.Viewport.music.play();

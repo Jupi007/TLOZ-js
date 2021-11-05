@@ -70,21 +70,21 @@ export class EnemyManager {
     this.loopEnemies((enemy: Enemy) => {
       if (enemy.state.is(EnemyState.Killed)) {
         if (enemy.state.currentFrame <= 10) {
-          this.Game.Viewport.currentScene.drawImage(
-            enemy.killedSprites[1],
-            enemy.x,
-            enemy.y,
-            enemy.width,
-            enemy.height
-          );
+          this.Game.Viewport.currentScene.drawImage({
+            sprite: enemy.killedSprites[1],
+            x: enemy.x,
+            y: enemy.y,
+            width: enemy.width,
+            height: enemy.height
+          });
         } else if (enemy.state.currentFrame <= 20) {
-          this.Game.Viewport.currentScene.drawImage(
-            enemy.killedSprites[2],
-            enemy.x,
-            enemy.y,
-            enemy.width,
-            enemy.height
-          );
+          this.Game.Viewport.currentScene.drawImage({
+            sprite: enemy.killedSprites[2],
+            x: enemy.x,
+            y: enemy.y,
+            width: enemy.width,
+            height: enemy.height
+          });
         } else {
           enemy.isKilledAnimationFinished = true;
         }

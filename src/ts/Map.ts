@@ -164,36 +164,24 @@ export class Scene {
     });
   }
 
-  drawImage(
-    sprite: HTMLImageElement,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
-    this.Game.Viewport.drawImage(sprite, x + this.x, y + this.y, width, height);
+  drawImage({ sprite, x, y, width, height }: {
+    sprite: HTMLImageElement;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }): void {
+    this.Game.Viewport.drawImage({ sprite, x: x + this.x, y: y + this.y, width, height });
   }
 
-  fillRect({
-    x,
-    y,
-    width,
-    height,
-    color
-  }: {
+  fillRect({ x, y, width, height, color }: {
     x: number;
     y: number;
     width: number;
     height: number;
     color: string;
   }): void {
-    this.Game.Viewport.fillRect({
-      x: x + this.x,
-      y: y + this.y,
-      width,
-      height,
-      color
-    });
+    this.Game.Viewport.fillRect({ x: x + this.x, y: y + this.y, width, height, color });
   }
 
   upperEdgeCollision(): void {

@@ -206,13 +206,13 @@ export class SimpleMovingEnemy extends Enemy {
   }
 
   draw(): void {
-    this.Game.Viewport.currentScene.drawImage(
-      this.sprites[this.direction][this.spritesAnimation.currentAnimationStep],
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
+    this.Game.Viewport.currentScene.drawImage({
+      sprite: this.sprites[this.direction][this.spritesAnimation.currentAnimationStep],
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height
+    });
   }
 
   attack(): void { }
@@ -612,13 +612,13 @@ export class Tektite extends Enemy {
         break;
     }
 
-    this.Game.Viewport.currentScene.drawImage(
+    this.Game.Viewport.currentScene.drawImage({
       sprite,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height
+    });
   }
 }
 

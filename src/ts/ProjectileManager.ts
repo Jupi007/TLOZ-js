@@ -86,13 +86,13 @@ export class ProjectileManager {
 
   draw(): void {
     this.loopProjectiles((projectile: Projectile) => {
-      this.Game.Viewport.currentScene.drawImage(
-        projectile.sprites[projectile.direction],
-        projectile.x,
-        projectile.y,
-        projectile.width,
-        projectile.height
-      );
+      this.Game.Viewport.currentScene.drawImage({
+        sprite: projectile.sprites[projectile.direction],
+        x: projectile.x,
+        y: projectile.y,
+        width: projectile.width,
+        height: projectile.height
+      });
     });
   }
 

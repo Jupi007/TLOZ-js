@@ -98,13 +98,13 @@ export class Viewport {
     });
 
     this.loopCells((cell: Cell, col: number, row: number) => {
-      this.currentScene.drawImage(
-        cell.brick.sprite,
-        this.cellSize * col,
-        this.cellSize * row,
-        this.cellSize,
-        this.cellSize
-      );
+      this.currentScene.drawImage({
+        sprite: cell.brick.sprite,
+        x: this.cellSize * col,
+        y: this.cellSize * row,
+        width: this.cellSize,
+        height: this.cellSize
+      });
     });
 
     if (this.nextScene !== null) {
@@ -117,13 +117,13 @@ export class Viewport {
       });
 
       this.loopCells((cell: Cell, col: number, row: number) => {
-        this.nextScene.drawImage(
-          cell.brick.sprite,
-          this.cellSize * col,
-          this.cellSize * row,
-          this.cellSize,
-          this.cellSize
-        );
+        this.nextScene.drawImage({
+          sprite: cell.brick.sprite,
+          x: this.cellSize * col,
+          y: this.cellSize * row,
+          width: this.cellSize,
+          height: this.cellSize
+        });
       }, this.nextScene);
     }
   }
@@ -386,35 +386,23 @@ export class Viewport {
     }
   }
 
-  drawImage(
-    sprite: HTMLImageElement,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
-    this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
+  drawImage({ sprite, x, y, width, height }: {
+    sprite: HTMLImageElement;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }): void {
+    this.Game.drawImage({ sprite, x: x + this.x, y: y + this.y, width, height });
   }
 
-  fillRect({
-    x,
-    y,
-    width,
-    height,
-    color
-  }: {
+  fillRect({ x, y, width, height, color }: {
     x: number;
     y: number;
     width: number;
     height: number;
     color: string;
   }): void {
-    this.Game.fillRect({
-      x: x + this.x,
-      y: y + this.y,
-      width,
-      height,
-      color
-    });
+    this.Game.fillRect({ x: x + this.x, y: y + this.y, width, height, color });
   }
 }

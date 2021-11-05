@@ -33,13 +33,13 @@ export class ItemManager {
 
   draw(): void {
     this.loopItems((item: Item) => {
-      this.Game.Viewport.currentScene.drawImage(
-        item.sprite,
-        item.x,
-        item.y,
-        item.width,
-        item.height
-      );
+      this.Game.Viewport.currentScene.drawImage({
+        sprite: item.sprite,
+        x: item.x,
+        y: item.y,
+        width: item.width,
+        height: item.height
+      });
     });
   }
 

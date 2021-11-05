@@ -87,17 +87,24 @@ export class Inventory {
       textBaseline: "middle"
     });
 
-    this.fillText(
-      { text: "Q", x: this.width / 2 - 10, y: (this.height / 3) * 2, color: "#fff", fontSize: "24px", textAlign: "right", textBaseline: "middle" });
+    this.fillText({
+      text: "Q",
+      x: this.width / 2 - 10,
+      y: (this.height / 3) * 2,
+      color: "#fff",
+      fontSize: "24px",
+      textAlign: "right",
+      textBaseline: "middle"
+    });
 
     if (this.Game.Sword.isEnabled) {
-      this.drawImage(
-        this.Game.Sword.sprites[Direction.Up],
-        this.width / 2 + 10,
-        (this.height / 3) * 2 - this.Game.Sword.swordWidth / 2,
-        this.Game.Sword.swordHeight,
-        this.Game.Sword.swordWidth
-      );
+      this.drawImage({
+        sprite: this.Game.Sword.sprites[Direction.Up],
+        x: this.width / 2 + 10,
+        y: (this.height / 3) * 2 - this.Game.Sword.swordWidth / 2,
+        width: this.Game.Sword.swordHeight,
+        height: this.Game.Sword.swordWidth
+      });
     } else {
       this.fillRect({
         x: this.width / 2 + 10,
@@ -111,43 +118,28 @@ export class Inventory {
     this.state.update(this.Game.dt);
   }
 
-  drawImage(
-    sprite: HTMLImageElement,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
-    this.Game.drawImage(sprite, x, y + this.y, width, height);
+  drawImage({ sprite, x, y, width, height }: {
+    sprite: HTMLImageElement;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }): void {
+    this.Game.drawImage({ sprite, x, y: y + this.y, width, height });
   }
 
-  fillRect({
-    x,
-    y,
-    width,
-    height,
-    color
-  }: {
+  fillRect({ x, y, width, height, color }: {
     x: number;
     y: number;
     width: number;
     height: number;
     color: string;
   }): void {
-    this.Game.fillRect({
-      x,
-      y: y + this.y,
-      width,
-      height,
-      color
-    });
+    this.Game.fillRect({ x, y: y + this.y, width, height, color });
   }
 
   fillText({
-    text,
-    x,
-    y,
-    color,
+    text, x, y, color,
     fontSize = "16px",
     textAlign = "left",
     textBaseline = "alphabetic"
@@ -160,14 +152,6 @@ export class Inventory {
     textAlign?: CanvasTextAlign;
     textBaseline?: CanvasTextBaseline;
   }): void {
-    this.Game.fillText({
-      text,
-      x,
-      y: y + this.y,
-      color,
-      fontSize,
-      textAlign,
-      textBaseline
-    });
+    this.Game.fillText({ text, x, y: y + this.y, color, fontSize, textAlign, textBaseline });
   }
 }
