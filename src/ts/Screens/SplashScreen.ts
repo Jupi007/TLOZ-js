@@ -1,44 +1,46 @@
-import { Game, GameState } from "../Game.js";
+import { Game, GameState } from "../Game";
 
-import { StateObserver } from "../Libraries/Observers.js";
-import { AudioLoader } from "../Libraries/Loaders.js";
+import { StateObserver } from "../Libraries/Observers";
+import { AudioLoader } from "../Libraries/Loaders";
 
-import { AbstractScreen } from "./AbstractScreen.js";
+import { AbstractScreen } from "./AbstractScreen";
 
-enum SplashScreenState {BlackScreen}
+enum SplashScreenState {
+  BlackScreen
+}
 
 export class SplashScreen extends AbstractScreen {
-    music: HTMLAudioElement;
+  music: HTMLAudioElement;
 
-    constructor(game: Game) {
-        super(
-            game,
-            new StateObserver(SplashScreenState.BlackScreen),
-            "#000",
-            "TLOZ-JS GAME",
-            "press enter to start",
-            150
-        );
+  constructor(game: Game) {
+    super(
+      game,
+      new StateObserver(SplashScreenState.BlackScreen),
+      "#000",
+      "TLOZ-JS GAME",
+      "press enter to start",
+      150
+    );
 
-        this.music = AudioLoader.load("./sounds/music/intro.mp3", true);
-    }
+    this.music = AudioLoader.load("/sounds/music/intro.mp3", true);
+  }
 
-    draw(): void {
-        switch (this.state.get()) {
-            case SplashScreenState.BlackScreen:
-                if (this.state.isFirstFrame) this.music.play();
+  draw(): void {
+    switch (this.state.get()) {
+      case SplashScreenState.BlackScreen:
+        if (this.state.isFirstFrame) this.music.play();
 
-                super.draw();
+        super.draw();
 
-                if (this.state.currentFrame > this.showMessageAfter) {
-                    if (this.Game.EventManager.isEnterPressed) {
-                        this.music.pause();
-                        this.Game.state.setNextState(GameState.Run);
-                    }
-                }
-                break;
+        if (this.state.currentFrame > this.showMessageAfter) {
+          if (this.Game.EventManager.isEnterPressed) {
+            this.music.pause();
+            this.Game.state.setNextState(GameState.Run);
+          }
         }
-
-        super.updateObservers();
+        break;
     }
+
+    super.updateObservers();
+  }
 }

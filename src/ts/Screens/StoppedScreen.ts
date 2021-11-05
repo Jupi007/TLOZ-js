@@ -1,29 +1,31 @@
-import { Game } from "../Game.js";
+import { Game } from "../Game";
 
-import { StateObserver } from "../Libraries/Observers.js";
+import { StateObserver } from "../Libraries/Observers";
 
-import { AbstractScreen } from "./AbstractScreen.js";
+import { AbstractScreen } from "./AbstractScreen";
 
-enum StoppedScreenState {BlackScreen}
+enum StoppedScreenState {
+  BlackScreen
+}
 
 export class StoppedScreen extends AbstractScreen {
-    constructor(game: Game) {
-        super(
-            game,
-            new StateObserver(StoppedScreenState.BlackScreen),
-            "rgba(0, 0, 0, 0.5)",
-            "PAUSE",
-            "press p to continue"
-        );
+  constructor(game: Game) {
+    super(
+      game,
+      new StateObserver(StoppedScreenState.BlackScreen),
+      "rgba(0, 0, 0, 0.5)",
+      "PAUSE",
+      "press p to continue"
+    );
+  }
+
+  draw(): void {
+    switch (this.state.get()) {
+      case StoppedScreenState.BlackScreen:
+        super.draw();
+        break;
     }
 
-    draw(): void {
-        switch (this.state.get()) {
-            case StoppedScreenState.BlackScreen:
-                super.draw();
-                break;
-        }
-
-        super.updateObservers();
-    }
+    super.updateObservers();
+  }
 }

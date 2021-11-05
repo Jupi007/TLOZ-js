@@ -1,77 +1,78 @@
-import { Game } from "./Game.js";
+import { Game } from "./Game";
 
-import { Collisions } from "./Libraries/Collisions.js";
+import { Collisions } from "./Libraries/Collisions";
 
-import { Item } from "./Items.js";
+import { Item } from "./Items";
 
 export class ItemManager {
-    Game: Game;
+  Game: Game;
 
-    items: Item[];
-    permanentItems: Item[];
+  items: Item[];
+  permanentItems: Item[];
 
-    constructor(game: Game) {
-        this.Game = game;
+  constructor(game: Game) {
+    this.Game = game;
 
-        this.items = [];
-        this.permanentItems = [];
+    this.items = [];
+    this.permanentItems = [];
+  }
+
+  collisions(): void {
+    this.loopItems((item: Item) => {
+      if (
+        Collisions.simpleMovingBox(this.Game.Player, item) ||
+        (this.Game.Player.attackObserver.is(true) &&
+          Collisions.simpleBox(this.Game.Sword, item))
+      ) {
+        item.collisionCallback();
+        item.collisionSound.play();
+        this.deleteItem(item);
+      }
+    });
+  }
+
+  draw(): void {
+    this.loopItems((item: Item) => {
+      this.Game.Viewport.currentScene.drawImage(
+        item.sprite,
+        item.x,
+        item.y,
+        item.width,
+        item.height
+      );
+    });
+  }
+
+  addItem(item: Item): void {
+    this.items.push(item);
+  }
+
+  addPermanentItem(item: Item): void {
+    this.permanentItems.push(item);
+  }
+
+  deleteItem(item: Item): void {
+    let itemIndex = this.items.indexOf(item);
+    let permanentItemIndex = this.permanentItems.indexOf(item);
+
+    if (itemIndex > -1) {
+      this.items.splice(itemIndex, 1);
+    } else if (permanentItemIndex > -1) {
+      this.permanentItems.splice(permanentItemIndex, 1);
     }
+  }
 
-    collisions(): void {
-        this.loopItems((item: Item) => {
-            if (
-                Collisions.simpleMovingBox(this.Game.Player, item) ||
-                (this.Game.Player.attackObserver.is(true) && Collisions.simpleBox(this.Game.Sword, item))
-            ) {
-                item.collisionCallback();
-                item.collisionSound.play();
-                this.deleteItem(item);
-            }
-        });
-    }
+  deleteAllItems(): void {
+    this.items = [];
+    this.permanentItems = [];
+  }
 
-    draw(): void {
-        this.loopItems((item: Item) => {
-            this.Game.Viewport.currentScene.drawImage(
-                item.sprite,
-                item.x,
-                item.y,
-                item.width,
-                item.height
-            );
-        });
-    }
-
-    addItem(item: Item): void {
-        this.items.push(item);
-    }
-
-    addPermanentItem(item: Item): void {
-        this.permanentItems.push(item);
-    }
-
-    deleteItem(item: Item): void {
-        let itemIndex = this.items.indexOf(item);
-        let permanentItemIndex = this.permanentItems.indexOf(item);
-        
-        if (itemIndex > -1) {
-            this.items.splice(itemIndex, 1);
-        } else if (permanentItemIndex > -1) {
-            this.permanentItems.splice(permanentItemIndex, 1);
-        }
-    }
-
-    deleteAllItems(): void {
-        this.items = [];
-        this.permanentItems = [];
-    }
-
-    loopItems(callback: Function): void {
-        this.items.forEach((item: Item) => {
-            callback(item);
-        });
-        this.permanentItems.forEach((item: Item) => {
-            callback(item);
-        });
-    }
+  loopItems(callback: Function): void {
+    this.items.forEach((item: Item) => {
+      callback(item);
+    });
+    this.permanentItems.forEach((item: Item) => {
+      callback(item);
+    });
+  }
 }

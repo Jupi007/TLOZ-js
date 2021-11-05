@@ -1,65 +1,70 @@
-import { Game } from "../Game.js";
+import { Game } from "../Game";
 
-import { StateObserver, AnimationObserver } from "../Libraries/Observers.js";
-import { AudioLoader } from "../Libraries/Loaders.js";
+import { StateObserver } from "../Libraries/Observers";
+import { AudioLoader } from "../Libraries/Loaders";
 
-import { AbstractScreen } from "./AbstractScreen.js";
+import { AbstractScreen } from "./AbstractScreen";
 
-enum GameOverScreenState {PlayerAnimation, HideGame, BlackScreen}
+enum GameOverScreenState {
+  PlayerAnimation,
+  HideGame,
+  BlackScreen
+}
 
 export class GameOverScreen extends AbstractScreen {
-    music: HTMLAudioElement;
+  music: HTMLAudioElement;
 
-    constructor(game: Game) {
-        super(
-            game,
-            new StateObserver(GameOverScreenState.PlayerAnimation),
-            "#000",
-            "GAME OVER",
-            "press enter to retry",
-            150
-        );
+  constructor(game: Game) {
+    super(
+      game,
+      new StateObserver(GameOverScreenState.PlayerAnimation),
+      "#000",
+      "GAME OVER",
+      "press enter to retry",
+      150
+    );
 
-        this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
-    }
+    this.music = AudioLoader.load("/sounds/music/game_over.mp3", true);
+  }
 
-    draw(): void {
-        switch (this.state.get()) {
-            case GameOverScreenState.PlayerAnimation:
-                this.Game.Viewport.draw();
-                this.Game.EnemyManager.draw();
-                this.Game.Hud.draw();
-                this.Game.Player.drawGameOver();
+  draw(): void {
+    switch (this.state.get()) {
+      case GameOverScreenState.PlayerAnimation:
+        this.Game.Viewport.draw();
+        this.Game.EnemyManager.draw();
+        this.Game.Hud.draw();
+        this.Game.Player.drawGameOver();
 
-                if (this.Game.Player.diedObserver.currentFrame > 145) this.state.setNextState(GameOverScreenState.HideGame);
-                break;
+        if (this.Game.Player.diedObserver.currentFrame > 145)
+          this.state.setNextState(GameOverScreenState.HideGame);
+        break;
 
-            case GameOverScreenState.HideGame:
-                if (this.state.isFirstFrame) {
-                    this.Game.Panes.reset();
-                }
-
-                this.Game.Viewport.draw();
-                this.Game.Hud.draw();
-                this.Game.Panes.drawClose();
-
-                if (this.Game.Panes.isAnimationFinished) {
-                    this.state.setNextState(GameOverScreenState.BlackScreen);
-                }
-                break;
-
-            case GameOverScreenState.BlackScreen:
-                if (this.state.isFirstFrame) this.music.play();
-
-                if (this.Game.EventManager.isEnterPressed) {
-                    this.music.pause();
-                    this.Game.restart();
-                }
-
-                super.draw();
-                break;
+      case GameOverScreenState.HideGame:
+        if (this.state.isFirstFrame) {
+          this.Game.Panes.reset();
         }
 
-        super.updateObservers();
+        this.Game.Viewport.draw();
+        this.Game.Hud.draw();
+        this.Game.Panes.drawClose();
+
+        if (this.Game.Panes.isAnimationFinished) {
+          this.state.setNextState(GameOverScreenState.BlackScreen);
+        }
+        break;
+
+      case GameOverScreenState.BlackScreen:
+        if (this.state.isFirstFrame) this.music.play();
+
+        if (this.Game.EventManager.isEnterPressed) {
+          this.music.pause();
+          this.Game.restart();
+        }
+
+        super.draw();
+        break;
     }
+
+    super.updateObservers();
+  }
 }
