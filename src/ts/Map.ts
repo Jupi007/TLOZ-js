@@ -98,15 +98,15 @@ export class Scene {
 
   backgroundColor: string;
 
-  constructor(
-    game: Game,
-    world: World,
-    c: number,
-    r: number,
-    music: HTMLAudioElement,
-    defaultBrick: Brick,
-    backgroundColor: string
-  ) {
+  constructor({ game, world, c, r, music, defaultBrick, backgroundColor }: {
+    game: Game;
+    world: World;
+    c: number;
+    r: number;
+    music: HTMLAudioElement;
+    defaultBrick: Brick;
+    backgroundColor: string;
+  }) {
     this.Game = game;
     this.World = world;
 
@@ -230,15 +230,15 @@ export class World {
     for (let c = 0; c < this.nbCol; c++) {
       this.scenes[c] = [];
       for (let r = 0; r < this.nbRow; r++) {
-        this.scenes[c][r] = new Scene(
-          this.Game,
-          this,
+        this.scenes[c][r] = new Scene({
+          game: this.Game,
+          world: this,
           c,
           r,
-          defaultMusic,
+          music: defaultMusic,
           defaultBrick,
-          defaultBackgroundColor
-        );
+          backgroundColor: defaultBackgroundColor
+        });
       }
     }
   }
