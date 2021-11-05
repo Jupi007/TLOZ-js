@@ -91,13 +91,13 @@ export class MovingBoxHitBox {
   private _hitWidth: number;
   private _hitHeight: number;
 
-  constructor(
-    box: MovingBox | MovingBoxHitBox,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
+  constructor({ box, x, y, width, height }: {
+    box: MovingBox | MovingBoxHitBox;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) {
     this._Box = box;
     this._hitX = x;
     this._hitY = y;
@@ -161,35 +161,15 @@ export class MovingBoxHalfHitBoxes {
     this.box = box;
 
     this.halfLeftHitBox = new MovingBoxHitBox(
-      this.box,
-      0,
-      0,
-      this.box.width / 2,
-      this.box.height
-    );
+      { box: this.box, x: 0, y: 0, width: this.box.width / 2, height: this.box.height });
 
     this.halfRightHitBox = new MovingBoxHitBox(
-      this.box,
-      this.box.width / 2,
-      0,
-      this.box.width / 2,
-      this.box.height
-    );
+      { box: this.box, x: this.box.width / 2, y: 0, width: this.box.width / 2, height: this.box.height });
 
     this.halfUpHitBox = new MovingBoxHitBox(
-      this.box,
-      0,
-      0,
-      this.box.width,
-      this.box.height / 2
-    );
+      { box: this.box, x: 0, y: 0, width: this.box.width, height: this.box.height / 2 });
 
     this.halfDownHitBox = new MovingBoxHitBox(
-      this.box,
-      0,
-      this.box.height / 2,
-      this.box.width,
-      this.box.height / 2
-    );
+      { box: this.box, x: 0, y: this.box.height / 2, width: this.box.width, height: this.box.height / 2 });
   }
 }

@@ -27,7 +27,10 @@ export class Projectile extends MovingBox {
 
   state: StateObserver;
 
-  constructor(speed: number, direction: Direction) {
+  constructor({ speed, direction }: {
+    speed: number;
+    direction: Direction;
+  }) {
     super();
 
     this.speed = speed;
@@ -67,15 +70,15 @@ export class Projectile extends MovingBox {
 export class Fireball extends Projectile {
   sprite: HTMLImageElement;
 
-  constructor(
-    game: Game,
-    x: number,
-    y: number,
-    speed: number,
-    direction: Direction,
-    damage: number
-  ) {
-    super(speed, direction);
+  constructor({ game, x, y, speed, direction, damage }: {
+    game: Game;
+    x: number;
+    y: number;
+    speed: number;
+    direction: Direction;
+    damage: number;
+  }) {
+    super({ speed, direction });
 
     this.Game = game;
 
@@ -102,15 +105,15 @@ export class Fireball extends Projectile {
 }
 
 export class Arrow extends Projectile {
-  constructor(
-    game: Game,
-    x: number,
-    y: number,
-    speed: number,
-    direction: Direction,
-    damage: number
-  ) {
-    super(speed, direction);
+  constructor({ game, x, y, speed, direction, damage }: {
+    game: Game;
+    x: number;
+    y: number;
+    speed: number;
+    direction: Direction;
+    damage: number;
+  }) {
+    super({ speed, direction });
 
     this.Game = game;
 
@@ -143,15 +146,15 @@ export class Arrow extends Projectile {
 }
 
 export class Sword extends Projectile {
-  constructor(
-    game: Game,
-    x: number,
-    y: number,
-    speed: number,
-    direction: Direction,
-    damage: number
-  ) {
-    super(speed, direction);
+  constructor({ game, x, y, speed, direction, damage }: {
+    game: Game;
+    x: number;
+    y: number;
+    speed: number;
+    direction: Direction;
+    damage: number;
+  }) {
+    super({ speed, direction });
 
     this.Game = game;
 

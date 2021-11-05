@@ -15,14 +15,14 @@ export class GameOverScreen extends AbstractScreen {
   music: HTMLAudioElement;
 
   constructor(game: Game) {
-    super(
+    super({
       game,
-      new StateObserver(GameOverScreenState.PlayerAnimation),
-      "#000",
-      "GAME OVER",
-      "press enter to retry",
-      150
-    );
+      state: new StateObserver(GameOverScreenState.PlayerAnimation),
+      backgroundColor: "#000",
+      title: "GAME OVER",
+      message: "press enter to retry",
+      showMessageAfter: 150
+    });
 
     this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
   }

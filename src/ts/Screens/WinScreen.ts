@@ -17,14 +17,14 @@ export class WinScreen extends AbstractScreen {
   killedSprites: HTMLImageElement[] = [];
 
   constructor(game: Game) {
-    super(
+    super({
       game,
-      new StateObserver(WinScreenState.PlayerAnimation),
-      "#000",
-      "YOU WON",
-      "press enter to play again",
-      150
-    );
+      state: new StateObserver(WinScreenState.PlayerAnimation),
+      backgroundColor: "#000",
+      title: "YOU WON",
+      message: "press enter to play again",
+      showMessageAfter: 150
+    });
 
     this.music = AudioLoader.load("./sounds/music/ending.mp3", true);
 

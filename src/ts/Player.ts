@@ -93,13 +93,13 @@ export class Player extends MovingBox {
     // | ** | ** |
     // | ** | ** |
 
-    this.hitBox = new MovingBoxHitBox(
-      this,
-      0,
-      this.height / 2,
-      this.width,
-      this.height / 2
-    );
+    this.hitBox = new MovingBoxHitBox({
+      box: this,
+      x: 0,
+      y: this.height / 2,
+      width: this.width,
+      height: this.height / 2
+    });
 
     this.halfHitBoxes = new MovingBoxHalfHitBoxes(this.hitBox);
 

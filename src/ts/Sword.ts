@@ -174,14 +174,14 @@ export class Sword extends SimpleBox {
       this.isFlying = true;
 
       this.Game.ProjectileManager.addProjectile(
-        new SwordProjectile(
-          this.Game,
-          this.x,
-          this.y,
-          this.Game.Player.speed * 3,
-          this.direction,
-          this.damage
-        )
+        new SwordProjectile({
+          game: this.Game,
+          x: this.x,
+          y: this.y,
+          speed: this.Game.Player.speed * 3,
+          direction: this.direction,
+          damage: this.damage
+        })
       );
     }
   }

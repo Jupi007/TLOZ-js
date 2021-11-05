@@ -109,11 +109,11 @@ export class Enemy extends MovingBox {
   dropItem(): boolean {
     if (this.Game.Player.hp < this.Game.Player.maxHp && Random.getOneInt(3)) {
       this.Game.ItemManager.addItem(
-        new Heart(
-          this.Game,
-          this.x + this.width / 2 - 24 / 2,
-          this.y + this.height / 2 - 24 / 2
-        )
+        new Heart({
+          game: this.Game,
+          x: this.x + this.width / 2 - 24 / 2,
+          y: this.y + this.height / 2 - 24 / 2
+        })
       );
       return true;
     }
@@ -280,14 +280,14 @@ export class Octorok extends SimpleMovingEnemy {
 
   attack(): void {
     this.Game.ProjectileManager.addProjectile(
-      new Fireball(
-        this.Game,
-        this.x + this.width / 2 - 24 / 2,
-        this.y + this.height / 2 - 30 / 2,
-        8,
-        this.direction,
-        this.damage
-      )
+      new Fireball({
+        game: this.Game,
+        x: this.x + this.width / 2 - 24 / 2,
+        y: this.y + this.height / 2 - 30 / 2,
+        speed: 8,
+        direction: this.direction,
+        damage: this.damage
+      })
     );
   }
 }
@@ -343,11 +343,11 @@ export class BlueOctorok extends Octorok {
 
     if (Random.getOneInt(3) && !this.Game.Player.invincibleObserver.is(true)) {
       this.Game.ItemManager.addItem(
-        new Clock(
-          this.Game,
-          this.x + this.width / 2 - 32 / 2,
-          this.y + this.height / 2 - 32 / 2
-        )
+        new Clock({
+          game: this.Game,
+          x: this.x + this.width / 2 - 32 / 2,
+          y: this.y + this.height / 2 - 32 / 2
+        })
       );
       return true;
     }
@@ -357,8 +357,6 @@ export class BlueOctorok extends Octorok {
 }
 
 export class Moblin extends SimpleMovingEnemy {
-  arrowSprites: HTMLImageElement[];
-
   constructor({ game, x, y, speed, direction }: {
     game: Game;
     x: number;
@@ -423,14 +421,14 @@ export class Moblin extends SimpleMovingEnemy {
 
   attack(): void {
     this.Game.ProjectileManager.addProjectile(
-      new Arrow(
-        this.Game,
-        this.x + this.width / 2 - 24 / 2,
-        this.y + this.height / 2 - 30 / 2,
-        8,
-        this.direction,
-        this.damage
-      )
+      new Arrow({
+        game: this.Game,
+        x: this.x + this.width / 2 - 24 / 2,
+        y: this.y + this.height / 2 - 30 / 2,
+        speed: 8,
+        direction: this.direction,
+        damage: this.damage
+      })
     );
   }
 }
@@ -486,11 +484,11 @@ export class BlueMoblin extends Moblin {
 
     if (Random.getOneInt(3) && !this.Game.Player.invincibleObserver.is(true)) {
       this.Game.ItemManager.addItem(
-        new Clock(
-          this.Game,
-          this.x + this.width / 2 - 32 / 2,
-          this.y + this.height / 2 - 32 / 2
-        )
+        new Clock({
+          game: this.Game,
+          x: this.x + this.width / 2 - 32 / 2,
+          y: this.y + this.height / 2 - 32 / 2
+        })
       );
       return true;
     }
@@ -646,11 +644,11 @@ export class BlueTektite extends Tektite {
 
     if (Random.getOneInt(3) && !this.Game.Player.invincibleObserver.is(true)) {
       this.Game.ItemManager.addItem(
-        new Clock(
-          this.Game,
-          this.x + this.width / 2 - 32 / 2,
-          this.y + this.height / 2 - 32 / 2
-        )
+        new Clock({
+          game: this.Game,
+          x: this.x + this.width / 2 - 32 / 2,
+          y: this.y + this.height / 2 - 32 / 2
+        })
       );
       return true;
     }

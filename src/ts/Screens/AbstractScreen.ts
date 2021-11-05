@@ -13,14 +13,14 @@ export class AbstractScreen {
   state: StateObserver;
   messageAnimation: AnimationObserver;
 
-  constructor(
-    game: Game,
-    state: StateObserver,
-    backgroundColor: string,
-    title: string,
-    message: string,
-    showMessageAfter: number = 0
-  ) {
+  constructor({ game, state, backgroundColor, title, message, showMessageAfter = 0 }: {
+    game: Game;
+    state: StateObserver;
+    backgroundColor: string;
+    title: string;
+    message: string;
+    showMessageAfter?: number;
+  }) {
     this.Game = game;
 
     this.title = title;

@@ -17,7 +17,11 @@ export class Item extends SimpleBox {
 }
 
 export class Heart extends Item {
-  constructor(game: Game, x: number, y: number) {
+  constructor({ game, x, y }: {
+    game: Game;
+    x: number;
+    y: number;
+  }) {
     super();
 
     this.Game = game;
@@ -38,7 +42,11 @@ export class Heart extends Item {
 }
 
 export class Clock extends Item {
-  constructor(game: Game, x: number, y: number) {
+  constructor({ game, x, y }: {
+    game: Game;
+    x: number;
+    y: number;
+  }) {
     super();
 
     this.Game = game;
@@ -59,7 +67,11 @@ export class Clock extends Item {
 }
 
 export class Sword extends Item {
-  constructor(game: Game, x: number, y: number) {
+  constructor({ game, x, y }: {
+    game: Game;
+    x: number;
+    y: number;
+  }) {
     super();
 
     this.Game = game;
@@ -81,7 +93,11 @@ export class Sword extends Item {
 }
 
 export class HeartReceptacle extends Item {
-  constructor(game: Game, x: number, y: number) {
+  constructor({ game, x, y }: {
+    game: Game;
+    x: number;
+    y: number;
+  }) {
     super();
 
     this.Game = game;

@@ -10,13 +10,13 @@ enum StoppedScreenState {
 
 export class StoppedScreen extends AbstractScreen {
   constructor(game: Game) {
-    super(
+    super({
       game,
-      new StateObserver(StoppedScreenState.BlackScreen),
-      "rgba(0, 0, 0, 0.5)",
-      "PAUSE",
-      "press p to continue"
-    );
+      state: new StateObserver(StoppedScreenState.BlackScreen),
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      title: "PAUSE",
+      message: "press p to continue"
+    });
   }
 
   draw(): void {

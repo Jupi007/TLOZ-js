@@ -13,14 +13,14 @@ export class SplashScreen extends AbstractScreen {
   music: HTMLAudioElement;
 
   constructor(game: Game) {
-    super(
+    super({
       game,
-      new StateObserver(SplashScreenState.BlackScreen),
-      "#000",
-      "TLOZ-JS GAME",
-      "press enter to start",
-      150
-    );
+      state: new StateObserver(SplashScreenState.BlackScreen),
+      backgroundColor: "#000",
+      title: "TLOZ-JS GAME",
+      message: "press enter to start",
+      showMessageAfter: 150
+    });
 
     this.music = AudioLoader.load("./sounds/music/intro.mp3", true);
   }

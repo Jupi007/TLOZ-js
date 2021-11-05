@@ -2331,7 +2331,11 @@ export class Map {
     ]);
 
     this.worlds[1].scenes[0][0].permanentItems = [
-      new SwordItem(this.Game, 8 * 64 - 14, 5 * 64)
+      new SwordItem({
+        game: this.Game,
+        x: 8 * 64 - 14,
+        y: 5 * 64
+      })
     ];
 
     this.worlds[1].scenes[0][0].bottomEdgeCollision = function () {
@@ -2781,7 +2785,11 @@ export class Map {
     ]);
 
     this.worlds[2].scenes[1][0].permanentItems = [
-      new HeartReceptacle(this.Game, 8 * 64 - 13, 5 * 64)
+      new HeartReceptacle({
+        game: this.Game,
+        x: 8 * 64 - 13,
+        y: 5 * 64
+      })
     ];
 
     this.worlds[2].scenes[0][1].loadBricks([
