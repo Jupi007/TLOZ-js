@@ -3,7 +3,10 @@ import { Game, GameState } from "./Game";
 import { Direction } from "./Libraries/Direction";
 import { Collisions } from "./Libraries/Collisions";
 
-import { Passage, Scene, World, Cell } from "./Map";
+import { World } from "./Map/World";
+import { Scene } from "./Map/Scene";
+import { Passage } from "./Map/Passage";
+import { Cell } from "./Map/Cell";
 import { EnemyManager } from "./EnemyManager";
 
 export class Viewport {

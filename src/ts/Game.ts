@@ -1,7 +1,7 @@
 import { StateObserver } from "./Libraries/Observers";
 
 import { BrickCollection } from "./Bricks";
-import { Map } from "./Map";
+import { Map } from "./Map/Map";
 import { Viewport } from "./Viewport";
 import { Inventory } from "./Inventory";
 import { Player } from "./Player";
