@@ -44,15 +44,15 @@ export class Passage extends SimpleBox {
   targetSceneC: number;
   targetSceneR: number;
 
-  constructor(
-    game: Game,
-    scene: Scene,
-    c: number,
-    r: number,
-    targetWorldIndex: number,
-    targetSceneC: number,
-    targetSceneR: number
-  ) {
+  constructor({ game, scene, c, r, targetWorldIndex, targetSceneC, targetSceneR }: {
+    game: Game;
+    scene: Scene;
+    c: number;
+    r: number;
+    targetWorldIndex: number;
+    targetSceneC: number;
+    targetSceneR: number;
+  }) {
     super();
 
     this.Game = game;
@@ -958,7 +958,15 @@ export class Map {
     );
 
     this.worlds[0].scenes[2][0].passages = [
-      new Passage(this.Game, this.worlds[0].scenes[2][0], 7, 1, 2, 1, 1)
+      new Passage({
+        game: this.Game,
+        scene: this.worlds[0].scenes[2][0],
+        c: 7,
+        r: 1,
+        targetWorldIndex: 2,
+        targetSceneC: 1,
+        targetSceneR: 1
+      })
     ];
 
     this.worlds[0].scenes[2][0].enemies = [
@@ -2104,7 +2112,15 @@ export class Map {
     ]);
 
     this.worlds[0].scenes[1][2].passages = [
-      new Passage(this.Game, this.worlds[0].scenes[1][2], 3, 1, 1, 0, 0)
+      new Passage({
+        game: this.Game,
+        scene: this.worlds[0].scenes[1][2],
+        c: 3,
+        r: 1,
+        targetWorldIndex: 1,
+        targetSceneC: 0,
+        targetSceneR: 0
+      })
     ];
 
     this.worlds[0].scenes[2][2].loadBricks([
