@@ -66,52 +66,67 @@ export class Sword extends SimpleBox {
   }
 
   get x(): number {
-    if (this.direction === Direction.Up) {
-      return (
-        this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2
-      );
-    } else if (this.direction === Direction.Down) {
-      return (
-        this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2
-      );
-    } else if (this.direction === Direction.Left) {
-      return this.Game.Player.x - this.swordWidth + this.swordHandleWidth;
+    switch (this.direction) {
+      case Direction.Up:
+      case Direction.Down:
+        return this.Game.Player.x + (this.Game.Player.width - this.swordHeight) / 2;
+
+      case Direction.Left:
+        return this.Game.Player.x - this.swordWidth + this.swordHandleWidth;
+
+      case Direction.Right:
+        return this.Game.Player.x + this.Game.Player.width - this.swordHandleWidth;
+
+      default:
+        throw new Error("Wrong Sword Direction");
     }
-    return this.Game.Player.x + this.Game.Player.width - this.swordHandleWidth;
   }
 
   get y(): number {
-    if (this.direction === Direction.Up) {
-      return this.Game.Player.y - this.swordWidth + this.swordHandleWidth;
-    } else if (this.direction === Direction.Down) {
-      return (
-        this.Game.Player.y + this.Game.Player.width - this.swordHandleWidth
-      );
-    } else if (this.direction === Direction.Left) {
-      return (
-        this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2
-      );
-    }
+    switch (this.direction) {
+      case Direction.Up:
+        return this.Game.Player.y - this.swordWidth + this.swordHandleWidth;
 
-    return (
-      this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2
-    );
+      case Direction.Down:
+        return this.Game.Player.y + this.Game.Player.width - this.swordHandleWidth;
+
+      case Direction.Left:
+      case Direction.Right:
+        return this.Game.Player.y + (this.Game.Player.height - this.swordHeight) / 2;
+
+      default:
+        throw new Error("Wrong Sword Direction");
+    }
   }
 
   get width(): number {
-    if (this.direction === Direction.Up || this.direction === Direction.Down) {
-      return this.swordHeight;
-    }
+    switch (this.direction) {
+      case Direction.Up:
+      case Direction.Down:
+        return this.swordHeight;
 
-    return this.swordWidth;
+      case Direction.Left:
+      case Direction.Right:
+        return this.swordWidth;
+
+      default:
+        throw new Error("Wrong Sword Direction");
+    }
   }
 
   get height(): number {
-    if (this.direction === Direction.Up || this.direction === Direction.Down) {
-      return this.swordWidth;
-    }
+    switch (this.direction) {
+      case Direction.Up:
+      case Direction.Down:
+        return this.swordWidth;
 
-    return this.swordHeight;
+      case Direction.Left:
+      case Direction.Right:
+        return this.swordHeight;
+
+      default:
+        throw new Error("Wrong Sword Direction");
+    }
   }
 
   draw(): void {
