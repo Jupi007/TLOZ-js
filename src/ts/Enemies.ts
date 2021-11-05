@@ -129,7 +129,10 @@ export class SimpleMovingEnemy extends Enemy {
 
   halfHitBoxes: MovingBoxHalfHitBoxes;
 
-  constructor(width: number, height: number) {
+  constructor({ width, height }: {
+    width: number;
+    height: number;
+  }) {
     super();
 
     this.width = width;
@@ -219,17 +222,14 @@ export class SimpleMovingEnemy extends Enemy {
 }
 
 export class Octorok extends SimpleMovingEnemy {
-  constructor(
-    game: Game,
-    x: number,
-    y: number,
-    speed: number,
+  constructor({ game, x, y, speed, direction }: {
+    game: Game;
+    x: number;
+    y: number;
+    speed: number;
     direction: Direction
-  ) {
-    let width = 64;
-    let height = 64;
-
-    super(width, height);
+  }) {
+    super({ width: 64, height: 64 });
 
     this.Game = game;
 
@@ -293,14 +293,14 @@ export class Octorok extends SimpleMovingEnemy {
 }
 
 export class BlueOctorok extends Octorok {
-  constructor(
-    game: Game,
-    x: number,
-    y: number,
-    speed: number,
-    direction: Direction
-  ) {
-    super(game, x, y, speed, direction);
+  constructor({ game, x, y, speed, direction }: {
+    game: Game;
+    x: number;
+    y: number;
+    speed: number;
+    direction: Direction;
+  }) {
+    super({ game, x, y, speed, direction });
 
     this.damage = 2;
     this.hp = 2;
@@ -359,17 +359,17 @@ export class BlueOctorok extends Octorok {
 export class Moblin extends SimpleMovingEnemy {
   arrowSprites: HTMLImageElement[];
 
-  constructor(
-    game: Game,
-    x: number,
-    y: number,
-    speed: number,
-    direction: Direction
-  ) {
-    let width = 64;
-    let height = 64;
-
-    super(width, height);
+  constructor({ game, x, y, speed, direction }: {
+    game: Game;
+    x: number;
+    y: number;
+    speed: number;
+    direction: Direction;
+  }) {
+    super({
+      width: 64,
+      height: 64
+    });
 
     this.Game = game;
 
@@ -436,14 +436,14 @@ export class Moblin extends SimpleMovingEnemy {
 }
 
 export class BlueMoblin extends Moblin {
-  constructor(
-    game: Game,
-    x: number,
-    y: number,
-    speed: number,
-    direction: Direction
-  ) {
-    super(game, x, y, speed, direction);
+  constructor({ game, x, y, speed, direction }: {
+    game: Game;
+    x: number;
+    y: number;
+    speed: number;
+    direction: Direction;
+  }) {
+    super({ game, x, y, speed, direction });
 
     this.damage = 2;
     this.hp = 2;
@@ -505,7 +505,11 @@ export class Tektite extends Enemy {
   speedX: number;
   speedY: number;
 
-  constructor(game: Game, x: number, y: number) {
+  constructor({ game, x, y }: {
+    game: Game;
+    x: number;
+    y: number;
+  }) {
     super();
 
     this.Game = game;
@@ -623,8 +627,12 @@ export class Tektite extends Enemy {
 }
 
 export class BlueTektite extends Tektite {
-  constructor(game: Game, x: number, y: number) {
-    super(game, x, y);
+  constructor({ game, x, y }: {
+    game: Game;
+    x: number;
+    y: number;
+  }) {
+    super({ game, x, y });
 
     this.damage = 2;
 

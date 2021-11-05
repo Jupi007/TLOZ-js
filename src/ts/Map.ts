@@ -489,27 +489,27 @@ export class Map {
     );
 
     this.worlds[0].scenes[0][0].enemies = [
-      new BlueOctorok(
-        this.Game,
-        2 * 64,
-        2 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Right : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        5 * 64,
-        5 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        13 * 64,
-        3 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      )
+      new BlueOctorok({
+        game: this.Game,
+        x: 2 * 64,
+        y: 2 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 5 * 64,
+        y: 5 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 13 * 64,
+        y: 3 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      })
     ];
 
     this.worlds[0].scenes[1][0].loadBricks([
@@ -721,15 +721,27 @@ export class Map {
     );
 
     this.worlds[0].scenes[1][0].enemies = [
-      new BlueMoblin(this.Game, 5 * 64, 8 * 64, 4, Direction.Up),
-      new BlueMoblin(
-        this.Game,
-        8 * 64,
-        4 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new BlueMoblin(this.Game, 10 * 64, 2 * 64, 4, Direction.Down)
+      new BlueMoblin({
+        game: this.Game,
+        x: 5 * 64,
+        y: 8 * 64,
+        speed: 4,
+        direction: Direction.Up
+      }),
+      new BlueMoblin({
+        game: this.Game,
+        x: 8 * 64,
+        y: 4 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new BlueMoblin({
+        game: this.Game,
+        x: 10 * 64,
+        y: 2 * 64,
+        speed: 4,
+        direction: Direction.Down
+      })
     ];
 
     this.worlds[0].scenes[2][0].loadBricks([
@@ -945,10 +957,32 @@ export class Map {
     ];
 
     this.worlds[0].scenes[2][0].enemies = [
-      new BlueOctorok(this.Game, 5 * 64, 4 * 64, 4, Direction.Down),
-      new BlueOctorok(this.Game, 9 * 64, 6 * 64, 4, Direction.Right),
-      new BlueOctorok(this.Game, 12 * 64, 3 * 64, 4, Direction.Down),
-      new BlueTektite(this.Game, 7 * 64, 7 * 64)
+      new BlueOctorok({
+        game: this.Game,
+        x: 5 * 64,
+        y: 4 * 64,
+        speed: 4,
+        direction: Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 9 * 64,
+        y: 6 * 64,
+        speed: 4,
+        direction: Direction.Right
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 12 * 64,
+        y: 3 * 64,
+        speed: 4,
+        direction: Direction.Down
+      }),
+      new BlueTektite({
+        game: this.Game,
+        x: 7 * 64,
+        y: 7 * 64
+      })
     ];
 
     this.worlds[0].scenes[0][1].loadBricks([
@@ -1152,28 +1186,34 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[0][1].enemies = [
-      new Octorok(
-        this.Game,
-        6 * 64,
-        4 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new Octorok(
-        this.Game,
-        4 * 64,
-        6 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new Octorok(
-        this.Game,
-        7 * 64,
-        2 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(this.Game, 13 * 64, 2 * 64, 3, Direction.Down)
+      new Octorok({
+        game: this.Game,
+        x: 6 * 64,
+        y: 4 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 4 * 64,
+        y: 6 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 7 * 64,
+        y: 2 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 13 * 64,
+        y: 2 * 64,
+        speed: 3,
+        direction: Direction.Down
+      })
     ];
 
     this.worlds[0].scenes[1][1].loadBricks([
@@ -1377,34 +1417,34 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[1][1].enemies = [
-      new Octorok(
-        this.Game,
-        4 * 64,
-        5 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(
-        this.Game,
-        10 * 64,
-        3 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(
-        this.Game,
-        13 * 64,
-        7 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(
-        this.Game,
-        12 * 64,
-        6 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      )
+      new Octorok({
+        game: this.Game,
+        x: 4 * 64,
+        y: 5 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 10 * 64,
+        y: 3 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 13 * 64,
+        y: 7 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 12 * 64,
+        y: 6 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
     ];
 
     this.worlds[0].scenes[2][1].loadBricks([
@@ -1608,34 +1648,34 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[2][1].enemies = [
-      new Octorok(
-        this.Game,
-        3 * 64,
-        4 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new Octorok(
-        this.Game,
-        5 * 64,
-        6 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new Octorok(
-        this.Game,
-        10 * 64,
-        5 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(
-        this.Game,
-        14 * 64,
-        2 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Left : Direction.Down
-      )
+      new Octorok({
+        game: this.Game,
+        x: 3 * 64,
+        y: 4 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 5 * 64,
+        y: 6 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 10 * 64,
+        y: 5 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 14 * 64,
+        y: 2 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Left : Direction.Down
+      }),
     ];
 
     this.worlds[0].scenes[0][2].loadBricks([
@@ -1839,9 +1879,21 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[0][2].enemies = [
-      new Tektite(this.Game, 3 * 64, 4 * 64),
-      new Tektite(this.Game, 5 * 64, 7 * 64),
-      new Tektite(this.Game, 10 * 64, 5 * 64)
+      new Tektite({
+        game: this.Game,
+        x: 3 * 64,
+        y: 4 * 64
+      }),
+      new Tektite({
+        game: this.Game,
+        x: 5 * 64,
+        y: 7 * 64
+      }),
+      new Tektite({
+        game: this.Game,
+        x: 10 * 64,
+        y: 5 * 64
+      })
     ];
 
     // Spawn scene
@@ -2251,34 +2303,34 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[2][2].enemies = [
-      new Moblin(
-        this.Game,
-        3 * 64,
-        5 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Moblin(
-        this.Game,
-        5 * 64,
-        7 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Moblin(
-        this.Game,
-        10 * 64,
-        5 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Moblin(
-        this.Game,
-        12 * 64,
-        7 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      )
+      new Moblin({
+        game: this.Game,
+        x: 3 * 64,
+        y: 5 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Moblin({
+        game: this.Game,
+        x: 5 * 64,
+        y: 7 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Moblin({
+        game: this.Game,
+        x: 10 * 64,
+        y: 5 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Moblin({
+        game: this.Game,
+        x: 12 * 64,
+        y: 7 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      })
     ];
 
     this.worlds[1] = new World(
@@ -2710,34 +2762,34 @@ export class Map {
     ]);
 
     this.worlds[2].scenes[0][0].enemies = [
-      new BlueOctorok(
-        this.Game,
-        2 * 64,
-        2 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Right : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        5 * 64,
-        5 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        13 * 64,
-        3 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        8 * 64,
-        6 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      )
+      new BlueOctorok({
+        game: this.Game,
+        x: 2 * 64,
+        y: 2 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 5 * 64,
+        y: 5 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 13 * 64,
+        y: 3 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 8 * 64,
+        y: 6 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      })
     ];
 
     this.worlds[2].scenes[1][0].loadBricks([
@@ -3147,10 +3199,26 @@ export class Map {
     ]);
 
     this.worlds[2].scenes[0][1].enemies = [
-      new BlueTektite(this.Game, 2 * 64, 2 * 64),
-      new BlueTektite(this.Game, 5 * 64, 5 * 64),
-      new BlueTektite(this.Game, 13 * 64, 3 * 64),
-      new BlueTektite(this.Game, 8 * 64, 6 * 64)
+      new BlueTektite({
+        game: this.Game,
+        x: 2 * 64,
+        y: 2 * 64
+      }),
+      new BlueTektite({
+        game: this.Game,
+        x: 5 * 64,
+        y: 5 * 64
+      }),
+      new BlueTektite({
+        game: this.Game,
+        x: 13 * 64,
+        y: 3 * 64
+      }),
+      new BlueTektite({
+        game: this.Game,
+        x: 8 * 64,
+        y: 6 * 64
+      })
     ];
 
     this.worlds[2].scenes[1][1].loadBricks([
@@ -3359,27 +3427,27 @@ export class Map {
     };
 
     this.worlds[2].scenes[1][1].enemies = [
-      new BlueMoblin(
-        this.Game,
-        2 * 64,
-        2 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Right : Direction.Down
-      ),
-      new BlueMoblin(
-        this.Game,
-        5 * 64,
-        5 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new BlueMoblin(
-        this.Game,
-        13 * 64,
-        3 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      )
+      new BlueMoblin({
+        game: this.Game,
+        x: 2 * 64,
+        y: 2 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Down
+      }),
+      new BlueMoblin({
+        game: this.Game,
+        x: 5 * 64,
+        y: 5 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new BlueMoblin({
+        game: this.Game,
+        x: 13 * 64,
+        y: 3 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      })
     ];
   }
 
