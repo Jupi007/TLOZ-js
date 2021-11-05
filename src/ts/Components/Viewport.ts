@@ -1,9 +1,12 @@
-import { Game, GameState } from "./Game";
+import { Game, GameState } from "../Game";
 
-import { Direction } from "./Libraries/Direction";
-import { Collisions } from "./Libraries/Collisions";
+import { Direction } from "../Libraries/Direction";
+import { Collisions } from "../Libraries/Collisions";
 
-import { Passage, Scene, World, Cell } from "./Map";
+import { World } from "../Map/World";
+import { Scene } from "../Map/Scene";
+import { Passage } from "../Map/Passage";
+import { Cell } from "../Map/Cell";
 import { EnemyManager } from "./EnemyManager";
 
 export class Viewport {
@@ -89,41 +92,41 @@ export class Viewport {
     if (this.Game.state.is(GameState.Run) && this.Game.state.isFirstFrame)
       this.music.play();
 
-    this.currentScene.fillRect(
-      0,
-      0,
-      this.currentScene.width,
-      this.currentScene.height,
-      this.currentScene.backgroundColor
-    );
+    this.currentScene.fillRect({
+      x: 0,
+      y: 0,
+      width: this.currentScene.width,
+      height: this.currentScene.height,
+      color: this.currentScene.backgroundColor
+    });
 
     this.loopCells((cell: Cell, col: number, row: number) => {
-      this.currentScene.drawImage(
-        cell.brick.sprite,
-        this.cellSize * col,
-        this.cellSize * row,
-        this.cellSize,
-        this.cellSize
-      );
+      this.currentScene.drawImage({
+        sprite: cell.brick.sprite,
+        x: this.cellSize * col,
+        y: this.cellSize * row,
+        width: this.cellSize,
+        height: this.cellSize
+      });
     });
 
     if (this.nextScene !== null) {
-      this.nextScene.fillRect(
-        0,
-        0,
-        this.nextScene.width,
-        this.nextScene.height,
-        this.nextScene.backgroundColor
-      );
+      this.nextScene.fillRect({
+        x: 0,
+        y: 0,
+        width: this.nextScene.width,
+        height: this.nextScene.height,
+        color: this.nextScene.backgroundColor
+      });
 
       this.loopCells((cell: Cell, col: number, row: number) => {
-        this.nextScene.drawImage(
-          cell.brick.sprite,
-          this.cellSize * col,
-          this.cellSize * row,
-          this.cellSize,
-          this.cellSize
-        );
+        this.nextScene.drawImage({
+          sprite: cell.brick.sprite,
+          x: this.cellSize * col,
+          y: this.cellSize * row,
+          width: this.cellSize,
+          height: this.cellSize
+        });
       }, this.nextScene);
     }
   }
@@ -386,17 +389,23 @@ export class Viewport {
     }
   }
 
-  drawImage(
-    sprite: HTMLImageElement,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
-    this.Game.drawImage(sprite, x + this.x, y + this.y, width, height);
+  drawImage({ sprite, x, y, width, height }: {
+    sprite: HTMLImageElement;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }): void {
+    this.Game.drawImage({ sprite, x: x + this.x, y: y + this.y, width, height });
   }
 
-  fillRect(x: number, y: number, width: number, height: number, color: string) {
-    this.Game.fillRect(x + this.x, y + this.y, width, height, color);
+  fillRect({ x, y, width, height, color }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  }): void {
+    this.Game.fillRect({ x: x + this.x, y: y + this.y, width, height, color });
   }
 }

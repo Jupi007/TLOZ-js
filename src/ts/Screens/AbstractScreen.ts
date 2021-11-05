@@ -13,14 +13,14 @@ export class AbstractScreen {
   state: StateObserver;
   messageAnimation: AnimationObserver;
 
-  constructor(
-    game: Game,
-    state: StateObserver,
-    backgroundColor: string,
-    title: string,
-    message: string,
-    showMessageAfter: number = 0
-  ) {
+  constructor({ game, state, backgroundColor, title, message, showMessageAfter = 0 }: {
+    game: Game;
+    state: StateObserver;
+    backgroundColor: string;
+    title: string;
+    message: string;
+    showMessageAfter?: number;
+  }) {
     this.Game = game;
 
     this.title = title;
@@ -33,35 +33,35 @@ export class AbstractScreen {
   }
 
   draw(): void {
-    this.Game.fillRect(
-      0,
-      0,
-      this.Game.Canvas.width,
-      this.Game.Canvas.height,
-      this.backgroundColor
-    );
+    this.Game.fillRect({
+      x: 0,
+      y: 0,
+      width: this.Game.Canvas.width,
+      height: this.Game.Canvas.height,
+      color: this.backgroundColor
+    });
 
-    this.Game.fillText(
-      this.title,
-      this.Game.Canvas.width / 2,
-      this.Game.Canvas.height / 3,
-      "#fff",
-      "24px",
-      "center",
-      "middle"
-    );
+    this.Game.fillText({
+      text: this.title,
+      x: this.Game.Canvas.width / 2,
+      y: this.Game.Canvas.height / 3,
+      color: "#fff",
+      fontSize: "24px",
+      textAlign: "center",
+      textBaseline: "middle"
+    });
 
     if (this.state.currentFrame > this.showMessageAfter) {
       if (this.messageAnimation.currentAnimationStep === 1) {
-        this.Game.fillText(
-          this.message,
-          this.Game.Canvas.width / 2,
-          (this.Game.Canvas.height / 3) * 2,
-          "#fff",
-          "16px",
-          "center",
-          "middle"
-        );
+        this.Game.fillText({
+          text: this.message,
+          x: this.Game.Canvas.width / 2,
+          y: this.Game.Canvas.height / 3 * 2,
+          color: "#fff",
+          fontSize: "16px",
+          textAlign: "center",
+          textBaseline: "middle"
+        });
       }
       this.messageAnimation.update(this.Game.dt);
     }

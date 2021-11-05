@@ -1,5 +1,5 @@
 import { Game } from "../Game";
-import { Cell } from "../Map";
+import { Cell } from "../Map/Cell";
 
 import {
   SimpleBox,
@@ -80,13 +80,13 @@ export namespace Collisions {
   ): boolean {
     if (
       movingBox1.x + movingBox1.dx >=
-        movingBox2.x + movingBox2.width + movingBox1.dx ||
+      movingBox2.x + movingBox2.width + movingBox1.dx ||
       movingBox1.x + movingBox1.dx + movingBox1.width <=
-        movingBox2.x + movingBox1.dx ||
+      movingBox2.x + movingBox1.dx ||
       movingBox1.y + movingBox1.dy >=
-        movingBox2.y + movingBox2.height + movingBox1.dy ||
+      movingBox2.y + movingBox2.height + movingBox1.dy ||
       movingBox1.y + movingBox1.dy + movingBox1.height <=
-        movingBox2.y + movingBox1.dy
+      movingBox2.y + movingBox1.dy
     ) {
       return false;
     }

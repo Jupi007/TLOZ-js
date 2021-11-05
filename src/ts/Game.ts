@@ -1,17 +1,17 @@
 import { StateObserver } from "./Libraries/Observers";
 
-import { BrickCollection } from "./Bricks";
-import { Map } from "./Map";
-import { Viewport } from "./Viewport";
-import { Inventory } from "./Inventory";
-import { Player } from "./Player";
-import { Sword } from "./Sword";
-import { EnemyManager } from "./EnemyManager";
-import { ProjectileManager } from "./ProjectileManager";
-import { ItemManager } from "./ItemManager";
-import { EventManager } from "./EventManager";
-import { Hud } from "./Hud";
-import { Panes } from "./Panes";
+import { BrickCollection } from "./Bricks/Bricks";
+import { Map } from "./Map/Map";
+import { Viewport } from "./Components/Viewport";
+import { Inventory } from "./Components/Inventory";
+import { Player } from "./Components/Player";
+import { Sword } from "./Components/Sword";
+import { EnemyManager } from "./Components/EnemyManager";
+import { ProjectileManager } from "./Components/ProjectileManager";
+import { ItemManager } from "./Components/ItemManager";
+import { EventManager } from "./Components/EventManager";
+import { Hud } from "./Components/Hud";
+import { Panes } from "./Components/Panes";
 import { SplashScreen } from "./Screens/SplashScreen";
 import { GameOverScreen } from "./Screens/GameOverScreen";
 import { WinScreen } from "./Screens/WinScreen";
@@ -241,35 +241,46 @@ export class Game {
     this.Hud.draw();
   }
 
-  drawImage(
-    sprite: HTMLImageElement,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
+  drawImage({ sprite, x, y, width, height }: {
+    sprite: HTMLImageElement;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }): void {
     this.ctx.beginPath();
     this.ctx.imageSmoothingEnabled = false;
     this.ctx.drawImage(sprite, x, y, width, height);
     this.ctx.closePath();
   }
 
-  fillRect(x: number, y: number, width: number, height: number, color: string) {
+  fillRect({ x, y, width, height, color }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  }): void {
     this.ctx.beginPath();
     this.ctx.fillStyle = color;
     this.ctx.fillRect(x, y, width, height);
     this.ctx.closePath();
   }
 
-  fillText(
-    text: string,
-    x: number,
-    y: number,
-    color: string,
-    fontSize: string = "16px",
-    textAlign: CanvasTextAlign = "left",
-    textBaseline: CanvasTextBaseline = "alphabetic"
-  ) {
+  fillText({
+    text, x, y, color,
+    fontSize = "16px",
+    textAlign = "left",
+    textBaseline = "alphabetic"
+  }: {
+    text: string;
+    x: number;
+    y: number;
+    color: string;
+    fontSize?: string;
+    textAlign?: CanvasTextAlign;
+    textBaseline?: CanvasTextBaseline;
+  }): void {
     this.ctx.beginPath();
     this.ctx.font = fontSize + " NES-font";
     this.ctx.fillStyle = color;

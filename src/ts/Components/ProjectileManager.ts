@@ -1,10 +1,10 @@
-import { Game } from "./Game";
+import { Game } from "../Game";
 
-import { AudioLoader } from "./Libraries/Loaders";
-import { Direction } from "./Libraries/Direction";
-import { Collisions } from "./Libraries/Collisions";
+import { AudioLoader } from "../Libraries/Loaders";
+import { Direction } from "../Libraries/Direction";
+import { Collisions } from "../Libraries/Collisions";
 
-import { Projectile, ProjectileState } from "./Projectiles";
+import { Projectile, ProjectileState } from "../Projectiles/Projectiles";
 
 export class ProjectileManager {
   Game: Game;
@@ -86,13 +86,13 @@ export class ProjectileManager {
 
   draw(): void {
     this.loopProjectiles((projectile: Projectile) => {
-      this.Game.Viewport.currentScene.drawImage(
-        projectile.sprites[projectile.direction],
-        projectile.x,
-        projectile.y,
-        projectile.width,
-        projectile.height
-      );
+      this.Game.Viewport.currentScene.drawImage({
+        sprite: projectile.sprites[projectile.direction],
+        x: projectile.x,
+        y: projectile.y,
+        width: projectile.width,
+        height: projectile.height
+      });
     });
   }
 

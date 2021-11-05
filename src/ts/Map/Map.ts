@@ -1,245 +1,21 @@
-import { Game } from "./Game";
+import { Game } from "../Game";
 
-import { SimpleBox } from "./Libraries/Boxes";
-import { AudioLoader } from "./Libraries/Loaders";
-import { Direction } from "./Libraries/Direction";
-import { Random } from "./Libraries/Random";
+import { AudioLoader } from "../Libraries/Loaders";
+import { Direction } from "../Libraries/Direction";
+import { Random } from "../Libraries/Random";
 
-import {
-  Enemy,
-  Octorok,
-  BlueOctorok,
-  Moblin,
-  BlueMoblin,
-  Tektite,
-  BlueTektite
-} from "./Enemies";
-import { Brick } from "./Bricks";
-import { HeartReceptacle, Item, Sword as SwordItem } from "./Items";
+import { BlueTektite } from "../Enemies/BlueTektite";
+import { Tektite } from "../Enemies/Tektite";
+import { BlueMoblin } from "../Enemies/BlueMoblin";
+import { Moblin } from "../Enemies/Moblin";
+import { BlueOctorok } from "../Enemies/BlueOctorok";
+import { Octorok } from "../Enemies/Octorok";
 
-export class Cell extends SimpleBox {
-  brick: Brick;
-
-  constructor(x: number, y: number, size: number, brick: Brick) {
-    super();
-
-    this.x = x;
-    this.y = y;
-    this.width = size;
-    this.height = size;
-    this.brick = brick;
-  }
-}
-
-export class Passage extends SimpleBox {
-  Game: Game;
-  Scene: Scene;
-
-  targetWorldIndex: number;
-  targetSceneC: number;
-  targetSceneR: number;
-
-  constructor(
-    game: Game,
-    scene: Scene,
-    c: number,
-    r: number,
-    targetWorldIndex: number,
-    targetSceneC: number,
-    targetSceneR: number
-  ) {
-    super();
-
-    this.Game = game;
-    this.Scene = scene;
-
-    this.x = c * this.Scene.cellSize;
-    this.y = r * this.Scene.cellSize;
-
-    this.width = this.Scene.cellSize;
-    this.height = this.Scene.cellSize;
-
-    this.targetWorldIndex = targetWorldIndex;
-    this.targetSceneC = targetSceneC;
-    this.targetSceneR = targetSceneR;
-  }
-}
-
-export class Scene {
-  Game: Game;
-  World: World;
-
-  cells: Cell[][] = [];
-
-  x: number;
-  y: number;
-
-  // Coordinates of the scene in the world
-  c: number;
-  r: number;
-
-  nbRow: number;
-  nbCol: number;
-  cellSize: number;
-
-  enemies: Enemy[];
-  passages: Passage[];
-  permanentItems: Item[];
-
-  music: HTMLAudioElement;
-
-  defaultBrick: Brick;
-  defaultWallBrick: Brick;
-
-  backgroundColor: string;
-
-  constructor(
-    game: Game,
-    world: World,
-    c: number,
-    r: number,
-    music: HTMLAudioElement,
-    defaultBrick: Brick,
-    backgroundColor: string
-  ) {
-    this.Game = game;
-    this.World = world;
-
-    this.nbRow = 11;
-    this.nbCol = 16;
-    this.cellSize = 64;
-
-    this.enemies = [];
-    this.passages = [];
-    this.permanentItems = [];
-
-    this.x = 0;
-    this.y = 0;
-
-    this.c = c;
-    this.r = r;
-
-    this.music = music;
-
-    this.backgroundColor = backgroundColor;
-
-    for (let c = 0; c < this.nbCol; c++) {
-      this.cells[c] = [];
-      for (let r = 0; r < this.nbRow; r++) {
-        this.cells[c][r] = new Cell(
-          this.cellSize * c,
-          this.cellSize * r,
-          this.cellSize,
-          defaultBrick
-        );
-      }
-    }
-  }
-
-  public get width(): number {
-    return this.cellSize * this.nbCol;
-  }
-
-  public get height(): number {
-    return this.cellSize * this.nbRow;
-  }
-
-  get hasEnemies(): boolean {
-    return this.enemies.length > 0;
-  }
-
-  get hasPermanentItems(): boolean {
-    return this.permanentItems.length > 0;
-  }
-
-  getCell(col: number, row: number): Cell {
-    return this.cells[col][row];
-  }
-
-  loadBricks(bricks: any[][]): void {
-    bricks.forEach((row, r) => {
-      row.forEach((brickName, c) => {
-        this.cells[c][r].brick = this.Game.BrickCollection.get(brickName);
-      });
-    });
-  }
-
-  drawImage(
-    sprite: HTMLImageElement,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
-    this.Game.Viewport.drawImage(sprite, x + this.x, y + this.y, width, height);
-  }
-
-  fillRect(x: number, y: number, width: number, height: number, color: string) {
-    this.Game.Viewport.fillRect(x + this.x, y + this.y, width, height, color);
-  }
-
-  upperEdgeCollision(): void {
-    this.Game.Viewport.slideScene(Direction.Up);
-  }
-
-  rightEdgeCollision(): void {
-    this.Game.Viewport.slideScene(Direction.Right);
-  }
-
-  bottomEdgeCollision(): void {
-    this.Game.Viewport.slideScene(Direction.Down);
-  }
-
-  leftEdgeCollision(): void {
-    this.Game.Viewport.slideScene(Direction.Left);
-  }
-}
-
-export class World {
-  Game: Game;
-
-  scenes: Scene[][] = [];
-
-  nbCol: number;
-  nbRow: number;
-
-  constructor(
-    game: Game,
-    nbCol: number,
-    nbRow: number,
-    defaultMusic: HTMLAudioElement,
-    defaultBrick: Brick,
-    defaultBackgroundColor: string
-  ) {
-    this.Game = game;
-
-    this.nbCol = nbCol;
-    this.nbRow = nbRow;
-
-    for (let c = 0; c < this.nbCol; c++) {
-      this.scenes[c] = [];
-      for (let r = 0; r < this.nbRow; r++) {
-        this.scenes[c][r] = new Scene(
-          this.Game,
-          this,
-          c,
-          r,
-          defaultMusic,
-          defaultBrick,
-          defaultBackgroundColor
-        );
-      }
-    }
-  }
-
-  loopScenes(callback: Function): void {
-    this.scenes.forEach((col) => {
-      col.forEach((scene) => {
-        callback(scene);
-      });
-    });
-  }
-}
+import { HeartReceptacle } from "../Items/HeartReceptacle";
+import { Sword as SwordItem } from "../Items/Sword";
+import { Passage } from "./Passage";
+import { Scene } from "./Scene";
+import { World } from "./World";
 
 export class Map {
   Game: Game;
@@ -265,14 +41,14 @@ export class Map {
 
     this.worlds = [];
 
-    this.worlds[0] = new World(
-      this.Game,
-      3,
-      3,
-      AudioLoader.load("./sounds/music/overworld.mp3", true),
-      this.Game.BrickCollection.get("default"),
-      "#ffd4aa"
-    );
+    this.worlds[0] = new World({
+      game: this.Game,
+      nbCol: 3,
+      nbRow: 3,
+      defaultMusic: AudioLoader.load("./sounds/music/overworld.mp3", true),
+      defaultBrick: this.Game.BrickCollection.get("default"),
+      defaultBackgroundColor: "#ffd4aa"
+    });
 
     this.worlds[0].scenes[0][0].loadBricks([
       [
@@ -483,27 +259,27 @@ export class Map {
     );
 
     this.worlds[0].scenes[0][0].enemies = [
-      new BlueOctorok(
-        this.Game,
-        2 * 64,
-        2 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Right : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        5 * 64,
-        5 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        13 * 64,
-        3 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      )
+      new BlueOctorok({
+        game: this.Game,
+        x: 2 * 64,
+        y: 2 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 5 * 64,
+        y: 5 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 13 * 64,
+        y: 3 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      })
     ];
 
     this.worlds[0].scenes[1][0].loadBricks([
@@ -715,15 +491,27 @@ export class Map {
     );
 
     this.worlds[0].scenes[1][0].enemies = [
-      new BlueMoblin(this.Game, 5 * 64, 8 * 64, 4, Direction.Up),
-      new BlueMoblin(
-        this.Game,
-        8 * 64,
-        4 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new BlueMoblin(this.Game, 10 * 64, 2 * 64, 4, Direction.Down)
+      new BlueMoblin({
+        game: this.Game,
+        x: 5 * 64,
+        y: 8 * 64,
+        speed: 4,
+        direction: Direction.Up
+      }),
+      new BlueMoblin({
+        game: this.Game,
+        x: 8 * 64,
+        y: 4 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new BlueMoblin({
+        game: this.Game,
+        x: 10 * 64,
+        y: 2 * 64,
+        speed: 4,
+        direction: Direction.Down
+      })
     ];
 
     this.worlds[0].scenes[2][0].loadBricks([
@@ -935,14 +723,44 @@ export class Map {
     );
 
     this.worlds[0].scenes[2][0].passages = [
-      new Passage(this.Game, this.worlds[0].scenes[2][0], 7, 1, 2, 1, 1)
+      new Passage({
+        game: this.Game,
+        scene: this.worlds[0].scenes[2][0],
+        c: 7,
+        r: 1,
+        targetWorldIndex: 2,
+        targetSceneC: 1,
+        targetSceneR: 1
+      })
     ];
 
     this.worlds[0].scenes[2][0].enemies = [
-      new BlueOctorok(this.Game, 5 * 64, 4 * 64, 4, Direction.Down),
-      new BlueOctorok(this.Game, 9 * 64, 6 * 64, 4, Direction.Right),
-      new BlueOctorok(this.Game, 12 * 64, 3 * 64, 4, Direction.Down),
-      new BlueTektite(this.Game, 7 * 64, 7 * 64)
+      new BlueOctorok({
+        game: this.Game,
+        x: 5 * 64,
+        y: 4 * 64,
+        speed: 4,
+        direction: Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 9 * 64,
+        y: 6 * 64,
+        speed: 4,
+        direction: Direction.Right
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 12 * 64,
+        y: 3 * 64,
+        speed: 4,
+        direction: Direction.Down
+      }),
+      new BlueTektite({
+        game: this.Game,
+        x: 7 * 64,
+        y: 7 * 64
+      })
     ];
 
     this.worlds[0].scenes[0][1].loadBricks([
@@ -1146,28 +964,34 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[0][1].enemies = [
-      new Octorok(
-        this.Game,
-        6 * 64,
-        4 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new Octorok(
-        this.Game,
-        4 * 64,
-        6 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new Octorok(
-        this.Game,
-        7 * 64,
-        2 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(this.Game, 13 * 64, 2 * 64, 3, Direction.Down)
+      new Octorok({
+        game: this.Game,
+        x: 6 * 64,
+        y: 4 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 4 * 64,
+        y: 6 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 7 * 64,
+        y: 2 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 13 * 64,
+        y: 2 * 64,
+        speed: 3,
+        direction: Direction.Down
+      })
     ];
 
     this.worlds[0].scenes[1][1].loadBricks([
@@ -1371,34 +1195,34 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[1][1].enemies = [
-      new Octorok(
-        this.Game,
-        4 * 64,
-        5 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(
-        this.Game,
-        10 * 64,
-        3 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(
-        this.Game,
-        13 * 64,
-        7 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(
-        this.Game,
-        12 * 64,
-        6 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      )
+      new Octorok({
+        game: this.Game,
+        x: 4 * 64,
+        y: 5 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 10 * 64,
+        y: 3 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 13 * 64,
+        y: 7 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 12 * 64,
+        y: 6 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
     ];
 
     this.worlds[0].scenes[2][1].loadBricks([
@@ -1602,34 +1426,34 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[2][1].enemies = [
-      new Octorok(
-        this.Game,
-        3 * 64,
-        4 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new Octorok(
-        this.Game,
-        5 * 64,
-        6 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Right : Direction.Left
-      ),
-      new Octorok(
-        this.Game,
-        10 * 64,
-        5 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Octorok(
-        this.Game,
-        14 * 64,
-        2 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Left : Direction.Down
-      )
+      new Octorok({
+        game: this.Game,
+        x: 3 * 64,
+        y: 4 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 5 * 64,
+        y: 6 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Left
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 10 * 64,
+        y: 5 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Octorok({
+        game: this.Game,
+        x: 14 * 64,
+        y: 2 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Left : Direction.Down
+      }),
     ];
 
     this.worlds[0].scenes[0][2].loadBricks([
@@ -1833,9 +1657,21 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[0][2].enemies = [
-      new Tektite(this.Game, 3 * 64, 4 * 64),
-      new Tektite(this.Game, 5 * 64, 7 * 64),
-      new Tektite(this.Game, 10 * 64, 5 * 64)
+      new Tektite({
+        game: this.Game,
+        x: 3 * 64,
+        y: 4 * 64
+      }),
+      new Tektite({
+        game: this.Game,
+        x: 5 * 64,
+        y: 7 * 64
+      }),
+      new Tektite({
+        game: this.Game,
+        x: 10 * 64,
+        y: 5 * 64
+      })
     ];
 
     // Spawn scene
@@ -2041,7 +1877,15 @@ export class Map {
     ]);
 
     this.worlds[0].scenes[1][2].passages = [
-      new Passage(this.Game, this.worlds[0].scenes[1][2], 3, 1, 1, 0, 0)
+      new Passage({
+        game: this.Game,
+        scene: this.worlds[0].scenes[1][2],
+        c: 3,
+        r: 1,
+        targetWorldIndex: 1,
+        targetSceneC: 0,
+        targetSceneR: 0
+      })
     ];
 
     this.worlds[0].scenes[2][2].loadBricks([
@@ -2245,44 +2089,44 @@ export class Map {
       ]
     ]);
     this.worlds[0].scenes[2][2].enemies = [
-      new Moblin(
-        this.Game,
-        3 * 64,
-        5 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Moblin(
-        this.Game,
-        5 * 64,
-        7 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Moblin(
-        this.Game,
-        10 * 64,
-        5 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new Moblin(
-        this.Game,
-        12 * 64,
-        7 * 64,
-        3,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      )
+      new Moblin({
+        game: this.Game,
+        x: 3 * 64,
+        y: 5 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Moblin({
+        game: this.Game,
+        x: 5 * 64,
+        y: 7 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Moblin({
+        game: this.Game,
+        x: 10 * 64,
+        y: 5 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new Moblin({
+        game: this.Game,
+        x: 12 * 64,
+        y: 7 * 64,
+        speed: 3,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      })
     ];
 
-    this.worlds[1] = new World(
-      this.Game,
-      1,
-      1,
-      AudioLoader.load("./sounds/music/death_mountain.mp3", true),
-      this.Game.BrickCollection.get("default"),
-      "#0f0e0b"
-    );
+    this.worlds[1] = new World({
+      game: this.Game,
+      nbCol: 1,
+      nbRow: 1,
+      defaultMusic: AudioLoader.load("./sounds/music/death_mountain.mp3", true),
+      defaultBrick: this.Game.BrickCollection.get("default"),
+      defaultBackgroundColor: "#0f0e0b"
+    });
 
     this.worlds[1].scenes[0][0].loadBricks([
       [
@@ -2486,21 +2330,25 @@ export class Map {
     ]);
 
     this.worlds[1].scenes[0][0].permanentItems = [
-      new SwordItem(this.Game, 8 * 64 - 14, 5 * 64)
+      new SwordItem({
+        game: this.Game,
+        x: 8 * 64 - 14,
+        y: 5 * 64
+      })
     ];
 
     this.worlds[1].scenes[0][0].bottomEdgeCollision = function () {
       this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
     };
 
-    this.worlds[2] = new World(
-      this.Game,
-      2,
-      2,
-      AudioLoader.load("./sounds/music/dungeon.mp3", true),
-      this.Game.BrickCollection.get("default-dungeon"),
-      "#078382"
-    );
+    this.worlds[2] = new World({
+      game: this.Game,
+      nbCol: 2,
+      nbRow: 2,
+      defaultMusic: AudioLoader.load("./sounds/music/dungeon.mp3", true),
+      defaultBrick: this.Game.BrickCollection.get("default-dungeon"),
+      defaultBackgroundColor: "#078382"
+    });
 
     this.worlds[2].scenes[0][0].loadBricks([
       [
@@ -2704,34 +2552,34 @@ export class Map {
     ]);
 
     this.worlds[2].scenes[0][0].enemies = [
-      new BlueOctorok(
-        this.Game,
-        2 * 64,
-        2 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Right : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        5 * 64,
-        5 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        13 * 64,
-        3 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new BlueOctorok(
-        this.Game,
-        8 * 64,
-        6 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      )
+      new BlueOctorok({
+        game: this.Game,
+        x: 2 * 64,
+        y: 2 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 5 * 64,
+        y: 5 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 13 * 64,
+        y: 3 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new BlueOctorok({
+        game: this.Game,
+        x: 8 * 64,
+        y: 6 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      })
     ];
 
     this.worlds[2].scenes[1][0].loadBricks([
@@ -2936,7 +2784,11 @@ export class Map {
     ]);
 
     this.worlds[2].scenes[1][0].permanentItems = [
-      new HeartReceptacle(this.Game, 8 * 64 - 13, 5 * 64)
+      new HeartReceptacle({
+        game: this.Game,
+        x: 8 * 64 - 13,
+        y: 5 * 64
+      })
     ];
 
     this.worlds[2].scenes[0][1].loadBricks([
@@ -3141,10 +2993,26 @@ export class Map {
     ]);
 
     this.worlds[2].scenes[0][1].enemies = [
-      new BlueTektite(this.Game, 2 * 64, 2 * 64),
-      new BlueTektite(this.Game, 5 * 64, 5 * 64),
-      new BlueTektite(this.Game, 13 * 64, 3 * 64),
-      new BlueTektite(this.Game, 8 * 64, 6 * 64)
+      new BlueTektite({
+        game: this.Game,
+        x: 2 * 64,
+        y: 2 * 64
+      }),
+      new BlueTektite({
+        game: this.Game,
+        x: 5 * 64,
+        y: 5 * 64
+      }),
+      new BlueTektite({
+        game: this.Game,
+        x: 13 * 64,
+        y: 3 * 64
+      }),
+      new BlueTektite({
+        game: this.Game,
+        x: 8 * 64,
+        y: 6 * 64
+      })
     ];
 
     this.worlds[2].scenes[1][1].loadBricks([
@@ -3353,27 +3221,27 @@ export class Map {
     };
 
     this.worlds[2].scenes[1][1].enemies = [
-      new BlueMoblin(
-        this.Game,
-        2 * 64,
-        2 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Right : Direction.Down
-      ),
-      new BlueMoblin(
-        this.Game,
-        5 * 64,
-        5 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      ),
-      new BlueMoblin(
-        this.Game,
-        13 * 64,
-        3 * 64,
-        4,
-        Random.getOneInt(2) ? Direction.Up : Direction.Down
-      )
+      new BlueMoblin({
+        game: this.Game,
+        x: 2 * 64,
+        y: 2 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Right : Direction.Down
+      }),
+      new BlueMoblin({
+        game: this.Game,
+        x: 5 * 64,
+        y: 5 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      }),
+      new BlueMoblin({
+        game: this.Game,
+        x: 13 * 64,
+        y: 3 * 64,
+        speed: 4,
+        direction: Random.getOneInt(2) ? Direction.Up : Direction.Down
+      })
     ];
   }
 

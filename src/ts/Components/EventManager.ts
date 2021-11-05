@@ -1,4 +1,4 @@
-import { Game, GameState } from "./Game";
+import { Game, GameState } from "../Game";
 
 import { InventoryState } from "./Inventory";
 

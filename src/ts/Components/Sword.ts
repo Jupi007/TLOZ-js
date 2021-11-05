@@ -1,12 +1,12 @@
-import { Game } from "./Game";
+import { Game } from "../Game";
 
-import { AudioLoader, SpriteLoader } from "./Libraries/Loaders";
-import { Direction } from "./Libraries/Direction";
-import { Collisions } from "./Libraries/Collisions";
+import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
+import { Direction } from "../Libraries/Direction";
+import { Collisions } from "../Libraries/Collisions";
 
-import { Sword as SwordProjectile } from "./Projectiles";
-import { SimpleBox } from "./Libraries/Boxes";
-import { Enemy } from "./Enemies";
+import { Sword as SwordProjectile } from "../Projectiles/Sword";
+import { SimpleBox } from "../Libraries/Boxes";
+import { Enemy } from "../Enemies/Enemy";
 
 export class Sword extends SimpleBox {
   Game: Game;
@@ -118,24 +118,24 @@ export class Sword extends SimpleBox {
     if (!this.isEnabled) return;
 
     if (this.Game.Player.attackObserver.get()) {
-      this.Game.Viewport.drawImage(
-        this.sprites[this.direction],
-        this.x,
-        this.y,
-        this.width,
-        this.height
-      );
+      this.Game.Viewport.drawImage({
+        sprite: this.sprites[this.direction],
+        x: this.x,
+        y: this.y,
+        width: this.width,
+        height: this.height
+      });
     }
   }
 
   drawWin(): void {
-    this.Game.Viewport.drawImage(
-      this.sprites[Direction.Up],
-      this.Game.Player.x,
-      this.Game.Player.y - this.swordWidth,
-      this.swordHeight,
-      this.swordWidth
-    );
+    this.Game.Viewport.drawImage({
+      sprite: this.sprites[Direction.Up],
+      x: this.Game.Player.x,
+      y: this.Game.Player.y - this.swordWidth,
+      width: this.swordHeight,
+      height: this.swordWidth
+    });
   }
 
   collisions(): void {
@@ -174,14 +174,14 @@ export class Sword extends SimpleBox {
       this.isFlying = true;
 
       this.Game.ProjectileManager.addProjectile(
-        new SwordProjectile(
-          this.Game,
-          this.x,
-          this.y,
-          this.Game.Player.speed * 3,
-          this.direction,
-          this.damage
-        )
+        new SwordProjectile({
+          game: this.Game,
+          x: this.x,
+          y: this.y,
+          speed: this.Game.Player.speed * 3,
+          direction: this.direction,
+          damage: this.damage
+        })
       );
     }
   }
