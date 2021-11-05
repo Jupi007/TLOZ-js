@@ -1,127 +1,134 @@
-import { Game } from "./Game.js";
+import { Game } from "./Game";
 
-import { AudioLoader } from "./Libraries/Loaders.js";
-import { Direction } from "./Libraries/Direction.js";
-import { Collisions } from "./Libraries/Collisions.js";
+import { AudioLoader } from "./Libraries/Loaders";
+import { Direction } from "./Libraries/Direction";
+import { Collisions } from "./Libraries/Collisions";
 
-import { Projectile, ProjectileState } from "./Projectiles.js";
+import { Projectile, ProjectileState } from "./Projectiles";
 
 export class ProjectileManager {
-    Game: Game;
+  Game: Game;
 
-    projectiles: Projectile[];
+  projectiles: Projectile[];
 
-    shieldSound: HTMLAudioElement;
+  shieldSound: HTMLAudioElement;
 
-    constructor(game: Game) {
-        this.Game = game;
+  constructor(game: Game) {
+    this.Game = game;
 
-        this.projectiles = [];
+    this.projectiles = [];
 
-        this.shieldSound = AudioLoader.load("./sounds/effect/Shield.wav");
-    }
+    this.shieldSound = AudioLoader.load("/sounds/effect/Shield.wav");
+  }
 
-    collisions(): void {
-        this.loopProjectiles((projectile: Projectile) => {
-            if (projectile.state.is(ProjectileState.ShieldBlocked)) return;
+  collisions(): void {
+    this.loopProjectiles((projectile: Projectile) => {
+      if (projectile.state.is(ProjectileState.ShieldBlocked)) return;
 
-            if (projectile.hasEnemiesCollision) {
-                this.Game.EnemyManager.loopEnemies((enemy) => {
-                    if (Collisions.movingBoxs(enemy, projectile.hitBox)) {
-                        if (projectile.enemiesCollisionCallback !== null) projectile.enemiesCollisionCallback(enemy);
-                        this.deleteProjectile(projectile);
-                    }
-                });
-            }
-
-            if (projectile.hasPlayerCollision) {
-                if (Collisions.movingBoxs(this.Game.Player.hitBox, projectile.hitBox)) {
-                    if (
-                        projectile.canBeShieldBlocked &&
-                        this.Game.Player.movingObserver.is(false) &&
-                        this.Game.Player.attackObserver.is(false) &&
-                        Direction.areOpposite(this.Game.Player.direction, projectile.direction)
-                    ) {
-                        this.shieldSound.play();
-                        projectile.state.setNextState(ProjectileState.ShieldBlocked);
-                        return;
-                    }
-
-                    if (projectile.playerCollisionCallback !== null) projectile.playerCollisionCallback();
-                    this.deleteProjectile(projectile);
-                }
-            }
-
-            if (Collisions.movingBoxCanvas(projectile.hitBox, this.Game.Viewport)) {
-                this.deleteProjectile(projectile);
-            }
+      if (projectile.hasEnemiesCollision) {
+        this.Game.EnemyManager.loopEnemies((enemy) => {
+          if (Collisions.movingBoxs(enemy, projectile.hitBox)) {
+            if (projectile.enemiesCollisionCallback !== null)
+              projectile.enemiesCollisionCallback(enemy);
+            this.deleteProjectile(projectile);
+          }
         });
-    }
+      }
 
-    move(): void {
-        this.loopProjectiles((projectile: Projectile) => {
-            switch (projectile.state.get()) {
-                case ProjectileState.Moving:
-                    projectile.x += projectile.dx * this.Game.dt;
-                    projectile.y += projectile.dy * this.Game.dt;
-                    break;
+      if (projectile.hasPlayerCollision) {
+        if (Collisions.movingBoxs(this.Game.Player.hitBox, projectile.hitBox)) {
+          if (
+            projectile.canBeShieldBlocked &&
+            this.Game.Player.movingObserver.is(false) &&
+            this.Game.Player.attackObserver.is(false) &&
+            Direction.areOpposite(
+              this.Game.Player.direction,
+              projectile.direction
+            )
+          ) {
+            this.shieldSound.play();
+            projectile.state.setNextState(ProjectileState.ShieldBlocked);
+            return;
+          }
 
-                case ProjectileState.ShieldBlocked:
-                    if (Direction.isVertical(projectile.direction)) {
-                        projectile.x += projectile.dy / 2 * this.Game.dt;
-                        projectile.y -= projectile.dy / 2 * this.Game.dt;
-                    }
-                    else {
-                        projectile.x -= projectile.dx / 2 * this.Game.dt;
-                        projectile.y += projectile.dx / 2 * this.Game.dt;
-                    }
-                    break;
-            }
-        });
-    }
+          if (projectile.playerCollisionCallback !== null)
+            projectile.playerCollisionCallback();
+          this.deleteProjectile(projectile);
+        }
+      }
 
-    draw(): void {
-        this.loopProjectiles((projectile: Projectile) => {
-            this.Game.Viewport.currentScene.drawImage(
-                projectile.sprites[projectile.direction],
-                projectile.x,
-                projectile.y,
-                projectile.width,
-                projectile.height
-            );
-        });
-    }
+      if (Collisions.movingBoxCanvas(projectile.hitBox, this.Game.Viewport)) {
+        this.deleteProjectile(projectile);
+      }
+    });
+  }
 
-    updateObservers(): void {
-        this.loopProjectiles((projectile: Projectile) => {
-            projectile.state.update(this.Game.dt);
+  move(): void {
+    this.loopProjectiles((projectile: Projectile) => {
+      switch (projectile.state.get()) {
+        case ProjectileState.Moving:
+          projectile.x += projectile.dx * this.Game.dt;
+          projectile.y += projectile.dy * this.Game.dt;
+          break;
 
-            if (projectile.state.is(ProjectileState.ShieldBlocked) && projectile.state.currentFrame > 20) {
-                this.deleteProjectile(projectile);
-            }
-        });
-    }
+        case ProjectileState.ShieldBlocked:
+          if (Direction.isVertical(projectile.direction)) {
+            projectile.x += (projectile.dy / 2) * this.Game.dt;
+            projectile.y -= (projectile.dy / 2) * this.Game.dt;
+          } else {
+            projectile.x -= (projectile.dx / 2) * this.Game.dt;
+            projectile.y += (projectile.dx / 2) * this.Game.dt;
+          }
+          break;
+      }
+    });
+  }
 
-    addProjectile(projectile: Projectile): void {
-        this.projectiles.push(projectile);
-    }
+  draw(): void {
+    this.loopProjectiles((projectile: Projectile) => {
+      this.Game.Viewport.currentScene.drawImage(
+        projectile.sprites[projectile.direction],
+        projectile.x,
+        projectile.y,
+        projectile.width,
+        projectile.height
+      );
+    });
+  }
 
-    deleteProjectile(projectile: Projectile): void {
-        if (projectile.deleteCallback !== null) projectile.deleteCallback();
-        this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
-    }
+  updateObservers(): void {
+    this.loopProjectiles((projectile: Projectile) => {
+      projectile.state.update(this.Game.dt);
 
-    deleteAllProjectiles(): void {
-        this.loopProjectiles((projectile: Projectile) => {
-            if (projectile.deleteCallback !== null) projectile.deleteCallback();
-        });
+      if (
+        projectile.state.is(ProjectileState.ShieldBlocked) &&
+        projectile.state.currentFrame > 20
+      ) {
+        this.deleteProjectile(projectile);
+      }
+    });
+  }
 
-        this.projectiles = [];
-    }
+  addProjectile(projectile: Projectile): void {
+    this.projectiles.push(projectile);
+  }
 
-    loopProjectiles(callback: Function): void {
-        this.projectiles.forEach((projectile: Projectile) => {
-            callback(projectile);
-        });
-    }
+  deleteProjectile(projectile: Projectile): void {
+    if (projectile.deleteCallback !== null) projectile.deleteCallback();
+    this.projectiles.splice(this.projectiles.indexOf(projectile), 1);
+  }
+
+  deleteAllProjectiles(): void {
+    this.loopProjectiles((projectile: Projectile) => {
+      if (projectile.deleteCallback !== null) projectile.deleteCallback();
+    });
+
+    this.projectiles = [];
+  }
+
+  loopProjectiles(callback: Function): void {
+    this.projectiles.forEach((projectile: Projectile) => {
+      callback(projectile);
+    });
+  }
 }
