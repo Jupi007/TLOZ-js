@@ -214,14 +214,14 @@ export class World {
   nbCol: number;
   nbRow: number;
 
-  constructor(
-    game: Game,
-    nbCol: number,
-    nbRow: number,
-    defaultMusic: HTMLAudioElement,
-    defaultBrick: Brick,
-    defaultBackgroundColor: string
-  ) {
+  constructor({ game, nbCol, nbRow, defaultMusic, defaultBrick, defaultBackgroundColor }: {
+    game: Game;
+    nbCol: number;
+    nbRow: number;
+    defaultMusic: HTMLAudioElement;
+    defaultBrick: Brick;
+    defaultBackgroundColor: string;
+  }) {
     this.Game = game;
 
     this.nbCol = nbCol;
@@ -276,14 +276,14 @@ export class Map {
 
     this.worlds = [];
 
-    this.worlds[0] = new World(
-      this.Game,
-      3,
-      3,
-      AudioLoader.load("./sounds/music/overworld.mp3", true),
-      this.Game.BrickCollection.get("default"),
-      "#ffd4aa"
-    );
+    this.worlds[0] = new World({
+      game: this.Game,
+      nbCol: 3,
+      nbRow: 3,
+      defaultMusic: AudioLoader.load("./sounds/music/overworld.mp3", true),
+      defaultBrick: this.Game.BrickCollection.get("default"),
+      defaultBackgroundColor: "#ffd4aa"
+    });
 
     this.worlds[0].scenes[0][0].loadBricks([
       [
@@ -2354,14 +2354,14 @@ export class Map {
       })
     ];
 
-    this.worlds[1] = new World(
-      this.Game,
-      1,
-      1,
-      AudioLoader.load("./sounds/music/death_mountain.mp3", true),
-      this.Game.BrickCollection.get("default"),
-      "#0f0e0b"
-    );
+    this.worlds[1] = new World({
+      game: this.Game,
+      nbCol: 1,
+      nbRow: 1,
+      defaultMusic: AudioLoader.load("./sounds/music/death_mountain.mp3", true),
+      defaultBrick: this.Game.BrickCollection.get("default"),
+      defaultBackgroundColor: "#0f0e0b"
+    });
 
     this.worlds[1].scenes[0][0].loadBricks([
       [
@@ -2572,14 +2572,14 @@ export class Map {
       this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
     };
 
-    this.worlds[2] = new World(
-      this.Game,
-      2,
-      2,
-      AudioLoader.load("./sounds/music/dungeon.mp3", true),
-      this.Game.BrickCollection.get("default-dungeon"),
-      "#078382"
-    );
+    this.worlds[2] = new World({
+      game: this.Game,
+      nbCol: 2,
+      nbRow: 2,
+      defaultMusic: AudioLoader.load("./sounds/music/dungeon.mp3", true),
+      defaultBrick: this.Game.BrickCollection.get("default-dungeon"),
+      defaultBackgroundColor: "#078382"
+    });
 
     this.worlds[2].scenes[0][0].loadBricks([
       [
