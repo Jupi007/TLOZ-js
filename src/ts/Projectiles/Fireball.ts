@@ -1,5 +1,4 @@
 import { Game } from "../Game";
-import { SpriteLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { Projectile } from "./Projectile";
 
@@ -27,7 +26,7 @@ export class Fireball extends Projectile {
 
         this.damage = damage;
 
-        this.sprite = SpriteLoader.load("./sprites/png/fireball.png");
+        this.sprite = this.Game.AssetManager.getImage("./sprites/png/fireball.png");
 
         this.sprites[Direction.Up] = this.sprite;
         this.sprites[Direction.Down] = this.sprite;

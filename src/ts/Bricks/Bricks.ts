@@ -1,7 +1,6 @@
 import { AnimatedBrick } from "./AnimatedBrick";
 import { Brick } from "./Brick";
 import { Game } from "../Game";
-import { SpriteLoader } from "../Libraries/Loaders";
 import { AnimationObserver } from "../Libraries/Observers";
 
 export class BrickCollection {
@@ -85,7 +84,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/passage.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/passage.png");
     }
   }
 
@@ -93,7 +92,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/default.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/default.png");
     }
   }
 
@@ -101,7 +100,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/default-dungeon.png"
       );
     }
@@ -111,7 +110,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/stairs.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/stairs.png");
     }
   }
 
@@ -119,7 +118,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/tree.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/tree.png");
       this.hasCollisions = true;
     }
   }
@@ -128,7 +127,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/white-tree.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/white-tree.png");
       this.hasCollisions = true;
     }
   }
@@ -137,7 +136,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/grave.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/grave.png");
       this.hasCollisions = true;
     }
   }
@@ -146,7 +145,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/wall.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/wall.png");
       this.hasCollisions = true;
     }
   }
@@ -155,7 +154,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-dungeon.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/wall-dungeon.png");
       this.hasCollisions = true;
     }
   }
@@ -164,7 +163,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/red-wall.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/red-wall.png");
       this.hasCollisions = true;
     }
   }
@@ -173,7 +172,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/single-wall.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/single-wall.png");
       this.hasCollisions = true;
     }
   }
@@ -182,7 +181,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/single-red-wall.png"
       );
       this.hasCollisions = true;
@@ -193,7 +192,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-top.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/wall-top.png");
       this.hasCollisions = true;
     }
   }
@@ -202,7 +201,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/wall-top-right.png"
       );
       this.hasCollisions = true;
@@ -213,7 +212,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/wall-top-left.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/wall-top-left.png");
       this.hasCollisions = true;
     }
   }
@@ -222,7 +221,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/wall-bottom-right.png"
       );
       this.hasCollisions = true;
@@ -233,7 +232,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/wall-bottom-left.png"
       );
       this.hasCollisions = true;
@@ -244,7 +243,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load("./sprites/png/bricks/white-wall.png");
+      this.sprite = this.Game.AssetManager.getImage("./sprites/png/bricks/white-wall.png");
       this.hasCollisions = true;
     }
   }
@@ -253,7 +252,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/white-wall-top.png"
       );
       this.hasCollisions = true;
@@ -264,7 +263,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/white-wall-top-right.png"
       );
       this.hasCollisions = true;
@@ -275,7 +274,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/white-wall-top-left.png"
       );
       this.hasCollisions = true;
@@ -286,7 +285,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/white-wall-bottom-right.png"
       );
       this.hasCollisions = true;
@@ -297,7 +296,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/white-wall-bottom-left.png"
       );
       this.hasCollisions = true;
@@ -308,7 +307,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/monument-top-right.png"
       );
       this.hasCollisions = true;
@@ -319,7 +318,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/monument-top-left.png"
       );
       this.hasCollisions = true;
@@ -330,7 +329,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/monument-bottom-right.png"
       );
       this.hasCollisions = true;
@@ -341,7 +340,7 @@ export namespace Bricks {
     constructor(game: Game) {
       super(game);
 
-      this.sprite = SpriteLoader.load(
+      this.sprite = this.Game.AssetManager.getImage(
         "./sprites/png/bricks/monument-bottom-left.png"
       );
       this.hasCollisions = true;
@@ -354,8 +353,8 @@ export namespace Bricks {
 
       this.hasCollisions = true;
 
-      this.sprites[1] = SpriteLoader.load("./sprites/png/bricks/fire1.png");
-      this.sprites[2] = SpriteLoader.load("./sprites/png/bricks/fire2.png");
+      this.sprites[1] = this.Game.AssetManager.getImage("./sprites/png/bricks/fire1.png");
+      this.sprites[2] = this.Game.AssetManager.getImage("./sprites/png/bricks/fire2.png");
 
       this.spritesAnimation = new AnimationObserver(10, 2);
     }

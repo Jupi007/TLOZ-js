@@ -1,7 +1,6 @@
 import { Game } from "../Game";
 
 import { MovingBox } from "../Libraries/Boxes";
-import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
 import { Random } from "../Libraries/Random";
 import { StateObserver, AnimationObserver } from "../Libraries/Observers";
 
@@ -42,8 +41,10 @@ export class Enemy extends MovingBox {
   dieSound: HTMLAudioElement;
   hitSound: HTMLAudioElement;
 
-  constructor() {
+  constructor(game: Game) {
     super();
+
+    this.Game = game;
 
     this.hasPlayerCollision = true;
     this.hasViewportCollision = true;
@@ -52,15 +53,15 @@ export class Enemy extends MovingBox {
 
     this.isKilledAnimationFinished = false;
 
-    this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
-    this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
+    this.killedSprites[1] = this.Game.AssetManager.getImage("./sprites/png/killed1.png");
+    this.killedSprites[2] = this.Game.AssetManager.getImage("./sprites/png/killed2.png");
 
     this.invincibleObserver = new StateObserver(false);
     this.invincibleDuration = 25;
     this.invincibleAnimation = new AnimationObserver(7, 2);
 
-    this.dieSound = AudioLoader.load("./sounds/effect/Enemy_Die.wav");
-    this.hitSound = AudioLoader.load("./sounds/effect/Enemy_Hit.wav");
+    this.dieSound = this.Game.AssetManager.getSound("./sounds/effect/Enemy_Die.wav");
+    this.hitSound = this.Game.AssetManager.getSound("./sounds/effect/Enemy_Hit.wav");
   }
 
   aiThinking(): void { }

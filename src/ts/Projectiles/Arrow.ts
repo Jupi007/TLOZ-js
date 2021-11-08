@@ -1,5 +1,4 @@
 import { Game } from "../Game";
-import { SpriteLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { Projectile } from "./Projectile";
 
@@ -25,16 +24,16 @@ export class Arrow extends Projectile {
 
         this.damage = damage;
 
-        this.sprites[Direction.Up] = SpriteLoader.load(
+        this.sprites[Direction.Up] = this.Game.AssetManager.getImage(
             "./sprites/png/arrow-up.png"
         );
-        this.sprites[Direction.Down] = SpriteLoader.load(
+        this.sprites[Direction.Down] = this.Game.AssetManager.getImage(
             "./sprites/png/arrow-down.png"
         );
-        this.sprites[Direction.Right] = SpriteLoader.load(
+        this.sprites[Direction.Right] = this.Game.AssetManager.getImage(
             "./sprites/png/arrow-right.png"
         );
-        this.sprites[Direction.Left] = SpriteLoader.load(
+        this.sprites[Direction.Left] = this.Game.AssetManager.getImage(
             "./sprites/png/arrow-left.png"
         );
 

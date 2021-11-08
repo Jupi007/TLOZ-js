@@ -1,5 +1,4 @@
 import { Game } from "../Game";
-import { SpriteLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { Collisions } from "../Libraries/Collisions";
 import { Random } from "../Libraries/Random";
@@ -18,9 +17,7 @@ export class Tektite extends Enemy {
         x: number;
         y: number;
     }) {
-        super();
-
-        this.Game = game;
+        super(game);
 
         this.x = x;
         this.y = y;
@@ -40,8 +37,8 @@ export class Tektite extends Enemy {
         this.hasBricksCollisions = false;
 
         this.sprites = [];
-        this.sprites[1] = SpriteLoader.load("./sprites/png/tektite1.png");
-        this.sprites[2] = SpriteLoader.load("./sprites/png/tektite2.png");
+        this.sprites[1] = this.Game.AssetManager.getImage("./sprites/png/tektite1.png");
+        this.sprites[2] = this.Game.AssetManager.getImage("./sprites/png/tektite2.png");
 
         this.spritesAnimation = new AnimationObserver(20, 2);
 

@@ -1,7 +1,6 @@
 import { Game } from "../Game";
 
 import { StateObserver } from "../Libraries/Observers";
-import { AudioLoader } from "../Libraries/Loaders";
 
 import { AbstractScreen } from "./AbstractScreen";
 
@@ -24,7 +23,7 @@ export class GameOverScreen extends AbstractScreen {
       showMessageAfter: 150
     });
 
-    this.music = AudioLoader.load("./sounds/music/game_over.mp3", true);
+    this.music = this.Game.AssetManager.getSound("./sounds/music/game_over.mp3", true);
   }
 
   draw(): void {

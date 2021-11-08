@@ -4,6 +4,7 @@ import { Collisions } from "../Libraries/Collisions";
 import { Random } from "../Libraries/Random";
 import { StateObserver } from "../Libraries/Observers";
 import { Enemy, EnemyState } from "./Enemy";
+import { Game } from "../Game";
 
 
 export class SimpleMovingEnemy extends Enemy {
@@ -13,11 +14,12 @@ export class SimpleMovingEnemy extends Enemy {
 
     halfHitBoxes: MovingBoxHalfHitBoxes;
 
-    constructor({ width, height }: {
+    constructor({ game, width, height }: {
+        game: Game;
         width: number;
         height: number;
     }) {
-        super();
+        super(game);
 
         this.width = width;
         this.height = height;

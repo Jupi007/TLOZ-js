@@ -132,7 +132,7 @@ export class AssetManager {
         "./sprites/png/bricks/white-wall-top-right.png",
     ];
 
-    sounds: HTMLAudioElement[];
+    sounds: string[];
     images: HTMLImageElement[];
 
     toLoad: number;
@@ -147,14 +147,6 @@ export class AssetManager {
         this.images = [];
         this.sounds = [];
 
-        this.soundsToLoad.forEach(src => {
-            let sound = new Audio(src);
-
-            this.sounds[src] = sound;
-
-            sound.addEventListener("canplaythrough", () => this.loaded++, false);
-        });
-
         this.imagesToLoad.forEach(src => {
             let image = new Image();
             image.src = src;
@@ -163,9 +155,30 @@ export class AssetManager {
 
             image.addEventListener("load", () => this.loaded++, false);
         });
+
+        this.soundsToLoad.forEach(src => {
+            let sound = new Audio(src);
+
+            this.sounds.push(src);
+
+            sound.addEventListener("canplaythrough", () => this.loaded++, false);
+        });
     }
 
     isLoadFinished(): boolean {
         return this.toLoad === this.loaded;
+    }
+
+    getImage(src: string): HTMLImageElement {
+        return this.images[src];
+    }
+
+    getSound(src: string, loop: boolean): HTMLAudioElement {
+        if (!this.sounds.includes(src)) throw new Error("This sound hasn't been loaded");
+
+        let audio = new Audio(src);
+        audio.loop = loop;
+        
+        return audio;
     }
 }

@@ -1,6 +1,5 @@
 import { Game } from "../Game";
 
-import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { Collisions } from "../Libraries/Collisions";
 
@@ -37,21 +36,21 @@ export class Sword extends SimpleBox {
     this.swordHeight = 28;
     this.swordHandleWidth = 16;
 
-    this.sprites[Direction.Up] = SpriteLoader.load(
+    this.sprites[Direction.Up] = this.Game.AssetManager.getImage(
       "./sprites/png/sword-up.png"
     );
-    this.sprites[Direction.Right] = SpriteLoader.load(
+    this.sprites[Direction.Right] = this.Game.AssetManager.getImage(
       "./sprites/png/sword-right.png"
     );
-    this.sprites[Direction.Down] = SpriteLoader.load(
+    this.sprites[Direction.Down] = this.Game.AssetManager.getImage(
       "./sprites/png/sword-down.png"
     );
-    this.sprites[Direction.Left] = SpriteLoader.load(
+    this.sprites[Direction.Left] = this.Game.AssetManager.getImage(
       "./sprites/png/sword-left.png"
     );
 
-    this.slashSound = AudioLoader.load("./sounds/effect/Sword_Slash.wav");
-    this.flyingSound = AudioLoader.load("./sounds/effect/Sword_Shoot.wav");
+    this.slashSound = this.Game.AssetManager.getSound("./sounds/effect/Sword_Slash.wav");
+    this.flyingSound = this.Game.AssetManager.getSound("./sounds/effect/Sword_Shoot.wav");
 
     this.isFlying = false;
     this.isEnabled = false;

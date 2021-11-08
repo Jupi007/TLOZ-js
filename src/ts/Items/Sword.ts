@@ -1,5 +1,4 @@
 import { Game } from "../Game";
-import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
 import { Item } from "./Item";
 
 
@@ -19,8 +18,8 @@ export class Sword extends Item {
         this.width = 28;
         this.height = 64;
 
-        this.sprite = SpriteLoader.load("./sprites/png/sword-up.png");
-        this.collisionSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
+        this.sprite = this.Game.AssetManager.getImage("./sprites/png/sword-up.png");
+        this.collisionSound = this.Game.AssetManager.getSound("./sounds/effect/Fanfare.wav");
     }
 
     collisionCallback(): void {

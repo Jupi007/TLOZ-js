@@ -1,6 +1,5 @@
 import { Game } from "../Game";
 
-import { AudioLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { Collisions } from "../Libraries/Collisions";
 
@@ -18,7 +17,7 @@ export class ProjectileManager {
 
     this.projectiles = [];
 
-    this.shieldSound = AudioLoader.load("./sounds/effect/Shield.wav");
+    this.shieldSound = this.Game.AssetManager.getSound("./sounds/effect/Shield.wav");
   }
 
   collisions(): void {
