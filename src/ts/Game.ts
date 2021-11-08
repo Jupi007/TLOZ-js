@@ -2,6 +2,7 @@ import { StateObserver } from "./Libraries/Observers";
 
 import { BrickCollection } from "./Bricks/Bricks";
 import { Map } from "./Map/Map";
+import { AssetManager } from "./Components/AssetManager";
 import { Viewport } from "./Components/Viewport";
 import { Inventory } from "./Components/Inventory";
 import { Player } from "./Components/Player";
@@ -16,8 +17,10 @@ import { SplashScreen } from "./Screens/SplashScreen";
 import { GameOverScreen } from "./Screens/GameOverScreen";
 import { WinScreen } from "./Screens/WinScreen";
 import { StoppedScreen } from "./Screens/StoppedScreen";
+import { truncate } from "fs";
 
 export enum GameState {
+  Loading,
   Splash,
   Run,
   Inventory,
@@ -34,6 +37,7 @@ export class Game {
   lastTime: number;
   dt: number;
 
+  AssetManager: AssetManager;
   BrickCollection: BrickCollection;
   Map: Map;
   Viewport: Viewport;
@@ -63,6 +67,7 @@ export class Game {
   }
 
   init(): void {
+    this.AssetManager = new AssetManager(this);
     this.EventManager = new EventManager(this);
     this.BrickCollection = new BrickCollection(this);
     this.Map = new Map(this);
@@ -98,7 +103,7 @@ export class Game {
       });
     });
 
-    this.state = new StateObserver(GameState.Splash);
+    this.state = new StateObserver(GameState.Loading);
 
     this.lastTime = null;
     this.dt = null;
@@ -131,6 +136,9 @@ export class Game {
     this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
     switch (this.state.get()) {
+      case GameState.Loading:
+        this.loadingLoop();
+        break;
       case GameState.Splash:
         this.splashLoop();
         break;
@@ -201,6 +209,38 @@ export class Game {
   stoppedLoop(): void {
     this.drawGame();
     this.StoppedScreen.draw();
+  }
+
+  loadingLoop() {
+    this.fillRect({
+      x: 0,
+      y: 0,
+      width: this.Canvas.width,
+      height: this.Canvas.height,
+      color: '#000'
+    });
+
+    this.fillText({
+      text: 'LOADING...',
+      x: this.Canvas.width / 2,
+      y: this.Canvas.height / 3,
+      color: "#fff",
+      fontSize: "24px",
+      textAlign: "center",
+      textBaseline: "middle"
+    });
+
+    this.fillText({
+      text: Math.trunc(this.AssetManager.loaded * 100 /  this.AssetManager.toLoad) + "%",
+      x: this.Canvas.width / 2,
+      y: this.Canvas.height / 3 * 2,
+      color: "#fff",
+      fontSize: "16px",
+      textAlign: "center",
+      textBaseline: "middle"
+    });
+
+    if (this.AssetManager.isLoadFinished()) this.state.setNextState(GameState.Splash);
   }
 
   splashLoop(): void {

@@ -17,7 +17,7 @@ export class SplashScreen extends AbstractScreen {
       game,
       state: new StateObserver(SplashScreenState.BlackScreen),
       backgroundColor: "#000",
-      title: "TLOZ-JS GAME",
+      title: "TLOZ-JS",
       message: "press enter to start",
       showMessageAfter: 150
     });
