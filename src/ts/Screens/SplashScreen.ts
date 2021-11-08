@@ -18,7 +18,7 @@ export class SplashScreen extends AbstractScreen {
       state: new StateObserver(SplashScreenState.BlackScreen),
       backgroundColor: "#000",
       title: "TLOZ - JS",
-      titleFontSize: "32px",
+      titleFontSize: "40px",
       message: "press enter to start",
       showMessageAfter: 150
     });
