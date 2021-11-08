@@ -111,7 +111,6 @@ export class Game {
 
   restart(): void {
     this.init();
-    this.state.setNextState(GameState.Run);
   }
 
   run(): void {
