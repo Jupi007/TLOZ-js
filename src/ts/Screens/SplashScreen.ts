@@ -19,6 +19,7 @@ export class SplashScreen extends AbstractScreen {
       backgroundColor: "#000",
       title: "TLOZ - JS",
       titleFontSize: "40px",
+      titleColor: "#aefe44",
       message: "press enter to start",
       showMessageAfter: 150
     });
