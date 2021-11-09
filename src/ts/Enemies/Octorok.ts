@@ -1,5 +1,4 @@
 import { Game } from "../Game";
-import { SpriteLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { AnimationObserver } from "../Libraries/Observers";
 import { Fireball } from "../Projectiles/Fireball";
@@ -14,9 +13,7 @@ export class Octorok extends SimpleMovingEnemy {
         speed: number;
         direction: Direction;
     }) {
-        super({ width: 64, height: 64 });
-
-        this.Game = game;
+        super({ game, width: 64, height: 64 });
 
         this.x = x;
         this.y = y;
@@ -29,34 +26,34 @@ export class Octorok extends SimpleMovingEnemy {
         this.hp = 1;
 
         this.sprites[Direction.Up] = [];
-        this.sprites[Direction.Up][1] = SpriteLoader.load(
+        this.sprites[Direction.Up][1] = this.Game.AssetManager.getImage(
             "./sprites/png/octorok-up1.png"
         );
-        this.sprites[Direction.Up][2] = SpriteLoader.load(
+        this.sprites[Direction.Up][2] = this.Game.AssetManager.getImage(
             "./sprites/png/octorok-up2.png"
         );
 
         this.sprites[Direction.Down] = [];
-        this.sprites[Direction.Down][1] = SpriteLoader.load(
+        this.sprites[Direction.Down][1] = this.Game.AssetManager.getImage(
             "./sprites/png/octorok-down1.png"
         );
-        this.sprites[Direction.Down][2] = SpriteLoader.load(
+        this.sprites[Direction.Down][2] = this.Game.AssetManager.getImage(
             "./sprites/png/octorok-down2.png"
         );
 
         this.sprites[Direction.Right] = [];
-        this.sprites[Direction.Right][1] = SpriteLoader.load(
+        this.sprites[Direction.Right][1] = this.Game.AssetManager.getImage(
             "./sprites/png/octorok-right1.png"
         );
-        this.sprites[Direction.Right][2] = SpriteLoader.load(
+        this.sprites[Direction.Right][2] = this.Game.AssetManager.getImage(
             "./sprites/png/octorok-right2.png"
         );
 
         this.sprites[Direction.Left] = [];
-        this.sprites[Direction.Left][1] = SpriteLoader.load(
+        this.sprites[Direction.Left][1] = this.Game.AssetManager.getImage(
             "./sprites/png/octorok-left1.png"
         );
-        this.sprites[Direction.Left][2] = SpriteLoader.load(
+        this.sprites[Direction.Left][2] = this.Game.AssetManager.getImage(
             "./sprites/png/octorok-left2.png"
         );
 

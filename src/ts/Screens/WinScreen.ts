@@ -1,7 +1,6 @@
 import { Game } from "../Game";
 
 import { StateObserver } from "../Libraries/Observers";
-import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
 
 import { AbstractScreen } from "./AbstractScreen";
 
@@ -26,10 +25,10 @@ export class WinScreen extends AbstractScreen {
       showMessageAfter: 150
     });
 
-    this.music = AudioLoader.load("./sounds/music/ending.mp3", true);
+    this.music = this.Game.AssetManager.getSound("./sounds/music/ending.mp3", true);
 
-    this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
-    this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
+    this.killedSprites[1] = this.Game.AssetManager.getImage("./sprites/png/killed1.png");
+    this.killedSprites[2] = this.Game.AssetManager.getImage("./sprites/png/killed2.png");
   }
 
   draw(): void {

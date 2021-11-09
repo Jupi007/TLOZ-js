@@ -1,5 +1,4 @@
 import { Game } from "../Game";
-import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
 import { Item } from "./Item";
 
 
@@ -19,8 +18,8 @@ export class Heart extends Item {
         this.width = 24;
         this.height = 24;
 
-        this.sprite = SpriteLoader.load("./sprites/png/full-heart.png");
-        this.collisionSound = AudioLoader.load("./sounds/effect/Get_Heart.wav");
+        this.sprite = this.Game.AssetManager.getImage("./sprites/png/full-heart.png");
+        this.collisionSound = this.Game.AssetManager.getSound("./sounds/effect/Get_Heart.wav");
     }
 
     collisionCallback(): void {

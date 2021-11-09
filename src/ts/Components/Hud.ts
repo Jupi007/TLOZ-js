@@ -1,7 +1,6 @@
 import { Game, GameState } from "../Game";
 
 import { AnimationObserver } from "../Libraries/Observers";
-import { SpriteLoader } from "../Libraries/Loaders";
 
 export class Hud {
   Game: Game;
@@ -26,9 +25,9 @@ export class Hud {
 
     this.height = 64;
 
-    this.emptyHeartSprite = SpriteLoader.load("./sprites/png/empty-heart.png");
-    this.halfHeartSprite = SpriteLoader.load("./sprites/png/half-heart.png");
-    this.fullHeartSprite = SpriteLoader.load("./sprites/png/full-heart.png");
+    this.emptyHeartSprite = this.Game.AssetManager.getImage("./sprites/png/empty-heart.png");
+    this.halfHeartSprite = this.Game.AssetManager.getImage("./sprites/png/half-heart.png");
+    this.fullHeartSprite = this.Game.AssetManager.getImage("./sprites/png/full-heart.png");
 
     this.currentSceneAnimation = new AnimationObserver(25, 2);
   }

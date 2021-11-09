@@ -6,7 +6,6 @@ import {
   MovingBoxHitBox,
   MovingBoxHalfHitBoxes
 } from "../Libraries/Boxes";
-import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { Collisions } from "../Libraries/Collisions";
 import { StateObserver, AnimationObserver } from "../Libraries/Observers";
@@ -104,64 +103,61 @@ export class Player extends MovingBox {
     this.halfHitBoxes = new MovingBoxHalfHitBoxes(this.hitBox);
 
     this.sprites[Direction.Up] = [];
-    this.sprites[Direction.Up][1] = SpriteLoader.load(
+    this.sprites[Direction.Up][1] = this.Game.AssetManager.getImage(
       "./sprites/png/link-up1.png"
     );
-    this.sprites[Direction.Up][2] = SpriteLoader.load(
+    this.sprites[Direction.Up][2] = this.Game.AssetManager.getImage(
       "./sprites/png/link-up2.png"
     );
-    this.attackSprites[Direction.Up] = SpriteLoader.load(
+    this.attackSprites[Direction.Up] = this.Game.AssetManager.getImage(
       "./sprites/png/link-up-attack.png"
     );
 
     this.sprites[Direction.Right] = [];
-    this.sprites[Direction.Right][1] = SpriteLoader.load(
+    this.sprites[Direction.Right][1] = this.Game.AssetManager.getImage(
       "./sprites/png/link-right1.png"
     );
-    this.sprites[Direction.Right][2] = SpriteLoader.load(
+    this.sprites[Direction.Right][2] = this.Game.AssetManager.getImage(
       "./sprites/png/link-right2.png"
     );
-    this.attackSprites[Direction.Right] = SpriteLoader.load(
+    this.attackSprites[Direction.Right] = this.Game.AssetManager.getImage(
       "./sprites/png/link-right-attack.png"
     );
 
     this.sprites[Direction.Down] = [];
-    this.sprites[Direction.Down][1] = SpriteLoader.load(
+    this.sprites[Direction.Down][1] = this.Game.AssetManager.getImage(
       "./sprites/png/link-down1.png"
     );
-    this.sprites[Direction.Down][2] = SpriteLoader.load(
+    this.sprites[Direction.Down][2] = this.Game.AssetManager.getImage(
       "./sprites/png/link-down2.png"
     );
-    this.attackSprites[Direction.Down] = SpriteLoader.load(
+    this.attackSprites[Direction.Down] = this.Game.AssetManager.getImage(
       "./sprites/png/link-down-attack.png"
     );
 
     this.sprites[Direction.Left] = [];
-    this.sprites[Direction.Left][1] = SpriteLoader.load(
+    this.sprites[Direction.Left][1] = this.Game.AssetManager.getImage(
       "./sprites/png/link-left1.png"
     );
-    this.sprites[Direction.Left][2] = SpriteLoader.load(
+    this.sprites[Direction.Left][2] = this.Game.AssetManager.getImage(
       "./sprites/png/link-left2.png"
     );
-    this.attackSprites[Direction.Left] = SpriteLoader.load(
+    this.attackSprites[Direction.Left] = this.Game.AssetManager.getImage(
       "./sprites/png/link-left-attack.png"
     );
 
-    this.winSprite = SpriteLoader.load("./sprites/png/link-win.png");
+    this.winSprite = this.Game.AssetManager.getImage("./sprites/png/link-win.png");
 
-    this.killedSprites[1] = SpriteLoader.load("./sprites/png/killed1.png");
-    this.killedSprites[2] = SpriteLoader.load("./sprites/png/killed2.png");
+    this.killedSprites[1] = this.Game.AssetManager.getImage("./sprites/png/killed1.png");
+    this.killedSprites[2] = this.Game.AssetManager.getImage("./sprites/png/killed2.png");
 
     this.spritesAnimation = new AnimationObserver(6, 2);
     this.invincibleAnimation = new AnimationObserver(5, 2);
 
-    this.hurtSound = AudioLoader.load("./sounds/effect/Link_Hurt.wav");
-    this.dieSound = AudioLoader.load("./sounds/effect/Link_Die.wav");
-    this.lowHealthSound = AudioLoader.load(
-      "./sounds/effect/Low_Health.wav",
-      true
-    );
-    this.fanfareSound = AudioLoader.load("./sounds/effect/Fanfare.wav");
+    this.hurtSound = this.Game.AssetManager.getSound("./sounds/effect/Link_Hurt.wav");
+    this.dieSound = this.Game.AssetManager.getSound("./sounds/effect/Link_Die.wav");
+    this.lowHealthSound = this.Game.AssetManager.getSound("./sounds/effect/Low_Health.wav", true);
+    this.fanfareSound = this.Game.AssetManager.getSound("./sounds/effect/Fanfare.wav");
   }
 
   get isFullLife(): boolean {

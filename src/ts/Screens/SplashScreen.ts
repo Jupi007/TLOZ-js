@@ -1,7 +1,6 @@
 import { Game, GameState } from "../Game";
 
 import { StateObserver } from "../Libraries/Observers";
-import { AudioLoader } from "../Libraries/Loaders";
 
 import { AbstractScreen } from "./AbstractScreen";
 
@@ -18,12 +17,13 @@ export class SplashScreen extends AbstractScreen {
       state: new StateObserver(SplashScreenState.BlackScreen),
       backgroundColor: "#000",
       title: "TLOZ - JS",
-      titleFontSize: "32px",
+      titleFontSize: "40px",
+      titleColor: "#aefe44",
       message: "press enter to start",
       showMessageAfter: 150
     });
 
-    this.music = AudioLoader.load("./sounds/music/intro.mp3", true);
+    this.music = this.Game.AssetManager.getSound("./sounds/music/intro.mp3", true);
   }
 
   draw(): void {

@@ -1,6 +1,5 @@
 import { Game } from "../Game";
 
-import { AudioLoader } from "../Libraries/Loaders";
 import { Direction } from "../Libraries/Direction";
 import { Random } from "../Libraries/Random";
 
@@ -45,7 +44,7 @@ export class Map {
       game: this.Game,
       nbCol: 3,
       nbRow: 3,
-      defaultMusic: AudioLoader.load("./sounds/music/overworld.mp3", true),
+      defaultMusic: this.Game.AssetManager.getSound("./sounds/music/overworld.mp3", true),
       defaultBrick: this.Game.BrickCollection.get("default"),
       defaultBackgroundColor: "#ffd4aa"
     });
@@ -253,7 +252,7 @@ export class Map {
 
     this.worlds[0].scenes[0][0].backgroundColor = "#747474";
 
-    this.worlds[0].scenes[0][0].music = AudioLoader.load(
+    this.worlds[0].scenes[0][0].music = this.Game.AssetManager.getSound(
       "./sounds/music/death_mountain.mp3",
       true
     );
@@ -485,7 +484,7 @@ export class Map {
 
     this.worlds[0].scenes[1][0].backgroundColor = "#747474";
 
-    this.worlds[0].scenes[1][0].music = AudioLoader.load(
+    this.worlds[0].scenes[1][0].music = this.Game.AssetManager.getSound(
       "./sounds/music/death_mountain.mp3",
       true
     );
@@ -717,7 +716,7 @@ export class Map {
 
     this.worlds[0].scenes[2][0].backgroundColor = "#747474";
 
-    this.worlds[0].scenes[2][0].music = AudioLoader.load(
+    this.worlds[0].scenes[2][0].music = this.Game.AssetManager.getSound(
       "./sounds/music/death_mountain.mp3",
       true
     );
@@ -2123,7 +2122,7 @@ export class Map {
       game: this.Game,
       nbCol: 1,
       nbRow: 1,
-      defaultMusic: AudioLoader.load("./sounds/music/death_mountain.mp3", true),
+      defaultMusic: this.Game.AssetManager.getSound("./sounds/music/death_mountain.mp3", true),
       defaultBrick: this.Game.BrickCollection.get("default"),
       defaultBackgroundColor: "#0f0e0b"
     });
@@ -2345,7 +2344,7 @@ export class Map {
       game: this.Game,
       nbCol: 2,
       nbRow: 2,
-      defaultMusic: AudioLoader.load("./sounds/music/dungeon.mp3", true),
+      defaultMusic: this.Game.AssetManager.getSound("./sounds/music/dungeon.mp3", true),
       defaultBrick: this.Game.BrickCollection.get("default-dungeon"),
       defaultBackgroundColor: "#078382"
     });

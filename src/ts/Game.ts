@@ -2,6 +2,7 @@ import { StateObserver } from "./Libraries/Observers";
 
 import { BrickCollection } from "./Bricks/Bricks";
 import { Map } from "./Map/Map";
+import { AssetManager } from "./Components/AssetManager";
 import { Viewport } from "./Components/Viewport";
 import { Inventory } from "./Components/Inventory";
 import { Player } from "./Components/Player";
@@ -16,8 +17,11 @@ import { SplashScreen } from "./Screens/SplashScreen";
 import { GameOverScreen } from "./Screens/GameOverScreen";
 import { WinScreen } from "./Screens/WinScreen";
 import { StoppedScreen } from "./Screens/StoppedScreen";
+import { truncate } from "fs";
+import { LoadingScreen } from "./Screens/LoadingScreen";
 
 export enum GameState {
+  Loading,
   Splash,
   Run,
   Inventory,
@@ -34,6 +38,7 @@ export class Game {
   lastTime: number;
   dt: number;
 
+  AssetManager: AssetManager;
   BrickCollection: BrickCollection;
   Map: Map;
   Viewport: Viewport;
@@ -45,6 +50,7 @@ export class Game {
   EventManager: EventManager;
   Hud: Hud;
   Panes: Panes;
+  LoadingScreen: LoadingScreen;
   SplashScreen: SplashScreen;
   GameOverScreen: GameOverScreen;
   WinScreen: WinScreen;
@@ -63,6 +69,7 @@ export class Game {
   }
 
   init(): void {
+    this.AssetManager = new AssetManager(this);
     this.EventManager = new EventManager(this);
     this.BrickCollection = new BrickCollection(this);
     this.Map = new Map(this);
@@ -74,6 +81,7 @@ export class Game {
     this.ItemManager = new ItemManager(this);
     this.Hud = new Hud(this);
     this.Panes = new Panes(this);
+    this.LoadingScreen = new LoadingScreen(this);
     this.SplashScreen = new SplashScreen(this);
     this.GameOverScreen = new GameOverScreen(this);
     this.WinScreen = new WinScreen(this);
@@ -98,7 +106,7 @@ export class Game {
       });
     });
 
-    this.state = new StateObserver(GameState.Splash);
+    this.state = new StateObserver(GameState.Loading);
 
     this.lastTime = null;
     this.dt = null;
@@ -106,7 +114,6 @@ export class Game {
 
   restart(): void {
     this.init();
-    this.state.setNextState(GameState.Run);
   }
 
   run(): void {
@@ -131,6 +138,9 @@ export class Game {
     this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
     switch (this.state.get()) {
+      case GameState.Loading:
+        this.loadingLoop();
+        break;
       case GameState.Splash:
         this.splashLoop();
         break;
@@ -201,6 +211,10 @@ export class Game {
   stoppedLoop(): void {
     this.drawGame();
     this.StoppedScreen.draw();
+  }
+
+  loadingLoop() {
+    this.LoadingScreen.draw();
   }
 
   splashLoop(): void {

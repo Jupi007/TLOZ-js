@@ -1,5 +1,4 @@
 import { Game } from "../Game";
-import { SpriteLoader } from "../Libraries/Loaders";
 import { Random } from "../Libraries/Random";
 import { Clock } from "../Items/Clock";
 import { Tektite } from "./Tektite";
@@ -16,8 +15,8 @@ export class BlueTektite extends Tektite {
         this.damage = 2;
 
         this.sprites = [];
-        this.sprites[1] = SpriteLoader.load("./sprites/png/blue-tektite1.png");
-        this.sprites[2] = SpriteLoader.load("./sprites/png/blue-tektite2.png");
+        this.sprites[1] = this.Game.AssetManager.getImage("./sprites/png/blue-tektite1.png");
+        this.sprites[2] = this.Game.AssetManager.getImage("./sprites/png/blue-tektite2.png");
     }
 
     dropItem(): boolean {

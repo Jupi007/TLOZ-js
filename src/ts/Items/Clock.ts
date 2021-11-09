@@ -1,5 +1,4 @@
 import { Game } from "../Game";
-import { AudioLoader, SpriteLoader } from "../Libraries/Loaders";
 import { Item } from "./Item";
 
 
@@ -19,8 +18,8 @@ export class Clock extends Item {
         this.width = 32;
         this.height = 32;
 
-        this.sprite = SpriteLoader.load("./sprites/png/clock.png");
-        this.collisionSound = AudioLoader.load("./sounds/effect/Get_Item.wav");
+        this.sprite = this.Game.AssetManager.getImage("./sprites/png/clock.png");
+        this.collisionSound = this.Game.AssetManager.getSound("./sounds/effect/Get_Item.wav");
     }
 
     collisionCallback(): void {

@@ -7,6 +7,7 @@ export class AbstractScreen {
 
   title: string;
   titleFontSize: string;
+  titleColor: string;
   message: string;
   showMessageAfter: number;
   backgroundColor: string;
@@ -14,12 +15,13 @@ export class AbstractScreen {
   state: StateObserver;
   messageAnimation: AnimationObserver;
 
-  constructor({ game, state, backgroundColor, title, titleFontSize = "24px", message, showMessageAfter = 0 }: {
+  constructor({ game, state, backgroundColor, title, titleFontSize = "24px", titleColor = "#fff", message, showMessageAfter = 0 }: {
     game: Game;
     state: StateObserver;
     backgroundColor: string;
     title: string;
     titleFontSize?: string;
+    titleColor?: string;
     message: string;
     showMessageAfter?: number;
   }) {
@@ -27,6 +29,7 @@ export class AbstractScreen {
 
     this.title = title;
     this.titleFontSize = titleFontSize;
+    this.titleColor = titleColor;
     this.message = message;
     this.showMessageAfter = showMessageAfter;
     this.backgroundColor = backgroundColor;
@@ -48,7 +51,7 @@ export class AbstractScreen {
       text: this.title,
       x: this.Game.Canvas.width / 2,
       y: this.Game.Canvas.height / 3,
-      color: "#fff",
+      color: this.titleColor,
       fontSize: this.titleFontSize,
       textAlign: "center",
       textBaseline: "middle"
