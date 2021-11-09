@@ -18,6 +18,7 @@ import { GameOverScreen } from "./Screens/GameOverScreen";
 import { WinScreen } from "./Screens/WinScreen";
 import { StoppedScreen } from "./Screens/StoppedScreen";
 import { truncate } from "fs";
+import { LoadingScreen } from "./Screens/LoadingScreen";
 
 export enum GameState {
   Loading,
@@ -49,6 +50,7 @@ export class Game {
   EventManager: EventManager;
   Hud: Hud;
   Panes: Panes;
+  LoadingScreen: LoadingScreen;
   SplashScreen: SplashScreen;
   GameOverScreen: GameOverScreen;
   WinScreen: WinScreen;
@@ -79,6 +81,7 @@ export class Game {
     this.ItemManager = new ItemManager(this);
     this.Hud = new Hud(this);
     this.Panes = new Panes(this);
+    this.LoadingScreen = new LoadingScreen(this);
     this.SplashScreen = new SplashScreen(this);
     this.GameOverScreen = new GameOverScreen(this);
     this.WinScreen = new WinScreen(this);
@@ -211,35 +214,7 @@ export class Game {
   }
 
   loadingLoop() {
-    this.fillRect({
-      x: 0,
-      y: 0,
-      width: this.Canvas.width,
-      height: this.Canvas.height,
-      color: '#000'
-    });
-
-    this.fillText({
-      text: 'LOADING...',
-      x: this.Canvas.width / 2,
-      y: this.Canvas.height / 3,
-      color: "#fff",
-      fontSize: "24px",
-      textAlign: "center",
-      textBaseline: "middle"
-    });
-
-    this.fillText({
-      text: Math.trunc(this.AssetManager.loaded * 100 /  this.AssetManager.toLoad) + "%",
-      x: this.Canvas.width / 2,
-      y: this.Canvas.height / 3 * 2,
-      color: "#fff",
-      fontSize: "16px",
-      textAlign: "center",
-      textBaseline: "middle"
-    });
-
-    if (this.AssetManager.isLoadFinished()) this.state.setNextState(GameState.Splash);
+    this.LoadingScreen.draw();
   }
 
   splashLoop(): void {
