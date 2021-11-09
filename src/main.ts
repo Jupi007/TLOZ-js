@@ -1,15 +1,19 @@
 import { Game } from "./ts/Game";
 
-let button = document.getElementById("startButton");
-let help = document.getElementById("help");
+let button = document.getElementById("startButton") as HTMLButtonElement;
+let help = document.getElementById("help") as HTMLElement;
 let canvas = document.getElementById("canvas") as HTMLCanvasElement;
 
-button.addEventListener("click", () => {
-  help.style.display = "block";
-  canvas.style.display = "block";
+window.addEventListener("load", () => {
+  button.disabled = false;
 
-  let game = new Game(canvas);
-  game.run();
-
-  button.remove();
+  button.addEventListener("click", () => {
+    help.style.display = "block";
+    canvas.style.display = "block";
+  
+    let game = new Game(canvas);
+    game.run();
+  
+    button.remove();
+  });
 });

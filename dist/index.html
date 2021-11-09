@@ -36,13 +36,17 @@
             display: block;
             border-radius: 15px;
         }
+        .Button[disabled] {
+            opacity: .5;
+            cursor: not-allowed;
+        }
     </style>
-  <script type="module" crossorigin src="./assets/index.26d45b93.js"></script>
+  <script type="module" crossorigin src="./assets/index.f3e53a85.js"></script>
     <link rel="stylesheet" href="./assets/index.bbb50943.css">
   </head>
 <body>
     <main>
-        <button type="button" name="button" class="Button Button-dark Button--xl" id="startButton">Run game</button>
+        <button type="button" name="button" class="Button Button-dark Button--xl" id="startButton" disabled>Run game</button>
 
         <canvas id="canvas" style="display: none">Your browser seems to not support Canvas2D api. Please use a modern and up to date one like Firefox.</canvas>
 
