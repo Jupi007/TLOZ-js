@@ -17,7 +17,6 @@ import { SplashScreen } from "./Screens/SplashScreen";
 import { GameOverScreen } from "./Screens/GameOverScreen";
 import { WinScreen } from "./Screens/WinScreen";
 import { StoppedScreen } from "./Screens/StoppedScreen";
-import { truncate } from "fs";
 import { LoadingScreen } from "./Screens/LoadingScreen";
 
 export enum GameState {

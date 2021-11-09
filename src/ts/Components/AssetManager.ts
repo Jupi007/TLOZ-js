@@ -173,7 +173,7 @@ export class AssetManager {
         return this.images[src];
     }
 
-    getSound(src: string, loop: boolean): HTMLAudioElement {
+    getSound(src: string, loop: boolean = false): HTMLAudioElement {
         if (!this.sounds.includes(src)) throw new Error("This sound hasn't been loaded");
 
         let audio = new Audio(src);
