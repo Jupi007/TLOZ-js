@@ -17,7 +17,8 @@ export class LoadingScreen extends AbstractScreen {
       state: new StateObserver(LoadingScreenState.BlackScreen),
       backgroundColor: "#000",
       title: "LOADING...",
-      message: ""
+      message: "",
+      blinkingMessage: false
     });
   }
 
