@@ -117,10 +117,12 @@ export class Game {
   }
 
   run(): void {
-    window.requestAnimationFrame((now) => this.loop(now));
+    window.requestAnimationFrame(() => this.loop());
   }
 
-  deltaCalculation(now: number): void {
+  deltaCalculation(): void {
+    let now = performance.now();
+
     if (this.lastTime === null) {
       this.dt = 1;
     } else {
@@ -130,10 +132,10 @@ export class Game {
     this.lastTime = now;
   }
 
-  loop(now: number): void {
-    window.requestAnimationFrame((now) => this.loop(now));
+  loop(): void {
+    window.requestAnimationFrame(() => this.loop());
 
-    this.deltaCalculation(now);
+    this.deltaCalculation();
 
     this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 
