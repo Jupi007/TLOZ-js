@@ -57,7 +57,7 @@ export class Octorok extends SimpleMovingEnemy {
             "./sprites/png/octorok-left2.png"
         );
 
-        this.spritesAnimation = new AnimationObserver({ animationStepDuration: 20 / speed, nbAnimationStep: 2 });
+        this.spritesAnimation = new AnimationObserver({ animationStepDuration: 20 / speed, nbAnimationStep: 2, randomize: true });
     }
 
     attack(): void {
