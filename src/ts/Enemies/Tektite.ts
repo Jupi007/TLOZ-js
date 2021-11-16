@@ -40,7 +40,7 @@ export class Tektite extends Enemy {
         this.sprites[1] = this.Game.AssetManager.getImage("./sprites/png/tektite1.png");
         this.sprites[2] = this.Game.AssetManager.getImage("./sprites/png/tektite2.png");
 
-        this.spritesAnimation = new AnimationObserver({ animationStepDuration: 20, nbAnimationStep: 2 });
+        this.spritesAnimation = new AnimationObserver({ animationStepDuration: 20, nbAnimationStep: 2, randomize: true });
 
         this.state = new StateObserver(EnemyState.Wait);
     }

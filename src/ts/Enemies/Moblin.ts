@@ -64,7 +64,7 @@ export class Moblin extends SimpleMovingEnemy {
             "./sprites/png/moblin-left2.png"
         );
 
-        this.spritesAnimation = new AnimationObserver({ animationStepDuration: 25 / speed, nbAnimationStep: 2 });
+        this.spritesAnimation = new AnimationObserver({ animationStepDuration: 25 / speed, nbAnimationStep: 2, randomize: true });
     }
 
     attack(): void {

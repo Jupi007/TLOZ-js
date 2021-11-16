@@ -1,3 +1,5 @@
+import { Random } from "../Libraries/Random";
+
 export abstract class AbstractObserver {
     currentFrame: number;
     isFirstFrame: boolean;
@@ -95,14 +97,19 @@ export class AnimationObserver extends AbstractObserver {
     currentAnimationStep = 1;
     nbAnimationStep: number;
 
-    constructor({ animationStepDuration, nbAnimationStep }: {
+    constructor({ animationStepDuration, nbAnimationStep, randomize = false }: {
         animationStepDuration: number;
         nbAnimationStep: number;
+        randomize?: boolean;
     }) {
         super();
 
         this.animationStepDuration = animationStepDuration;
         this.nbAnimationStep = nbAnimationStep;
+
+        if (randomize) {
+            this.currentFrame = Random.getIntInclusive(0, animationStepDuration);
+        }
     }
 
     update(dt: number): void {
