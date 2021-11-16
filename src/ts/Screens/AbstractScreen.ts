@@ -38,7 +38,7 @@ export class AbstractScreen {
     this.backgroundColor = backgroundColor;
 
     this.state = state;
-    this.messageAnimation = new AnimationObserver(50, 2);
+    this.messageAnimation = new AnimationObserver({ animationStepDuration: 50, nbAnimationStep: 2 });
   }
 
   draw(): void {

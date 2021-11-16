@@ -58,7 +58,7 @@ export class Enemy extends MovingBox {
 
     this.invincibleObserver = new StateObserver(false);
     this.invincibleDuration = 25;
-    this.invincibleAnimation = new AnimationObserver(7, 2);
+    this.invincibleAnimation = new AnimationObserver({ animationStepDuration: 7, nbAnimationStep: 2 });
 
     this.dieSound = this.Game.AssetManager.getSound("./sounds/effect/Enemy_Die.wav");
     this.hitSound = this.Game.AssetManager.getSound("./sounds/effect/Enemy_Hit.wav");

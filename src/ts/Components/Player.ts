@@ -61,7 +61,7 @@ export class Player extends MovingBox {
     this.attackObserver = new StateObserver(false);
 
     this.diedObserver = new StateObserver(false);
-    this.diedAnimation = new AnimationObserver(8, 4);
+    this.diedAnimation = new AnimationObserver({ animationStepDuration: 8, nbAnimationStep: 4 });
 
     this.invincibleObserver = new StateObserver(false);
     this.defaultInvincibleDuration = 150;
@@ -151,8 +151,8 @@ export class Player extends MovingBox {
     this.killedSprites[1] = this.Game.AssetManager.getImage("./sprites/png/killed1.png");
     this.killedSprites[2] = this.Game.AssetManager.getImage("./sprites/png/killed2.png");
 
-    this.spritesAnimation = new AnimationObserver(6, 2);
-    this.invincibleAnimation = new AnimationObserver(5, 2);
+    this.spritesAnimation = new AnimationObserver({ animationStepDuration: 6, nbAnimationStep: 2 });
+    this.invincibleAnimation = new AnimationObserver({ animationStepDuration: 5, nbAnimationStep: 2 });
 
     this.hurtSound = this.Game.AssetManager.getSound("./sounds/effect/Link_Hurt.wav");
     this.dieSound = this.Game.AssetManager.getSound("./sounds/effect/Link_Die.wav");

@@ -29,7 +29,7 @@ export class Hud {
     this.halfHeartSprite = this.Game.AssetManager.getImage("./sprites/png/half-heart.png");
     this.fullHeartSprite = this.Game.AssetManager.getImage("./sprites/png/full-heart.png");
 
-    this.currentSceneAnimation = new AnimationObserver(25, 2);
+    this.currentSceneAnimation = new AnimationObserver({ animationStepDuration: 25, nbAnimationStep: 2 });
   }
 
   draw(): void {

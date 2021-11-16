@@ -356,7 +356,7 @@ export namespace Bricks {
       this.sprites[1] = this.Game.AssetManager.getImage("./sprites/png/bricks/fire1.png");
       this.sprites[2] = this.Game.AssetManager.getImage("./sprites/png/bricks/fire2.png");
 
-      this.spritesAnimation = new AnimationObserver(10, 2);
+      this.spritesAnimation = new AnimationObserver({ animationStepDuration: 10, nbAnimationStep: 2 });
     }
 
     public get sprite(): HTMLImageElement {

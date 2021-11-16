@@ -95,7 +95,10 @@ export class AnimationObserver extends AbstractObserver {
     currentAnimationStep = 1;
     nbAnimationStep: number;
 
-    constructor(animationStepDuration: number, nbAnimationStep: number) {
+    constructor({ animationStepDuration, nbAnimationStep }: {
+        animationStepDuration: number;
+        nbAnimationStep: number;
+    }) {
         super();
 
         this.animationStepDuration = animationStepDuration;
