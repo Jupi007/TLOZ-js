@@ -91,6 +91,7 @@ export class Game {
 
     this.Canvas.width = this.Viewport.width;
     this.Canvas.height = this.Viewport.height + this.Hud.height;
+    this.ctx.imageSmoothingEnabled = false; // This have to be set after canvas resize
 
     this.Inventory = new Inventory(this);
 
@@ -262,7 +263,6 @@ export class Game {
     height: number;
   }): void {
     this.ctx.beginPath();
-    this.ctx.imageSmoothingEnabled = false;
     this.ctx.drawImage(sprite, x, y, width, height);
     this.ctx.closePath();
   }
