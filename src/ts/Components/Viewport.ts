@@ -142,12 +142,12 @@ export class Viewport {
       this.currentScene.passages.forEach((passage: Passage) => {
         if (Collisions.simpleMovingBox(this.Game.Player.hitBox, passage)) {
           if (!this.justReachOutPassage) {
-            this.changeWorld(
-              true,
-              passage.targetWorldIndex,
-              passage.targetSceneC,
-              passage.targetSceneR
-            );
+            this.changeWorld({
+              fromPassage: true,
+              targetWorldIndex: passage.targetWorldIndex,
+              targetSceneC: passage.targetSceneC,
+              targetSceneR: passage.targetSceneR
+            });
           }
         } else if (this.justReachOutPassage) {
           this.justReachOutPassage = false;
@@ -335,14 +335,14 @@ export class Viewport {
     this.Game.drawGame();
   }
 
-  changeWorld(
-    fromPassage: boolean,
-    targetWorldIndex: number,
-    targetSceneC: number,
-    targetSceneR: number,
-    targetCellC: number | null = null,
-    targetCellR: number | null = null
-  ): void {
+  changeWorld({ fromPassage, targetWorldIndex, targetSceneC, targetSceneR, targetCellC = null, targetCellR = null }:{
+    fromPassage: boolean;
+    targetWorldIndex: number;
+    targetSceneC: number;
+    targetSceneR: number;
+    targetCellC?: number | null;
+    targetCellR?: number | null;
+  } ): void {
     this.changeWorldFromPassage = fromPassage;
     this.changeWorldToPassage =
       targetCellC !== null && targetCellR !== null ? true : false;

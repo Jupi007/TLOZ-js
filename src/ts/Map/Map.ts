@@ -2337,7 +2337,14 @@ export class Map {
     ];
 
     this.worlds[1].scenes[0][0].bottomEdgeCollision = function () {
-      this.Game.Viewport.changeWorld(false, 0, 1, 2, 3, 1);
+      this.Game.Viewport.changeWorld({
+        fromPassage: false,
+        targetWorldIndex: 0,
+        targetSceneC: 1,
+        targetSceneR: 2,
+        targetCellC: 3,
+        targetCellR: 1
+      });
     };
 
     this.worlds[2] = new World({
@@ -3216,7 +3223,14 @@ export class Map {
     ]);
 
     this.worlds[2].scenes[1][1].bottomEdgeCollision = function () {
-      this.Game.Viewport.changeWorld(false, 0, 2, 0, 7, 1);
+      this.Game.Viewport.changeWorld({
+        fromPassage: false,
+        targetWorldIndex: 0,
+        targetSceneC: 2,
+        targetSceneR: 0,
+        targetCellC: 7,
+        targetCellR: 1
+      });
     };
 
     this.worlds[2].scenes[1][1].enemies = [
